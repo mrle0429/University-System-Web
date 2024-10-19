@@ -3,3 +3,6 @@
 
 # 忽略本地目录
 __pycache__/
+
+# 忽略flask库
+.venv
