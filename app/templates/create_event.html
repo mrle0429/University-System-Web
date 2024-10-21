@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Create Course</h2>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.course_name.label }} {{ form.course_name(size=32) }}
+    </div>
+    <div>
+        {{ form.course_code.label }} {{ form.course_code(size=32) }}
+    </div>
+    <div>
+        {{ form.year.label }} {{ form.year() }}
+    </div>
+    <div>
+        {{ form.semester.label }} {{ form.semester() }}
+    </div>
+    <div>
+        {{ form.day_of_week.label }} {{ form.day_of_week() }}
+    </div>
+    <div>
+        {{ form.start_period.label }} {{ form.start_period() }}
+    </div>
+    <div>
+        {{ form.end_period.label }} {{ form.end_period() }}
+    </div>
+    <div>
+        {{ form.description.label }} {{ form.description() }}
+    </div>
+    <div>
+        {{ form.submit() }}
+    </div>
+</form>
+{% endblock %}

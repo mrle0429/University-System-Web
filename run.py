@@ -1,10 +1,8 @@
 from app import create_app, db
-from app.models import User
 
-# 创建Flask应用
 app = create_app()
 
-# 启动应用
 if __name__ == '__main__':
-    # 启动Flask调试模式
+    with app.app_context():
+        db.create_all()  # Create database tables
     app.run(debug=True)

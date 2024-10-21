@@ -1,10 +1,39 @@
 body {
     font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
 }
-.container {
-    margin: 20px;
+
+nav {
+    background-color: #007bff;
+    padding: 1em;
 }
+
 nav a {
-    margin: 10px;
+    color: white;
+    margin-right: 1em;
     text-decoration: none;
+}
+
+.container {
+    margin: 2em;
+}
+
+h2 {
+    color: #007bff;
+}
+
+form div {
+    margin-bottom: 1em;
+}
+
+form label {
+    display: inline-block;
+    width: 100px;
+}
+
+form input {
+    padding: 0.5em;
+    width: 200px;
 }
