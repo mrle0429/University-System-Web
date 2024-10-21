@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, current_user, login_required, logout_user
-from .forms import RegisterForm, LoginForm, TeacherProfileForm, StudentProfileForm, CreateCourseForm, RegisterCourseForm
-from .models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db
+from app.forms import RegisterForm, LoginForm, TeacherProfileForm, StudentProfileForm, CreateCourseForm, RegisterCourseForm
+from app.models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db
 from werkzeug.security import generate_password_hash, check_password_hash
 
 main_routes = Blueprint('main', __name__)
