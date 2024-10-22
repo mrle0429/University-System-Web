@@ -1,0 +1,185 @@
+\documentclass[12pt]{article}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+
+% 设置页边距
+\geometry{a4paper, left=25mm, right=25mm, top=30mm, bottom=30mm}
+
+% 修复 fancyhdr 警告
+\setlength{\headheight}{14.49998pt}
+
+% 页眉页脚设置
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{COMP3019J University Website Project}
+\fancyhead[R]{\thepage}
+\fancyfoot[L]{Group 20}
+\fancyfoot[R]{October, 2024}
+
+% 标题格式设置
+\titleformat{\section}
+  {\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalsize\bfseries}{\thesubsection}{1em}{}
+
+% 生成可点击链接
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={COMP 3019J Project},
+    pdfpagemode=FullScreen,
+}
+
+% 文档标题
+\title{COMP3019J University Website Project\\ \Large Design Document}
+\date{October 2024}
+
+\begin{document}
+
+% 第一页：标题页
+\maketitle
+\vspace{2cm}
+\begin{figure}[h]  % 插入图片的部分
+  \centering
+  \includegraphics[width=0.5\textwidth]{title.png}  % 替换成你的图片文件名
+\end{figure}
+\vspace{6cm}
+
+% 插入作者和日期信息作为文本
+\begin{center}
+  \textbf{Bohan Zhang 22207251}\\
+  \textbf{Yunhan Gao 22207250}\\
+  \textbf{Le Liu 22207256}\\
+\end{center}
+
+\thispagestyle{empty}
+\newpage
+
+% 第二页：目录页
+\tableofcontents
+\newpage
+
+% 开始正文
+
+\section{Introduction}
+
+\subsection{Project Goals}
+The primary goal of this project is to design and implement a comprehensive university website that offers a personalized
+ and functional experience for different types of users. The website will provide students, teachers, and other university 
+ personnel with an interface to manage their profiles, interact with others, and access university resources based on their 
+ roles. The website is expected to enhance user engagement, facilitate communication, and streamline administrative processes 
+ within the university. Additionally, the project will focus on secure data handling and innovative functionalities to 
+ differentiate the website from existing solutions.
+
+\subsection{Target Users and Use Cases}
+The target users of the website include students, teachers, library staff, administrative staff, and security personnel and external visitors.
+Each user type will have specific features available to them:
+\begin{itemize}
+    \item \textbf{Students}: Students will have access to their profiles, which display timetables, dormitory information, 
+    and university course. They can register for course, interact with teachers and fellow students, and access academic resources.
+    \item \textbf{Teachers}: Teachers will have a profile showing the modules they teach, their office hours, and office location. 
+    They will be able to create and manage courses and interact with students.
+    \item \textbf{Library staff}: Library staff will have access to features that allow them to manage book inventories, track book 
+    loans, and assist users with book reservations. They can also update the library's resources and provide access to digital resources for users.
+    \item \textbf{Security personnel}: Security personnel will use the website to monitor campus security issues
+    and manage car and e-bikes in campus.
+    \item \textbf{Administrative staff}: Administrative users will have full control over managing the system, including overseeing
+     user registration and manage the database.
+    \item \textbf{External visitors}: Unregistered users will have limited access to certain parts of the website, such as viewing 
+    general information about the university, available library resources, and university courses, without the ability to interact with 
+    internal functions.
+\end{itemize}
+
+
+\subsection{Technological Stack Overview}
+The university website will be built using a modern and robust technological stack to ensure reliability, security, and scalability. 
+The core technologies to be used include:
+\begin{itemize}
+    \item \textbf{Frontend}: The user interface will be developed using HTML, CSS, and JavaScript to create an interactive and
+     responsive design. Libraries like Bootstrap or Material UI may be incorporated for consistent styling across the website.
+    \item \textbf{Backend}: The server-side logic will be implemented using Flask (Python), providing a flexible framework for 
+    managing user authentication, database interactions, and session management.
+    \item \textbf{Database}: SQLite will be used as the primary database management system to store user profiles, event data, 
+    and other relevant information. The database will include the design of tables with appropriate relationships, such as primary
+     and foreign keys, to manage data integrity.
+    \item \textbf{Security}: The website will ensure secure handling of sensitive data, such as passwords, using encryption 
+    mechanisms. Proper user authentication and authorization will be implemented to protect user privacy and data access.
+\end{itemize}
+This technology stack has been chosen for its simplicity, flexibility, and suitability for the scale of the university website project, 
+ensuring a smooth user experience and maintainability.
+
+\newpage
+\section{Website Functionalities}
+\subsection{User Registration and Account Management}
+% 在这里详细描述用户注册和账号管理功能。
+\subsection{User Types and Role-Specific Features}
+% 在这里描述不同类型用户及其特定功能。
+\subsection{Profile Customization and Display}
+% 在这里描述用户个人资料定制和展示功能。
+\subsection{User Interaction and Communication}
+% 在这里描述用户之间的交互和沟通方式。
+\subsection{Unregistered User Access}
+% 在这里描述未注册用户的有限访问权限。
+\subsection{Security and Data Protection}
+% 在这里详细描述安全性和数据保护措施。
+\subsection{Administrative Features}
+% 在这里描述管理员账户和其功能。
+\subsection{Extra Functionality}
+% 在这里描述额外的功能。
+
+\newpage
+\section{Database Design}
+\subsection{Entity-Relationship Diagrams}
+% 在这里插入ER图并描述数据库设计。
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.8\textwidth]{path_to_your_image.png}
+%     \caption{Entity-Relationship Diagram}
+% \end{figure}
+\subsection{Table Structures and Relationships}
+% 在这里描述数据库表结构和关系。
+\subsection{Primary and Foreign Key Design}
+% 在这里详细描述主键和外键设计。
+\subsection{Data Population Strategy}
+% 在这里描述数据库如何填充数据。
+
+\newpage
+\section{Web Page Design}
+\subsection{Mockups and Layout Overview}
+% 在这里插入网页设计草图并描述布局。
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.8\textwidth]{path_to_your_mockup.png}
+%     \caption{Web Page Mockup}
+% \end{figure}
+\subsection{Color Schemes and Style Guidelines}
+% 在这里描述网页的配色方案和风格指南。
+\subsection{User Experience Considerations}
+% 在这里描述用户体验相关的设计考量。
+\subsection{Responsive Design}
+% 在这里描述响应式设计方案。
+
+\newpage
+\section{Technical Details}
+\subsection{File and Directory Structure}
+% 在这里描述项目的文件和目录结构。
+\subsection{Code Components and Dependencies}
+% 在这里描述代码的各个组成部分和依赖关系。
+\subsection{API and Database Interaction}
+% 在这里描述API与数据库的交互方式。
+\subsection{Version Control and Repository Details}
+% 在这里描述版本控制系统的使用和代码库的详细信息。
+
+\newpage
+\section{Conclusion}
+\subsection{Summary of Features}
+% 在这里总结网站功能。
+\subsection{Future Development Plans}
+% 在这里描述未来的开发计划和功能改进。
+
+\end{document}
