@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.10.22)  22 OCT 2024 20:13
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.10.22)  23 OCT 2024 16:40
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -295,7 +295,35 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 \tf@toc=\write4
 \openout4 = `Document.toc'.
 
- [2] [3] [4] [5] [6] [7] [8] [9] (./Document.aux)
+ [2] [3] [4] [5]
+Overfull \hbox (42.27832pt too wide) in paragraph at lines 142--152
+\TU/lmtt/m/n/12 student_profile\TU/lmr/m/n/12 , \TU/lmtt/m/n/12 teacher_profile\TU/lmr/m/n/12 , \TU/lmtt/m/n/12 library_staff_profile\TU/lmr/m/n/12 , \TU/lmtt/m/n/12 security_personnel_profile\TU/lmr/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 142--152
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 142--152
+
+ []
+
+File: ER.png Graphic file (type bmp)
+<ER.png>
+[6] [7] [8
+
+] [9
+
+]
+Overfull \hbox (10.72153pt too wide) in paragraph at lines 275--276
+[]\TU/lmr/m/n/12 The \TU/lmtt/m/n/12 user_id \TU/lmr/m/n/12 field in \TU/lmtt/m/n/12 student_profile\TU/lmr/m/n/12 , \TU/lmtt/m/n/12 teacher_profile\TU/lmr/m/n/12 , \TU/lmtt/m/n/12 library_staff_profile\TU/lmr/m/n/12 ,
+ []
+
+[10
+
+] [11] [12] [13] (./Document.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
@@ -304,12 +332,12 @@ Package rerunfilecheck Info: File `Document.out' has not changed.
 (rerunfilecheck)             Checksum: 22F6903DB4874A6259B5E4EE938D1812;5865.
  ) 
 Here is how much of TeX's memory you used:
- 9159 strings out of 474773
- 142247 string characters out of 5761288
+ 9173 strings out of 474773
+ 142421 string characters out of 5761288
  1931842 words of memory out of 5000000
- 31221 multiletter control sequences out of 15000+600000
- 562126 words of font info for 55 fonts, out of 8000000 for 9000
+ 31232 multiletter control sequences out of 15000+600000
+ 562134 words of font info for 56 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 72i,11n,79p,308b,402s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 72i,11n,79p,511b,402s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on Document.pdf (9 pages).
+Output written on Document.pdf (13 pages).
