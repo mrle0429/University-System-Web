@@ -17,18 +17,18 @@ rectangle "Common Use Cases" {
 
 rectangle "Admin Functions" {
     Admin -up-> (User Management)
-    Admin -down-> (System Configuration)
+    Admin -up-> (System Configuration)
 }
 
 rectangle "Student Functions" {
-    Student -up-> (Course Management)
+    Student -up-> (Course Register)
     Student -up-> (Grade Inquiry)
-    Student -- LibrarySearch
-    Student -- BorrowingRecords
-    Student -- Profile
-    Student -- Forum
-    Student -- EB: Register
-    Student -- Style
+    Student -down-> LibrarySearch
+    Student -down-> BorrowingRecords
+    Student -down-> Profile
+    Student -down-> Forum
+    Student -down-> EB: Register
+    Student -down-> Style
 }
 
 rectangle "Teacher Functions" {
@@ -43,20 +43,20 @@ rectangle "Teacher Functions" {
 }
 
 rectangle "Librarian Functions" {
-    Librarian -- (Resource Management)
-    Librarian -- (User Borrowing Records)
+    Librarian -down-> (Resource Management)
+    Librarian -down-> (User Borrowing Records)
     Librarian -up-> Profile
     Librarian -up-> Style
 }
 
 
-Security -- EB: Management
+Security -up-> EB: Management
 Security -up-> Profile
 Security -up-> Style
 
 
 rectangle "Visitor Functions" {
-    Visitor -- LibrarySearch
+    Visitor -down-> LibrarySearch
     Visitor -up-> (Contact University)
 }
 @enduml
