@@ -1,31 +1,106 @@
-\contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
-\contentsline {subsection}{\numberline {1.1}Project Goals}{3}{subsection.1.1}%
-\contentsline {subsection}{\numberline {1.2}Target Users and Use Cases}{3}{subsection.1.2}%
+\contentsline {section}{\numberline {1}Introduction}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Project Goals}{4}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Target Users and Use Cases}{4}{subsection.1.2}%
 \contentsline {subsection}{\numberline {1.3}Technological Stack Overview}{4}{subsection.1.3}%
-\contentsline {section}{\numberline {2}Website Functionalities}{5}{section.2}%
-\contentsline {subsection}{\numberline {2.1}User Registration and Account Management}{5}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}User Types and Role-Specific Features}{5}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Profile Customization and Display}{5}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}User Interaction and Communication}{5}{subsection.2.4}%
-\contentsline {subsection}{\numberline {2.5}Unregistered User Access}{5}{subsection.2.5}%
-\contentsline {subsection}{\numberline {2.6}Security and Data Protection}{5}{subsection.2.6}%
-\contentsline {subsection}{\numberline {2.7}Administrative Features}{5}{subsection.2.7}%
-\contentsline {subsection}{\numberline {2.8}Extra Functionality}{5}{subsection.2.8}%
-\contentsline {section}{\numberline {3}Database Design}{6}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Entity-Relationship Diagrams}{6}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Table Structures and Relationships}{8}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Primary and Foreign Key Design}{10}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Data Population Strategy}{10}{subsection.3.4}%
-\contentsline {section}{\numberline {4}Web Page Design}{11}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Mockups and Layout Overview}{11}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Color Schemes and Style Guidelines}{11}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}User Experience Considerations}{11}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Responsive Design}{11}{subsection.4.4}%
-\contentsline {section}{\numberline {5}Technical Details}{12}{section.5}%
-\contentsline {subsection}{\numberline {5.1}File and Directory Structure}{12}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Code Components and Dependencies}{12}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}API and Database Interaction}{12}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}Version Control and Repository Details}{12}{subsection.5.4}%
-\contentsline {section}{\numberline {6}Conclusion}{13}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Summary of Features}{13}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Future Development Plans}{13}{subsection.6.2}%
+\contentsline {section}{\numberline {2}Website Functionalities}{6}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Introduction and Use Case Diagram}{6}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Common Use Cases}{6}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Library Search}{6}{subsubsection.2.2.1}%
+\contentsline {paragraph}{Description}{6}{subsubsection.2.2.1}%
+\contentsline {paragraph}{Data Outcomes}{6}{subsubsection.2.2.1}%
+\contentsline {paragraph}{Related UI}{6}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Borrowing Records}{6}{subsubsection.2.2.2}%
+\contentsline {paragraph}{Description}{6}{subsubsection.2.2.2}%
+\contentsline {paragraph}{Data Outcomes}{6}{subsubsection.2.2.2}%
+\contentsline {paragraph}{Related UI}{6}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.3}Profile Management}{6}{subsubsection.2.2.3}%
+\contentsline {paragraph}{Description}{6}{subsubsection.2.2.3}%
+\contentsline {paragraph}{Data Outcomes}{6}{subsubsection.2.2.3}%
+\contentsline {paragraph}{Related UI}{7}{subsubsection.2.2.3}%
+\contentsline {subsubsection}{\numberline {2.2.4}Forum Participation}{7}{subsubsection.2.2.4}%
+\contentsline {paragraph}{Description}{7}{subsubsection.2.2.4}%
+\contentsline {paragraph}{Data Outcomes}{7}{subsubsection.2.2.4}%
+\contentsline {paragraph}{Related UI}{7}{subsubsection.2.2.4}%
+\contentsline {subsubsection}{\numberline {2.2.5}Style Customization}{7}{subsubsection.2.2.5}%
+\contentsline {paragraph}{Description}{7}{subsubsection.2.2.5}%
+\contentsline {paragraph}{Data Outcomes}{7}{subsubsection.2.2.5}%
+\contentsline {paragraph}{Related UI}{7}{subsubsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.3}Student Functions}{7}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Course Register}{7}{subsubsection.2.3.1}%
+\contentsline {paragraph}{Description}{7}{subsubsection.2.3.1}%
+\contentsline {paragraph}{Data Outcomes}{8}{subsubsection.2.3.1}%
+\contentsline {paragraph}{Related UI}{8}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Grade Inquiry}{8}{subsubsection.2.3.2}%
+\contentsline {paragraph}{Description}{8}{subsubsection.2.3.2}%
+\contentsline {paragraph}{Data Outcomes}{8}{subsubsection.2.3.2}%
+\contentsline {paragraph}{Related UI}{8}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}E-bike Registration}{8}{subsubsection.2.3.3}%
+\contentsline {paragraph}{Description}{8}{subsubsection.2.3.3}%
+\contentsline {paragraph}{Data Outcomes}{8}{subsubsection.2.3.3}%
+\contentsline {paragraph}{Related UI}{8}{subsubsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.4}Teacher Functions}{9}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Course Management}{9}{subsubsection.2.4.1}%
+\contentsline {paragraph}{Description}{9}{subsubsection.2.4.1}%
+\contentsline {paragraph}{Data Outcomes}{9}{subsubsection.2.4.1}%
+\contentsline {paragraph}{Related UI}{9}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}Student Management}{9}{subsubsection.2.4.2}%
+\contentsline {paragraph}{Description}{9}{subsubsection.2.4.2}%
+\contentsline {paragraph}{Data Outcomes}{9}{subsubsection.2.4.2}%
+\contentsline {paragraph}{Related UI}{9}{subsubsection.2.4.2}%
+\contentsline {subsubsection}{\numberline {2.4.3}Grade Entry}{9}{subsubsection.2.4.3}%
+\contentsline {paragraph}{Description}{9}{subsubsection.2.4.3}%
+\contentsline {paragraph}{Data Outcomes}{10}{subsubsection.2.4.3}%
+\contentsline {paragraph}{Related UI}{10}{subsubsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.5}Library Staff Functions}{10}{subsection.2.5}%
+\contentsline {subsubsection}{\numberline {2.5.1}Resource Management}{10}{subsubsection.2.5.1}%
+\contentsline {paragraph}{Description}{10}{subsubsection.2.5.1}%
+\contentsline {paragraph}{Data Outcomes}{10}{subsubsection.2.5.1}%
+\contentsline {paragraph}{Related UI}{10}{subsubsection.2.5.1}%
+\contentsline {subsubsection}{\numberline {2.5.2}User Borrowing Records Management}{10}{subsubsection.2.5.2}%
+\contentsline {paragraph}{Description}{10}{subsubsection.2.5.2}%
+\contentsline {paragraph}{Data Outcomes}{10}{subsubsection.2.5.2}%
+\contentsline {paragraph}{Related UI}{11}{subsubsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.6}Security Personnel Functions}{11}{subsection.2.6}%
+\contentsline {subsubsection}{\numberline {2.6.1}E-bike Management}{11}{subsubsection.2.6.1}%
+\contentsline {paragraph}{Description}{11}{subsubsection.2.6.1}%
+\contentsline {paragraph}{Data Outcomes}{11}{subsubsection.2.6.1}%
+\contentsline {paragraph}{Related UI}{11}{subsubsection.2.6.1}%
+\contentsline {subsection}{\numberline {2.7}Administrator Functions}{11}{subsection.2.7}%
+\contentsline {subsubsection}{\numberline {2.7.1}User Management}{11}{subsubsection.2.7.1}%
+\contentsline {paragraph}{Description}{11}{subsubsection.2.7.1}%
+\contentsline {paragraph}{Data Outcomes}{11}{subsubsection.2.7.1}%
+\contentsline {paragraph}{Related UI}{11}{subsubsection.2.7.1}%
+\contentsline {subsubsection}{\numberline {2.7.2}System Configuration}{12}{subsubsection.2.7.2}%
+\contentsline {paragraph}{Description}{12}{subsubsection.2.7.2}%
+\contentsline {paragraph}{Data Outcomes}{12}{subsubsection.2.7.2}%
+\contentsline {paragraph}{Related UI}{12}{subsubsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.8}Visitor Functions}{12}{subsection.2.8}%
+\contentsline {subsubsection}{\numberline {2.8.1}Contact Us}{12}{subsubsection.2.8.1}%
+\contentsline {paragraph}{Description}{12}{subsubsection.2.8.1}%
+\contentsline {paragraph}{Data Outcomes}{12}{subsubsection.2.8.1}%
+\contentsline {paragraph}{Related UI}{12}{subsubsection.2.8.1}%
+\contentsline {section}{\numberline {3}Database Design}{13}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Entity-Relationship Diagrams}{13}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Table Structures and Relationships}{15}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Primary and Foreign Key Design}{18}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Data Population Strategy}{18}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Web Page Design}{19}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Overview}{19}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Mockups for common functions}{19}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Mockups for student functions}{22}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Mockups for teacher functions}{26}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Mockups for library staff functions}{30}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Mockups for security personnel functions}{34}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Mockups for administrator functions}{36}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}Mockups for visitor functions}{38}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}Color Schemes and Style Guidelines}{38}{subsection.4.9}%
+\contentsline {subsection}{\numberline {4.10}User Experience Considerations}{38}{subsection.4.10}%
+\contentsline {subsection}{\numberline {4.11}Responsive Design}{38}{subsection.4.11}%
+\contentsline {section}{\numberline {5}Technical Details}{39}{section.5}%
+\contentsline {subsection}{\numberline {5.1}File and Directory Structure}{39}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Code Components and Dependencies}{39}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}API and Database Interaction}{39}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Version Control and Repository Details}{39}{subsection.5.4}%
+\contentsline {section}{\numberline {6}Conclusion}{40}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Summary of Features}{40}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Future Development Plans}{40}{subsection.6.2}%

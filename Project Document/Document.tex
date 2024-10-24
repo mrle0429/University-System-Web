@@ -4,6 +4,8 @@
 \usepackage{graphicx}
 \usepackage{titlesec}
 \usepackage{fancyhdr}
+\usepackage{float}
+
 
 % 设置页边距
 \geometry{a4paper, left=25mm, right=25mm, top=30mm, bottom=30mm}
@@ -29,7 +31,7 @@
 \hypersetup{
     colorlinks=true,
     linkcolor=blue,
-    filecolor=magenta,      
+    filecolor=magenta,
     urlcolor=cyan,
     pdftitle={COMP 3019J Project},
     pdfpagemode=FullScreen,
@@ -70,13 +72,13 @@
 
 \subsection{Project Goals}
 The primary goal of this project is to design and implement a comprehensive university website that offers a personalized
- and functional experience for different types of users. The website will provide students, teachers, and other university 
- personnel with an interface to manage their profiles, interact with others, and access university resources based on their 
- roles. The website is expected to enhance user engagement, facilitate communication, and streamline administrative processes 
- within the university. Additionally, the project will focus on secure data handling and innovative functionalities to 
+ and functional experience for different types of users. The website will provide students, teachers, and other university
+ personnel with an interface to manage their profiles, interact with others, and access university resources based on their
+ roles. The website is expected to enhance user engagement, facilitate communication, and streamline administrative processes
+ within the university. Additionally, the project will focus on secure data handling and innovative functionalities to
  differentiate the website from existing solutions.
 
-\subsection{Target Users and Use Cases} The target users of the website include students, teachers, library staff, security personnel, 
+\subsection{Target Users and Use Cases} The target users of the website include students, teachers, library staff, security personnel,
 administrative staff and external visitors. Each user type has specific features tailored to their role:
 
 \begin{itemize}
@@ -116,22 +118,276 @@ ensuring a smooth user experience and maintainability.
 
 \newpage
 \section{Website Functionalities}
-\subsection{User Registration and Account Management}
+\subsection{Introduction and Use Case Diagram}
 % 在这里详细描述用户注册和账号管理功能。
-\subsection{User Types and Role-Specific Features}
-% 在这里描述不同类型用户及其特定功能。
-\subsection{Profile Customization and Display}
-% 在这里描述用户个人资料定制和展示功能。
-\subsection{User Interaction and Communication}
-% 在这里描述用户之间的交互和沟通方式。
-\subsection{Unregistered User Access}
-% 在这里描述未注册用户的有限访问权限。
-\subsection{Security and Data Protection}
-% 在这里详细描述安全性和数据保护措施。
-\subsection{Administrative Features}
-% 在这里描述管理员账户和其功能。
-\subsection{Extra Functionality}
-% 在这里描述额外的功能。
+\subsection{Common Use Cases}
+\subsubsection{Library Search}
+
+\paragraph{Description}
+The Library Search allows students, teachers, and guests to search for books, journals, and articles using various criteria like title, author, or keywords. Logged-in users can also view their borrowing history. After using this feature, users obtain detailed information about resource availability and location.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{READ} - Library resource information, availability status, resource location
+    \item \textbf{CREATE} - Search history log entry (for logged-in users)
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:searchbook_page]{Figure~\ref*{fig:searchbook_page}}.
+
+\subsubsection{Borrowing Records}
+
+\paragraph{Description}
+Borrowing Records enables students and teachers to view their current loans, due dates, past borrowing history, and any overdue fines. Users can also renew eligible items. After using this feature, users can track their borrowed items and manage renewals.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{READ} - Current borrowed items, due dates, past borrowing history, fines/penalties
+    \item \textbf{UPDATE} - Loan status and due dates (in case of renewals)
+    \item \textbf{CREATE} - Log entry of borrowing record access
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:borrowing_records_ui]{Figure~\ref*{fig:borrowing_records_ui}}.
+
+\subsubsection{Profile Management}
+
+\paragraph{Description}
+Profile Management allows students, teachers, librarians, and security personnel to update personal information such as contact details, privacy settings, and profile pictures. After using this feature, users will have updated their profile with any necessary changes reflected in the system.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{READ} - Current profile information
+    \item \textbf{UPDATE} - Personal details, contact information, privacy settings
+    \item \textbf{CREATE} - Log entry of profile changes
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:profile_management_ui]{Figure~\ref*{fig:profile_management_ui}}.
+
+\subsubsection{Forum Participation}
+
+\paragraph{Description}
+Forum Participation allows students and teachers to create or reply to discussion threads on various academic or campus-related topics. After using this feature, users contribute to ongoing discussions or start new ones to engage with the university community.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{CREATE} - New forum posts or replies
+    \item \textbf{READ} - Existing forum threads and replies
+    \item \textbf{UPDATE} - User's forum activity status
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:forum_participation_ui]{Figure~\ref*{fig:forum_participation_ui}}.
+
+\subsubsection{Style Customization}
+
+\paragraph{Description}
+Style Customization enables students, teachers, librarians, and security personnel to personalize the interface by adjusting settings such as color schemes and fonts. After using this feature, users will have their preferred visual settings applied, improving their experience.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{READ} - Current style settings
+    \item \textbf{UPDATE} - User's style preferences
+    \item \textbf{CREATE} - Log entry of style changes
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:style_customization_ui]{Figure~\ref*{fig:style_customization_ui}}.
+
+\subsection{Student Functions}
+\subsubsection{Course Register}
+
+\paragraph{Description}
+The Course Register feature allows students to view available courses, register for classes, and drop courses during specified periods. The system ensures compliance with registration rules, such as prerequisites and credit limits. After using this feature, students can view their updated course schedule, along with confirmation of their successful registrations or drops.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{READ} - Available courses, current course schedule, course details
+    \item \textbf{CREATE} - New course registrations
+    \item \textbf{UPDATE} - Student's course schedule
+    \item \textbf{DELETE} - Dropped courses from student's schedule
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:course_register_ui]{Figure~\ref*{fig:course_register_ui}}.
+
+\subsubsection{Grade Inquiry}
+
+\paragraph{Description}
+Grade Inquiry enables students to securely access and review their academic performance, including current course grades, GPA, and past transcripts. After using this feature, students can track their progress and obtain a detailed view of their academic records without making any modifications.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{READ} - Current course grades, historical grades, overall GPA, academic transcript
+    \item \textbf{CREATE} - Log entry of grade inquiry access
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:grade_inquiry_ui]{Figure~\ref*{fig:grade_inquiry_ui}}.
+
+\subsubsection{E-bike Registration}
+
+\paragraph{Description}
+E-bike Registration allows students to register their electric bicycles with the university system, including details such as brand, model, and license plate number. After using this feature, students can view their registration information and receive confirmation, while the security department is notified of the new registration.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{CREATE} - New e-bike registration entry
+    \item \textbf{UPDATE} - Existing e-bike information (if applicable)
+    \item \textbf{READ} - Current e-bike registration details
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:ebike_registration_ui]{Figure~\ref*{fig:ebike_registration_ui}}.
+
+\subsection{Teacher Functions}
+\subsubsection{Course Management}
+
+\paragraph{Description}
+Course Management for teachers enables instructors to create, update, and manage course information within the university's system. Teachers can set up courses, create syllabi, schedule classes, and manage course materials. After using this feature, teachers ensure that students have access to up-to-date course details throughout the semester.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{CREATE} - New course entries
+    \item \textbf{READ} - Existing course information
+    \item \textbf{UPDATE} - Course details, schedules, materials
+    \item \textbf{DELETE} - Outdated course materials or information
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:course_management_ui]{Figure~\ref*{fig:course_management_ui}}.
+
+\subsubsection{Student Management}
+
+\paragraph{Description}
+Student Management allows teachers to view and interact with the list of enrolled students, track attendance, monitor academic progress, and manage group assignments. After using this feature, teachers have access to organized records of student performance, helping them provide personalized instruction.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{READ} - Student enrollment list, individual student profiles
+    \item \textbf{UPDATE} - Attendance records, student groupings
+    \item \textbf{CREATE} - Log entries for student management activities
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:student_management_ui]{Figure~\ref*{fig:student_management_ui}}.
+
+\subsubsection{Grade Entry}
+
+\paragraph{Description}
+Grade Entry allows teachers to input and update student grades for assignments, exams, and participation. After using this feature, grades are recorded, final grades calculated, and students are able to view their academic progress.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{CREATE} - New grade entries
+    \item \textbf{READ} - Existing grade information
+    \item \textbf{UPDATE} - Individual assignment grades, overall course grades
+    \item \textbf{DELETE} - Incorrect grade entries (if applicable)
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:grade_entry_ui]{Figure~\ref*{fig:grade_entry_ui}}.
+
+\subsection{Library Staff Functions}
+\subsubsection{Resource Management}
+
+\paragraph{Description}
+Resource Management enables librarians to oversee and maintain the library's collection of materials. This feature allows librarians to add new books, journals, and other resources, update existing information, and remove outdated or damaged items from the catalog. After using this feature, users can see the updated library catalog, ensuring access to accurate and up-to-date resources.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{CREATE} - New resource entries in the catalog
+    \item \textbf{READ} - Existing resource information
+    \item \textbf{UPDATE} - Resource details (e.g., title, author, location, availability status)
+    \item \textbf{DELETE} - Entries for resources no longer in the library collection
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:resource_management_ui]{Figure~\ref*{fig:resource_management_ui}}.
+
+\subsubsection{User Borrowing Records Management}
+
+\paragraph{Description}
+User Borrowing Records Management allows librarians to oversee and manage the borrowing activities of library users. This functionality enables librarians to record new loans, process returns, manage renewals, and track user borrowing history. After using this feature, borrowing activities are accurately recorded and users can be held accountable for borrowed materials.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{CREATE} - New borrowing record entries
+    \item \textbf{READ} - Existing borrowing histories, due dates, fine records
+    \item \textbf{UPDATE} - Loan statuses, renewal information, fine payments
+    \item \textbf{DELETE} - Resolved overdue records or paid fines (if applicable)
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:borrowing_records_management_ui]{Figure~\ref*{fig:borrowing_records_management_ui}}.
+
+\subsection{Security Personnel Functions}
+\subsubsection{E-bike Management}
+
+\paragraph{Description}
+E-bike Management enables security personnel to manage and regulate electric bicycle use on campus. This feature allows security staff to review E-bike registrations, approve or reject requests, monitor usage patterns, and address policy violations. After using this feature, the system ensures compliance with campus policies and helps manage parking and safety standards.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{READ} - E-bike registration information, usage data
+    \item \textbf{UPDATE} - Registration status, incident reports
+    \item \textbf{CREATE} - New policy violation records, audit logs
+    \item \textbf{DELETE} - Outdated or invalid E-bike registrations
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:ebike_management_ui]{Figure~\ref*{fig:ebike_management_ui}}.
+
+\subsection{Administrator Functions}
+
+\subsubsection{User Management}
+
+\paragraph{Description}
+User Management enables the system administrator to create, update, and manage user accounts within the university campus management system. This functionality allows the administrator to add new user accounts for students, teachers, librarians, and security personnel, modify user details, reset passwords, adjust permissions, and delete accounts. After using this feature, user accounts are maintained securely, ensuring the integrity of the system.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{CREATE} - New user accounts
+    \item \textbf{READ} - Existing user account information
+    \item \textbf{UPDATE} - User account details, permissions
+    \item \textbf{DELETE} - User accounts no longer needed
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:user_management_ui]{Figure~\ref*{fig:user_management_ui}}.
+
+\subsubsection{System Configuration}
+
+\paragraph{Description}
+System Configuration allows the system administrator to customize and manage various settings of the university campus management system. This feature enables administrators to adjust system parameters, enforce security policies, configure course management settings, and define activity rules. After using this feature, the system remains aligned with institutional needs and security requirements.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{READ} - Current system configuration settings
+    \item \textbf{UPDATE} - System configuration parameters
+    \item \textbf{CREATE} - New configuration options (if custom configurations are allowed)
+    \item \textbf{DELETE} - Obsolete configuration options
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:system_configuration_ui]{Figure~\ref*{fig:system_configuration_ui}}.
+
+\subsection{Visitor Functions}
+\subsubsection{Contact Us}
+
+\paragraph{Description}
+Contact Us is a public-facing feature that allows guests to access important contact information for various university departments. This functionality provides non-registered users with email addresses, phone numbers, and physical addresses of key university offices, helping guests make inquiries, schedule visits, or request additional information. After using this feature, guests can successfully obtain the information needed to communicate with the university.
+
+\paragraph{Data Outcomes}
+\begin{itemize}
+    \item \textbf{READ} - University and department contact information
+    \item \textbf{CREATE} - Anonymous access log entries
+\end{itemize}
+
+\paragraph{Related UI}
+For the related user interface, click \hyperref[fig:contact_us_ui]{Figure~\ref*{fig:contact_us_ui}}.
+
 
 \newpage
 \section{Database Design}
@@ -322,13 +578,234 @@ registrations, grades, library loans, and personalized interface preferences.
 
 \newpage
 \section{Web Page Design}
-\subsection{Mockups and Layout Overview}
-% 在这里插入网页设计草图并描述布局。
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=0.8\textwidth]{path_to_your_mockup.png}
-%     \caption{Web Page Mockup}
-% \end{figure}
+\subsection{Overview}
+
+\subsection{Mockups for common functions}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/common/register.png}
+    \caption{Register Page}
+    \label{fig:register_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/common/login.png}
+    \caption{Login Page}
+    \label{fig:login_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/common/searchbook.png}
+    \caption{Book Searching Page}
+    \label{fig:searchbook_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/common/searchbookresult.png}
+    \caption{Book Searching Result Page}
+    \label{fig:searchbookresult_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/common/loanrecord.png}
+    \caption{Loan Record Page}
+    \label{fig:loanrecord_page}
+\end{figure}
+
+\subsection{Mockups for student functions}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/student/addcourse.png}
+    \caption{Add Course Page}
+    \label{fig:addcourse_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/student/grade.png}
+    \caption{Grade Page}
+    \label{fig:grade_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/student/mycourse.png}
+    \caption{My Course Page}
+    \label{fig:mycourse_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/student/profile.png}
+    \caption{Profile Page}
+    \label{fig:student_profile_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/student/registerebike.png}
+    \caption{E-bike Registration Page}
+    \label{fig:registerebike_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/student/studentdash.png}
+    \caption{Student Dashboard}
+    \label{fig:student_dashboard}
+\end{figure}
+
+
+\subsection{Mockups for teacher functions}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/teacher/addcourse.png}
+    \caption{Add Course Page (Teacher)}
+    \label{fig:teacher_addcourse_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/teacher/coursedetail.png}
+    \caption{Course Detail Page}
+    \label{fig:teacher_coursedetail_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/teacher/grade.png}
+    \caption{Grade Page}
+    \label{fig:teacher_grade_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/teacher/mycourses.png}
+    \caption{My Courses Page}
+    \label{fig:teacher_mycourses_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/teacher/profile.png}
+    \caption{Profile Page}
+    \label{fig:teacher_profile_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/teacher/teacherdash.png}
+    \caption{Teacher Dashboard}
+    \label{fig:teacher_dashboard_page}
+\end{figure}
+
+\subsection{Mockups for library staff functions}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/library/addloan.png}
+    \caption{Add Loan Page}
+    \label{fig:library_addloan_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/library/addresource.png}
+    \caption{Add Resource Page}
+    \label{fig:library_addresource_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/library/librarydash.png}
+    \caption{Library Dashboard}
+    \label{fig:library_dashboard_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/library/loanhistory.png}
+    \caption{Loan History Page}
+    \label{fig:library_loanhistory_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/library/manageresource.png}
+    \caption{Manage Resource Page}
+    \label{fig:library_manageresource_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/library/profile.png}
+    \caption{Profile Page}
+    \label{fig:library_profile_page}
+\end{figure}
+
+\subsection{Mockups for security personnel functions}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/security/ebikemanage.png}
+    \caption{E-bike Management Page}
+    \label{fig:security_ebikemanage_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/security/profile.png}
+    \caption{Profile Page (Security Personnel)}
+    \label{fig:security_profile_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/security/securitydash.png}
+    \caption{Security Dashboard}
+    \label{fig:security_dashboard_page}
+\end{figure}
+
+\subsection{Mockups for administrator functions}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/admin/admindash.png}
+    \caption{Admin Dashboard}
+    \label{fig:admin_dashboard_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/admin/courselist.png}
+    \caption{Course List Page}
+    \label{fig:admin_courselist_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/admin/useraccount.png}
+    \caption{User Account Management Page}
+    \label{fig:admin_useraccount_page}
+\end{figure}
+
+\subsection{Mockups for visitor functions}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/visitor/contact.png}
+    \caption{Contact Page}
+    \label{fig:visitor_contact_page}
+\end{figure}
+
+
 \subsection{Color Schemes and Style Guidelines}
 % 在这里描述网页的配色方案和风格指南。
 \subsection{User Experience Considerations}
