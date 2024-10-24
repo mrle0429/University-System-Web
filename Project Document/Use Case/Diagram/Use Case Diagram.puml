@@ -2,7 +2,7 @@
 actor "System Administrator" as Admin
 actor "Visitor" as Visitor
 actor "Security Personnel" as Security
-actor "Librarian" as Librarian
+actor "Library Staff" as Librarian
 actor "Teacher" as Teacher
 actor "Student" as Student
 
@@ -42,7 +42,7 @@ rectangle "Teacher Functions" {
     Teacher -up-> Style
 }
 
-rectangle "Librarian Functions" {
+rectangle "Library Staff Functions" {
     Librarian -down-> (Resource Management)
     Librarian -down-> (User Borrowing Records)
     Librarian -up-> Profile
