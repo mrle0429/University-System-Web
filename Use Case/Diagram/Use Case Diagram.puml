@@ -1,0 +1,62 @@
+@startuml
+actor "System Administrator" as Admin
+actor "Visitor" as Visitor
+actor "Security Personnel" as Security
+actor "Librarian" as Librarian
+actor "Teacher" as Teacher
+actor "Student" as Student
+
+rectangle "Common Use Cases" {
+    (Profile Management) as Profile
+    (Library Search) as LibrarySearch
+    (Borrowing Records) as BorrowingRecords
+    (Style) as Style
+    (E-bike) as EB
+    (Forum) as Forum
+}
+
+rectangle "Admin Functions" {
+    Admin -up-> (User Management)
+    Admin -down-> (System Configuration)
+}
+
+rectangle "Student Functions" {
+    Student -up-> (Course Management)
+    Student -up-> (Grade Inquiry)
+    Student -- LibrarySearch
+    Student -- BorrowingRecords
+    Student -- Profile
+    Student -- Forum
+    Student -- EB: Register
+    Student -- Style
+}
+
+rectangle "Teacher Functions" {
+    Teacher -down-> (Course Management)
+    Teacher -down-> (Student Management)
+    Teacher -up-> LibrarySearch
+    Teacher -up-> BorrowingRecords
+    Teacher -up-> Profile
+    Teacher -down-> (Grade Entry)
+    Teacher -up-> Forum
+    Teacher -up-> Style
+}
+
+rectangle "Librarian Functions" {
+    Librarian -- (Resource Management)
+    Librarian -- (User Borrowing Records)
+    Librarian -up-> Profile
+    Librarian -up-> Style
+}
+
+
+Security -- EB: Management
+Security -up-> Profile
+Security -up-> Style
+
+
+rectangle "Visitor Functions" {
+    Visitor -- LibrarySearch
+    Visitor -up-> (Contact University)
+}
+@enduml

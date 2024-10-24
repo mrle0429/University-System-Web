@@ -1,0 +1,10 @@
+@startuml
+actor "Visitor" as Visitor
+
+rectangle "System" {
+    Visitor -- (Information Access)
+    Visitor -- (Resource Browsing)
+    Visitor -- (Registration Information)
+    Visitor -- (Contact Us)
+}
+@enduml
