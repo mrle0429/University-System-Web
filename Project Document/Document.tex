@@ -80,40 +80,38 @@ The primary goal of this project is to design and implement a comprehensive univ
 administrative staff and external visitors. Each user type has specific features tailored to their role:
 
 \begin{itemize}
-  \item \textbf{Students}: Students will have access to their profiles, which display timetables, dormitory information, and enrolled 
-  courses. They can register for courses, interact with teachers and fellow students, borrow library books, and manage their electric 
-  bike licenses.
-  \item \textbf{Teachers}: Teachers will have a profile that shows the courses they teach, office hours, and office location. 
-  They can create and manage courses, interact with students, and participate in the library system by borrowing resources or 
-  creating electric bike licenses
-  \item \textbf{Library staff}: Library staff will have access to features that allow them to manage book inventories, track book 
-  loans, and assist users with book reservations. They can also update library resources and monitor the availability of digital 
+  \item \textbf{Students}: Students will have access to their dashboard, which display timetables, profiles, and
+  enrolled courses. They can register for courses, check their grades, interact with teachers and fellow students, view library
+  collections, and check their own borrowing history, as well as manage their electric bike licenses.
+  \item \textbf{Teachers}: Teachers will have a dashboard that shows the courses they teach, timetable, profiles, and office
+  location. They can create and manage courses, interact with students, view library collections.
+  \item \textbf{Library staff}: Library staff will have access to features that allow them to manage book inventories, track book
+  loans, and assist users with book reservations. They can also update library resources and monitor the availability of digital
   content for users.
-  \item \textbf{Security personnel}: Security personnel will manage electric bike licenses and oversee vehicle registrations on 
-  campus. They will also have access to the profiles of students, teachers, and library staff to approve bike license applications.
-  \item \textbf{Administrative staff}: Administrative users will have full control over the system, including managing user 
+  \item \textbf{Security personnel}: Security personnel will manage electric bike licenses and oversee vehicle registrations on
+  campus.
+  \item \textbf{Administrative staff}: Administrative users will have full control over the system, including managing user
   registrations, overseeing course creation, and handling overall database management to ensure smooth system operation.
-  \item \textbf{External visitors}: Unregistered users will have limited access to parts of the website, such as viewing general 
-  information about the university, available library resources, and public course listings, without the ability to register for 
-  courses or interact with internal functions.  
+  \item \textbf{External visitors}: Unregistered users will have limited access to parts of the website, such as viewing general
+  information about the university, available library resources without the ability  interact with internal functions.
 \end{itemize}
 
 \subsection{Technological Stack Overview}
-The university website will be built using a modern and robust technological stack to ensure reliability, security, and scalability. 
+The university website will be built using a modern and robust technological stack to ensure reliability, security, and scalability.
 The core technologies to be used include:
 \begin{itemize}
     \item \textbf{Frontend}: The user interface will be developed using HTML, CSS, and JavaScript to create an interactive and
      responsive design. Libraries like Bootstrap or Material UI may be incorporated for consistent styling across the website.
-    \item \textbf{Backend}: The server-side logic will be implemented using Flask (Python), providing a flexible framework for 
+    \item \textbf{Backend}: The server-side logic will be implemented using Flask (Python), providing a flexible framework for
     managing user authentication, database interactions, and session management.
-    \item \textbf{Database}: MySQL will be used as the primary database management system to store user profiles, 
-    course data, library resources, electric bike licenses, and forum information. The database will include the design of 
-    tables with appropriate relationships, such as primary and foreign keys, to ensure data integrity and support efficient 
+    \item \textbf{Database}: MySQL will be used as the primary database management system to store user profiles,
+    course data, library resources, electric bike licenses, and forum information. The database will include the design of
+    tables with appropriate relationships, such as primary and foreign keys, to ensure data integrity and support efficient
     querying and management.
-    \item \textbf{Security}: The website will ensure secure handling of sensitive data, such as passwords, using encryption 
+    \item \textbf{Security}: The website will ensure secure handling of sensitive data, such as passwords, using encryption
     mechanisms. Proper user authentication and authorization will be implemented to protect user privacy and data access.
 \end{itemize}
-This technology stack has been chosen for its simplicity, flexibility, and suitability for the scale of the university website project, 
+This technology stack has been chosen for its simplicity, flexibility, and suitability for the scale of the university website project,
 ensuring a smooth user experience and maintainability.
 
 \newpage
@@ -139,15 +137,15 @@ ensuring a smooth user experience and maintainability.
 \section{Database Design}
 
 \subsection{Entity-Relationship Diagrams}
-The database for the university website currently includes several key tables: \texttt{user}, 
-\texttt{student\_profile}, \texttt{teacher\_profile}, \texttt{library\_staff\_profile}, 
-\texttt{security\_personnel\_profile}, \texttt{course}, \texttt{course\_registration}, \texttt{library\_resources}, 
-\texttt{library\_loan}, \texttt{e\_bike\_license}, \texttt{forum\_post} and \texttt{forum\_reply}.\\ \\ 
-These tables represent the foundational structure for managing users and their interactions with the system, 
-such as course enrollment and profile management. To support additional functionalities outlined in the introduction, 
-tables have been added to manage library resources, electric bike licenses, and forum discussions. 
-These expansions ensure that students, teachers, library staff, and security personnel can effectively interact 
-with the system in their respective roles. \\ \\ 
+The database for the university website currently includes several key tables: \texttt{user},
+\texttt{student\_profile}, \texttt{teacher\_profile}, \texttt{library\_staff\_profile},
+\texttt{security\_personnel\_profile}, \texttt{course}, \texttt{course\_registration}, \texttt{library\_resources},
+\texttt{library\_loan}, \texttt{e\_bike\_license}, \texttt{forum\_post} and \texttt{forum\_reply}.\\ \\
+These tables represent the foundational structure for managing users and their interactions with the system,
+such as course enrollment and profile management. To support additional functionalities outlined in the introduction,
+tables have been added to manage library resources, electric bike licenses, and forum discussions.
+These expansions ensure that students, teachers, library staff, and security personnel can effectively interact
+with the system in their respective roles. \\ \\
 The Entity-Relationship Diagrams are on the next page:
 
 \begin{figure}[htbp]
@@ -167,57 +165,79 @@ Below are the current and proposed tables, along with their respective fields an
         \item \texttt{user\_id} (Primary Key)
         \item \texttt{name}
         \item \texttt{email}
+        \item \texttt{school\_id}
         \item \texttt{role} (e.g., student, teacher, library staff, security personnel)
     \end{itemize}
-    
+
     \item \texttt{student\_profile}: Stores additional information specific to students. Fields include:
     \begin{itemize}
         \item \texttt{user\_id} (Foreign Key referencing \texttt{user})
         \item \texttt{dormitory\_information}
+        \item \texttt{gender}
+        \item \texttt{birth}
+        \item \texttt{college}
+        \item \texttt{major}
         \item \texttt{biography}
     \end{itemize}
-    
+
     \item \texttt{teacher\_profile}: Stores additional information specific to teachers. Fields include:
     \begin{itemize}
         \item \texttt{user\_id} (Foreign Key referencing \texttt{user})
         \item \texttt{office\_hours}
         \item \texttt{office\_location}
+        \item \texttt{gender}
         \item \texttt{biography}
     \end{itemize}
-    
+
     \item \texttt{library\_staff\_profile}: Stores additional information specific to library staff. Fields include:
     \begin{itemize}
         \item \texttt{user\_id} (Foreign Key referencing \texttt{user})
         \item \texttt{work\_schedule}
-        \item \texttt{department}
+        \item \texttt{gender}
         \item \texttt{biography}
     \end{itemize}
+
+    \clearpage  % 强制换页，并将后续内容移到图片的下一页
 
     \item \texttt{security\_personnel\_profile}: Stores additional information specific to security personnel. Fields include:
     \begin{itemize}
         \item \texttt{user\_id} (Foreign Key referencing \texttt{user})
         \item \texttt{shift\_hours}
         \item \texttt{assigned\_area}
+        \item \texttt{gender}
         \item \texttt{biography}
     \end{itemize}
-    
-    \clearpage  % 强制换页，并将后续内容移到图片的下一页
+
 
     \item \texttt{course}: Contains information about the courses offered. Fields include:
     \begin{itemize}
         \item \texttt{course\_id} (Primary Key)
+        \item \texttt{course\_code}
+        \item \texttt{year}
+        \item \texttt{semester}
+        \item \texttt{day\_of\_week}
         \item \texttt{course\_name}
+        \item \texttt{start\_period}
+        \item \texttt{end\_period}
         \item \texttt{description}
         \item \texttt{teacher\_id} (Foreign Key referencing \texttt{teacher\_profile})
     \end{itemize}
-    
+
     \item \texttt{course\_registration}: Tracks student registrations for courses. Fields include:
     \begin{itemize}
         \item \texttt{registration\_id} (Primary Key)
         \item \texttt{student\_id} (Foreign Key referencing \texttt{student\_profile})
         \item \texttt{course\_id} (Foreign Key referencing \texttt{course})
     \end{itemize}
-    
+
+    \item \texttt{student\_grades}: Stores student's grade for each course. Fields include:
+    \begin{itemize}
+        \item \texttt{grade\_id} (Primary Key)
+        \item \texttt{student\_id} (Foreign Key referencing \texttt{student\_profile})
+        \item \texttt{course\_id} (Foreign Key referencing \texttt{course})
+        \item \texttt{grade} (The grade received by the student)
+    \end{itemize}
+
     % 新增的表格
     \item \texttt{library\_resources}: Manages library books and resources. Fields include:
     \begin{itemize}
@@ -227,7 +247,7 @@ Below are the current and proposed tables, along with their respective fields an
         \item \texttt{publication\_year}
         \item \texttt{availability\_status}
     \end{itemize}
-    
+
     \item \texttt{library\_loan}: Tracks book loans by students and other users. Fields include:
     \begin{itemize}
         \item \texttt{loan\_id} (Primary Key)
@@ -236,7 +256,7 @@ Below are the current and proposed tables, along with their respective fields an
         \item \texttt{loan\_date}
         \item \texttt{return\_date}
     \end{itemize}
-    
+
     \item \texttt{e\_bike\_license}: Manages electric bike licenses for students, teachers, and library staff. Fields include:
     \begin{itemize}
         \item \texttt{license\_id} (Primary Key)
@@ -248,8 +268,6 @@ Below are the current and proposed tables, along with their respective fields an
         \item \texttt{approved\_by} (Foreign Key referencing \texttt{security\_personnel\_profile})
     \end{itemize}
 
-    \clearpage  % 强制换页，并将后续内容移到图片的下一页
-
     \item \texttt{forum\_post}: Stores user-created posts for the forum. Fields include:
     \begin{itemize}
         \item \texttt{post\_id} (Primary Key)
@@ -258,7 +276,7 @@ Below are the current and proposed tables, along with their respective fields an
         \item \texttt{post\_content}
         \item \texttt{post\_date}
     \end{itemize}
-    
+
     \item \texttt{forum\_reply}: Stores user replies to forum posts. Fields include:
     \begin{itemize}
         \item \texttt{reply\_id} (Primary Key)
@@ -267,19 +285,40 @@ Below are the current and proposed tables, along with their respective fields an
         \item \texttt{reply\_content}
         \item \texttt{reply\_date}
     \end{itemize}
+
+    \item \texttt{ui\_preferences}: Stores user preferences for the UI interface. Fields include:
+    \begin{itemize}
+        \item \texttt{preference\_id} (Primary Key)
+        \item \texttt{user\_id} (Foreign Key referencing \texttt{user})
+        \item \texttt{theme} (Preferred UI theme, e.g., light, dark)
+        \item \texttt{color\_scheme} (Preferred color scheme, e.g., blue, green)
+    \end{itemize}
 \end{itemize}
 
 \subsection{Primary and Foreign Key Design}
 Each table contains a primary key that uniquely identifies each record. Foreign keys are used to establish relationships between users and the entities they interact with. For example:
 \begin{itemize}
-    \item The \texttt{user\_id} field in \texttt{student\_profile}, \texttt{teacher\_profile}, \texttt{library\_staff\_profile}, and \texttt{security\_personnel\_profile} links the profiles to the core \texttt{user} table.
-    \item The \texttt{course\_id} field in \texttt{course\_registration} links students to the courses they have enrolled in.
-    \item The \texttt{license\_id} in the \texttt{e\_bike\_license} table allows students, teachers, and library staff to register electric bikes, which are approved by security personnel.
-    \item The \texttt{post\_id} and \texttt{reply\_id} in the \texttt{forum\_post} and \texttt{forum\_reply} tables link forum posts and their replies to the users who created them.
+    \item The \texttt{user\_id} field in \texttt{student\_profile}, \texttt{teacher\_profile},
+    \texttt{library\_staff\_profile}, and \texttt{security\_personnel\_profile} links the
+    profiles to the core \texttt{user} table.
+    \item The \texttt{course\_id} field in \texttt{course\_registration} and \texttt{student\_grades} links
+    students to the courses they have enrolled in and the grades they have received.
+    \item The \texttt{license\_id} in the \texttt{e\_bike\_license} table allows students
+    to register electric bikes, which are approved by security personnel.
+    \item The \texttt{post\_id} and \texttt{reply\_id} in the \texttt{forum\_post} and \texttt{forum\_reply}
+    tables link forum posts and their replies to the users who created them.
+    \item The \texttt{user\_id} field in the \texttt{ui\_preferences} table links users to their personalized
+    interface settings, such as theme, font size, and color scheme.
 \end{itemize}
 
 \subsection{Data Population Strategy}
-The initial data for the \texttt{user}, \texttt{course}, and \texttt{library\_resources} tables will be seeded by administrators during development and testing phases. As users interact with the system, data will be dynamically added to the \texttt{course\_registration}, \texttt{library\_loan}, \texttt{e\_bike\_license}, \texttt{forum\_post}, and \texttt{forum\_reply} tables. The system will ensure that all data remains up-to-date and consistent across these entities.
+The initial data for the \texttt{user}, \texttt{course}, and \texttt{library\_resources}
+tables will be seeded by administrators during development and testing phases. As users
+interact with the system, data will be dynamically added to the \texttt{course\_registration},
+\texttt{student\_grades}, \texttt{library\_loan}, \texttt{e\_bike\_license}, \texttt{forum\_post},
+\texttt{forum\_reply}, and \texttt{ui\_preferences} tables. The system will ensure that all data
+remains up-to-date and consistent across these entities, allowing users to track their course
+registrations, grades, library loans, and personalized interface preferences.
 
 \newpage
 \section{Web Page Design}
