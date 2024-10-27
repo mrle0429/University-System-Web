@@ -5,6 +5,7 @@
 \usepackage{titlesec}
 \usepackage{fancyhdr}
 \usepackage{float}
+\usepackage[all]{hypcap}
 
 
 % 设置页边距
@@ -31,7 +32,7 @@
 \hypersetup{
     colorlinks=true,
     linkcolor=blue,
-    filecolor=magenta,
+    filecolor=magenta,      
     urlcolor=cyan,
     pdftitle={COMP 3019J Project},
     pdfpagemode=FullScreen,
@@ -72,60 +73,69 @@
 
 \subsection{Project Goals}
 The primary goal of this project is to design and implement a comprehensive university website that offers a personalized
- and functional experience for different types of users. The website will provide students, teachers, and other university
- personnel with an interface to manage their profiles, interact with others, and access university resources based on their
- roles. The website is expected to enhance user engagement, facilitate communication, and streamline administrative processes
- within the university. Additionally, the project will focus on secure data handling and innovative functionalities to
+ and functional experience for different types of users. The website will provide students, teachers, and other university 
+ personnel with an interface to manage their profiles, interact with others, and access university resources based on their 
+ roles. The website is expected to enhance user engagement, facilitate communication, and streamline administrative processes 
+ within the university. Additionally, the project will focus on secure data handling and innovative functionalities to 
  differentiate the website from existing solutions.
 
-\subsection{Target Users and Use Cases} The target users of the website include students, teachers, library staff, security personnel,
+\subsection{Target Users and Use Cases} The target users of the website include students, teachers, library staff, security personnel, 
 administrative staff and external visitors. Each user type has specific features tailored to their role:
 
 \begin{itemize}
-  \item \textbf{Students}: Students will have access to their dashboard, which display timetables, profiles, and
-  enrolled courses. They can register for courses, check their grades, interact with teachers and fellow students, view library
+  \item \textbf{Students}: Students will have access to their dashboard, which display timetables, profiles, and 
+  enrolled courses. They can register for courses, check their grades, interact with teachers and fellow students, view library 
   collections, and check their own borrowing history, as well as manage their electric bike licenses.
-  \item \textbf{Teachers}: Teachers will have a dashboard that shows the courses they teach, timetable, profiles, and office
+  \item \textbf{Teachers}: Teachers will have a dashboard that shows the courses they teach, timetable, profiles, and office 
   location. They can create and manage courses, interact with students, view library collections.
-  \item \textbf{Library staff}: Library staff will have access to features that allow them to manage book inventories, track book
-  loans, and assist users with book reservations. They can also update library resources and monitor the availability of digital
+  \item \textbf{Library staff}: Library staff will have access to features that allow them to manage book inventories, track book 
+  loans, and assist users with book reservations. They can also update library resources and monitor the availability of digital 
   content for users.
-  \item \textbf{Security personnel}: Security personnel will manage electric bike licenses and oversee vehicle registrations on
+  \item \textbf{Security personnel}: Security personnel will manage electric bike licenses and oversee vehicle registrations on 
   campus.
-  \item \textbf{Administrative staff}: Administrative users will have full control over the system, including managing user
+  \item \textbf{Administrative staff}: Administrative users will have full control over the system, including managing user 
   registrations, overseeing course creation, and handling overall database management to ensure smooth system operation.
-  \item \textbf{External visitors}: Unregistered users will have limited access to parts of the website, such as viewing general
-  information about the university, available library resources without the ability  interact with internal functions.
+  \item \textbf{External visitors}: Unregistered users will have limited access to parts of the website, such as viewing general 
+  information about the university, available library resources without the ability  interact with internal functions.  
 \end{itemize}
 
 \subsection{Technological Stack Overview}
-The university website will be built using a modern and robust technological stack to ensure reliability, security, and scalability.
+The university website will be built using a modern and robust technological stack to ensure reliability, security, and scalability. 
 The core technologies to be used include:
 \begin{itemize}
     \item \textbf{Frontend}: The user interface will be developed using HTML, CSS, and JavaScript to create an interactive and
      responsive design. Libraries like Bootstrap or Material UI may be incorporated for consistent styling across the website.
-    \item \textbf{Backend}: The server-side logic will be implemented using Flask (Python), providing a flexible framework for
+    \item \textbf{Backend}: The server-side logic will be implemented using Flask (Python), providing a flexible framework for 
     managing user authentication, database interactions, and session management.
-    \item \textbf{Database}: MySQL will be used as the primary database management system to store user profiles,
-    course data, library resources, electric bike licenses, and forum information. The database will include the design of
-    tables with appropriate relationships, such as primary and foreign keys, to ensure data integrity and support efficient
+    \item \textbf{Database}: MySQL will be used as the primary database management system to store user profiles, 
+    course data, library resources, electric bike licenses, and forum information. The database will include the design of 
+    tables with appropriate relationships, such as primary and foreign keys, to ensure data integrity and support efficient 
     querying and management.
-    \item \textbf{Security}: The website will ensure secure handling of sensitive data, such as passwords, using encryption
+    \item \textbf{Security}: The website will ensure secure handling of sensitive data, such as passwords, using encryption 
     mechanisms. Proper user authentication and authorization will be implemented to protect user privacy and data access.
 \end{itemize}
-This technology stack has been chosen for its simplicity, flexibility, and suitability for the scale of the university website project,
+This technology stack has been chosen for its simplicity, flexibility, and suitability for the scale of the university website project, 
 ensuring a smooth user experience and maintainability.
 
 \newpage
 \section{Website Functionalities}
-\subsection{Introduction and Use Case Diagram}
-% 在这里详细描述用户注册和账号管理功能。
+\subsection{System Use Case Overview}
+
+The following sections describe the system's functionalities. The \textit{Common Use Cases} subsection outlines features accessible to multiple user types, such as library search and forum participation. Subsequent sections cover features unique to each user type, including course management for teachers and e-bike management for security personnel.\\ \\ 
+The Use Case Diagram is below:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{usecasediagram.png}  % 替换成你的图片文件名
+    \caption{System Use Case Diagram}
+    \label{fig:use_case_diagram}
+\end{figure}
+
 \subsection{Common Use Cases}
 \subsubsection{Library Search}
 
 \paragraph{Description}
-The Library Search allows students, teachers, and guests to search for books, journals, and articles using various criteria like title, author, or keywords. Logged-in users can also view their borrowing history. After using this feature, users obtain detailed information about resource availability and location.
-
+The Library Search allows students, teachers, and visitors to search for books, journals, and articles using various criteria like title, author, or keywords. Logged-in users can also view their borrowing history. After using this feature, users obtain detailed information about resource availability and location.
 \paragraph{Data Outcomes}
 \begin{itemize}
     \item \textbf{READ} - Library resource information, availability status, resource location
@@ -148,7 +158,7 @@ Borrowing Records enables students and teachers to view their current loans, due
 \end{itemize}
 
 \paragraph{Related UI}
-For the related user interface, click \hyperref[fig:borrowing_records_ui]{Figure~\ref*{fig:borrowing_records_ui}}.
+For the related user interface, click \hyperref[fig:loanrecord_page]{Figure~\ref*{fig:loanrecord_page}}.
 
 \subsubsection{Profile Management}
 
@@ -163,7 +173,7 @@ Profile Management allows students, teachers, librarians, and security personnel
 \end{itemize}
 
 \paragraph{Related UI}
-For the related user interface, click \hyperref[fig:profile_management_ui]{Figure~\ref*{fig:profile_management_ui}}.
+For the related user interface, click \hyperref[fig:student_profile_page]{Figure~\ref*{fig:student_profile_page}}.
 
 \subsubsection{Forum Participation}
 
@@ -178,7 +188,7 @@ Forum Participation allows students and teachers to create or reply to discussio
 \end{itemize}
 
 \paragraph{Related UI}
-For the related user interface, click \hyperref[fig:forum_participation_ui]{Figure~\ref*{fig:forum_participation_ui}}.
+For the related user interface, click \hyperref[fig:forum_page]{Figure~\ref*{fig:forum_page}}.
 
 \subsubsection{Style Customization}
 
@@ -192,14 +202,11 @@ Style Customization enables students, teachers, librarians, and security personn
     \item \textbf{CREATE} - Log entry of style changes
 \end{itemize}
 
-\paragraph{Related UI}
-For the related user interface, click \hyperref[fig:style_customization_ui]{Figure~\ref*{fig:style_customization_ui}}.
-
 \subsection{Student Functions}
 \subsubsection{Course Register}
 
 \paragraph{Description}
-The Course Register feature allows students to view available courses, register for classes, and drop courses during specified periods. The system ensures compliance with registration rules, such as prerequisites and credit limits. After using this feature, students can view their updated course schedule, along with confirmation of their successful registrations or drops.
+The Course Register feature allows students to view available courses, register for classes, and drop courses during specified periods. After using this feature, students can view their updated course schedule, along with confirmation of their successful registrations or drops.
 
 \paragraph{Data Outcomes}
 \begin{itemize}
@@ -210,7 +217,7 @@ The Course Register feature allows students to view available courses, register 
 \end{itemize}
 
 \paragraph{Related UI}
-For the related user interface, click \hyperref[fig:course_register_ui]{Figure~\ref*{fig:course_register_ui}}.
+For the related user interface, click \hyperref[fig:addcourse_page]{Figure~\ref*{fig:addcourse_page}}.
 
 \subsubsection{Grade Inquiry}
 
@@ -224,7 +231,7 @@ Grade Inquiry enables students to securely access and review their academic perf
 \end{itemize}
 
 \paragraph{Related UI}
-For the related user interface, click \hyperref[fig:grade_inquiry_ui]{Figure~\ref*{fig:grade_inquiry_ui}}.
+For the related user interface, click \hyperref[fig:grade_page]{Figure~\ref*{fig:grade_page}}.
 
 \subsubsection{E-bike Registration}
 
@@ -239,13 +246,13 @@ E-bike Registration allows students to register their electric bicycles with the
 \end{itemize}
 
 \paragraph{Related UI}
-For the related user interface, click \hyperref[fig:ebike_registration_ui]{Figure~\ref*{fig:ebike_registration_ui}}.
+For the related user interface, click \hyperref[fig:registerebike_page]{Figure~\ref*{fig:registerebike_page}}.
 
 \subsection{Teacher Functions}
 \subsubsection{Course Management}
 
 \paragraph{Description}
-Course Management for teachers enables instructors to create, update, and manage course information within the university's system. Teachers can set up courses, create syllabi, schedule classes, and manage course materials. After using this feature, teachers ensure that students have access to up-to-date course details throughout the semester.
+Course Management for teachers enables instructors to create, update, and manage course information within the university's system. Teachers can set up courses, schedule classes, and manage course materials. After using this feature, teachers ensure that students have access to up-to-date course details throughout the semester.
 
 \paragraph{Data Outcomes}
 \begin{itemize}
@@ -256,12 +263,12 @@ Course Management for teachers enables instructors to create, update, and manage
 \end{itemize}
 
 \paragraph{Related UI}
-For the related user interface, click \hyperref[fig:course_management_ui]{Figure~\ref*{fig:course_management_ui}}.
+For the related user interface, click \hyperref[fig:teacher_coursedetail_page]{Figure~\ref*{fig:teacher_coursedetail_page}}.
 
 \subsubsection{Student Management}
 
 \paragraph{Description}
-Student Management allows teachers to view and interact with the list of enrolled students, track attendance, monitor academic progress, and manage group assignments. After using this feature, teachers have access to organized records of student performance, helping them provide personalized instruction.
+Student Management allows teachers to view and interact with the list of enrolled students. After using this feature, teachers have access to organized records of student performance, helping them provide personalized instruction.
 
 \paragraph{Data Outcomes}
 \begin{itemize}
@@ -271,7 +278,7 @@ Student Management allows teachers to view and interact with the list of enrolle
 \end{itemize}
 
 \paragraph{Related UI}
-For the related user interface, click \hyperref[fig:student_management_ui]{Figure~\ref*{fig:student_management_ui}}.
+For the related user interface, click \hyperref[fig:teacher_grade_page]{Figure~\ref*{fig:teacher_grade_page}}.
 
 \subsubsection{Grade Entry}
 
@@ -287,7 +294,7 @@ Grade Entry allows teachers to input and update student grades for assignments, 
 \end{itemize}
 
 \paragraph{Related UI}
-For the related user interface, click \hyperref[fig:grade_entry_ui]{Figure~\ref*{fig:grade_entry_ui}}.
+For the related user interface, click \hyperref[fig:teacher_grade_page]{Figure~\ref*{fig:teacher_grade_page}}.
 
 \subsection{Library Staff Functions}
 \subsubsection{Resource Management}
@@ -304,7 +311,7 @@ Resource Management enables librarians to oversee and maintain the library's col
 \end{itemize}
 
 \paragraph{Related UI}
-For the related user interface, click \hyperref[fig:resource_management_ui]{Figure~\ref*{fig:resource_management_ui}}.
+For the related user interface, click \hyperref[fig:library_addresource_page]{Figure~\ref*{fig:library_addresource_page}}.
 
 \subsubsection{User Borrowing Records Management}
 
@@ -320,13 +327,13 @@ User Borrowing Records Management allows librarians to oversee and manage the bo
 \end{itemize}
 
 \paragraph{Related UI}
-For the related user interface, click \hyperref[fig:borrowing_records_management_ui]{Figure~\ref*{fig:borrowing_records_management_ui}}.
+For the related user interface, click \hyperref[fig:library_addloan_page]{Figure~\ref*{fig:library_addloan_page}}.
 
 \subsection{Security Personnel Functions}
 \subsubsection{E-bike Management}
 
 \paragraph{Description}
-E-bike Management enables security personnel to manage and regulate electric bicycle use on campus. This feature allows security staff to review E-bike registrations, approve or reject requests, monitor usage patterns, and address policy violations. After using this feature, the system ensures compliance with campus policies and helps manage parking and safety standards.
+E-bike Management enables security personnel to manage and regulate electric bicycle use on campus. This feature allows security staff to review E-bike registrations, approve or reject requests, and address policy violations. After using this feature, the system ensures compliance with campus policies and helps manage parking and safety standards.
 
 \paragraph{Data Outcomes}
 \begin{itemize}
@@ -337,7 +344,7 @@ E-bike Management enables security personnel to manage and regulate electric bic
 \end{itemize}
 
 \paragraph{Related UI}
-For the related user interface, click \hyperref[fig:ebike_management_ui]{Figure~\ref*{fig:ebike_management_ui}}.
+For the related user interface, click \hyperref[fig:security_ebikemanage_page]{Figure~\ref*{fig:security_ebikemanage_page}}.
 
 \subsection{Administrator Functions}
 
@@ -355,7 +362,7 @@ User Management enables the system administrator to create, update, and manage u
 \end{itemize}
 
 \paragraph{Related UI}
-For the related user interface, click \hyperref[fig:user_management_ui]{Figure~\ref*{fig:user_management_ui}}.
+For the related user interface, click \hyperref[fig:admin_useraccount_page]{Figure~\ref*{fig:admin_useraccount_page}}.
 
 \subsubsection{System Configuration}
 
@@ -371,13 +378,13 @@ System Configuration allows the system administrator to customize and manage var
 \end{itemize}
 
 \paragraph{Related UI}
-For the related user interface, click \hyperref[fig:system_configuration_ui]{Figure~\ref*{fig:system_configuration_ui}}.
+For the related user interface, click \hyperref[fig:admin_dashboard_page]{Figure~\ref*{fig:admin_dashboard_page}}.
 
 \subsection{Visitor Functions}
 \subsubsection{Contact Us}
 
 \paragraph{Description}
-Contact Us is a public-facing feature that allows guests to access important contact information for various university departments. This functionality provides non-registered users with email addresses, phone numbers, and physical addresses of key university offices, helping guests make inquiries, schedule visits, or request additional information. After using this feature, guests can successfully obtain the information needed to communicate with the university.
+Contact Us is a public-facing feature that allows guests to access important contact information for various university departments. This functionality provides non-registered users with email addresses, phone numbers, and physical addresses of key university offices, helping guests make inquiries. After using this feature, guests can successfully obtain the information needed to communicate with the university.
 
 \paragraph{Data Outcomes}
 \begin{itemize}
@@ -386,22 +393,22 @@ Contact Us is a public-facing feature that allows guests to access important con
 \end{itemize}
 
 \paragraph{Related UI}
-For the related user interface, click \hyperref[fig:contact_us_ui]{Figure~\ref*{fig:contact_us_ui}}.
+For the related user interface, click \hyperref[fig:visitor_contact_page]{Figure~\ref*{fig:visitor_contact_page}}.
 
 
 \newpage
 \section{Database Design}
 
 \subsection{Entity-Relationship Diagrams}
-The database for the university website currently includes several key tables: \texttt{user},
-\texttt{student\_profile}, \texttt{teacher\_profile}, \texttt{library\_staff\_profile},
-\texttt{security\_personnel\_profile}, \texttt{course}, \texttt{course\_registration}, \texttt{library\_resources},
-\texttt{library\_loan}, \texttt{e\_bike\_license}, \texttt{forum\_post} and \texttt{forum\_reply}.\\ \\
-These tables represent the foundational structure for managing users and their interactions with the system,
-such as course enrollment and profile management. To support additional functionalities outlined in the introduction,
-tables have been added to manage library resources, electric bike licenses, and forum discussions.
-These expansions ensure that students, teachers, library staff, and security personnel can effectively interact
-with the system in their respective roles. \\ \\
+The database for the university website currently includes several key tables: \texttt{user}, 
+\texttt{student\_profile}, \texttt{teacher\_profile}, \texttt{library\_staff\_profile}, 
+\texttt{security\_personnel\_profile}, \texttt{course}, \texttt{course\_registration}, \texttt{library\_resources}, 
+\texttt{library\_loan}, \texttt{e\_bike\_license}, \texttt{forum\_post} and \texttt{forum\_reply}.\\ \\ 
+These tables represent the foundational structure for managing users and their interactions with the system, 
+such as course enrollment and profile management. To support additional functionalities outlined in the introduction, 
+tables have been added to manage library resources, electric bike licenses, and forum discussions. 
+These expansions ensure that students, teachers, library staff, and security personnel can effectively interact 
+with the system in their respective roles. \\ \\ 
 The Entity-Relationship Diagrams are on the next page:
 
 \begin{figure}[htbp]
@@ -424,7 +431,7 @@ Below are the current and proposed tables, along with their respective fields an
         \item \texttt{school\_id}
         \item \texttt{role} (e.g., student, teacher, library staff, security personnel)
     \end{itemize}
-
+    
     \item \texttt{student\_profile}: Stores additional information specific to students. Fields include:
     \begin{itemize}
         \item \texttt{user\_id} (Foreign Key referencing \texttt{user})
@@ -435,7 +442,7 @@ Below are the current and proposed tables, along with their respective fields an
         \item \texttt{major}
         \item \texttt{biography}
     \end{itemize}
-
+    
     \item \texttt{teacher\_profile}: Stores additional information specific to teachers. Fields include:
     \begin{itemize}
         \item \texttt{user\_id} (Foreign Key referencing \texttt{user})
@@ -444,7 +451,7 @@ Below are the current and proposed tables, along with their respective fields an
         \item \texttt{gender}
         \item \texttt{biography}
     \end{itemize}
-
+    
     \item \texttt{library\_staff\_profile}: Stores additional information specific to library staff. Fields include:
     \begin{itemize}
         \item \texttt{user\_id} (Foreign Key referencing \texttt{user})
@@ -463,7 +470,7 @@ Below are the current and proposed tables, along with their respective fields an
         \item \texttt{gender}
         \item \texttt{biography}
     \end{itemize}
-
+    
 
     \item \texttt{course}: Contains information about the courses offered. Fields include:
     \begin{itemize}
@@ -478,7 +485,7 @@ Below are the current and proposed tables, along with their respective fields an
         \item \texttt{description}
         \item \texttt{teacher\_id} (Foreign Key referencing \texttt{teacher\_profile})
     \end{itemize}
-
+    
     \item \texttt{course\_registration}: Tracks student registrations for courses. Fields include:
     \begin{itemize}
         \item \texttt{registration\_id} (Primary Key)
@@ -503,7 +510,7 @@ Below are the current and proposed tables, along with their respective fields an
         \item \texttt{publication\_year}
         \item \texttt{availability\_status}
     \end{itemize}
-
+    
     \item \texttt{library\_loan}: Tracks book loans by students and other users. Fields include:
     \begin{itemize}
         \item \texttt{loan\_id} (Primary Key)
@@ -512,7 +519,7 @@ Below are the current and proposed tables, along with their respective fields an
         \item \texttt{loan\_date}
         \item \texttt{return\_date}
     \end{itemize}
-
+    
     \item \texttt{e\_bike\_license}: Manages electric bike licenses for students, teachers, and library staff. Fields include:
     \begin{itemize}
         \item \texttt{license\_id} (Primary Key)
@@ -532,7 +539,7 @@ Below are the current and proposed tables, along with their respective fields an
         \item \texttt{post\_content}
         \item \texttt{post\_date}
     \end{itemize}
-
+    
     \item \texttt{forum\_reply}: Stores user replies to forum posts. Fields include:
     \begin{itemize}
         \item \texttt{reply\_id} (Primary Key)
@@ -554,31 +561,33 @@ Below are the current and proposed tables, along with their respective fields an
 \subsection{Primary and Foreign Key Design}
 Each table contains a primary key that uniquely identifies each record. Foreign keys are used to establish relationships between users and the entities they interact with. For example:
 \begin{itemize}
-    \item The \texttt{user\_id} field in \texttt{student\_profile}, \texttt{teacher\_profile},
-    \texttt{library\_staff\_profile}, and \texttt{security\_personnel\_profile} links the
+    \item The \texttt{user\_id} field in \texttt{student\_profile}, \texttt{teacher\_profile}, 
+    \texttt{library\_staff\_profile}, and \texttt{security\_personnel\_profile} links the 
     profiles to the core \texttt{user} table.
-    \item The \texttt{course\_id} field in \texttt{course\_registration} and \texttt{student\_grades} links
+    \item The \texttt{course\_id} field in \texttt{course\_registration} and \texttt{student\_grades} links 
     students to the courses they have enrolled in and the grades they have received.
-    \item The \texttt{license\_id} in the \texttt{e\_bike\_license} table allows students
+    \item The \texttt{license\_id} in the \texttt{e\_bike\_license} table allows students 
     to register electric bikes, which are approved by security personnel.
-    \item The \texttt{post\_id} and \texttt{reply\_id} in the \texttt{forum\_post} and \texttt{forum\_reply}
+    \item The \texttt{post\_id} and \texttt{reply\_id} in the \texttt{forum\_post} and \texttt{forum\_reply} 
     tables link forum posts and their replies to the users who created them.
-    \item The \texttt{user\_id} field in the \texttt{ui\_preferences} table links users to their personalized
+    \item The \texttt{user\_id} field in the \texttt{ui\_preferences} table links users to their personalized 
     interface settings, such as theme, font size, and color scheme.
 \end{itemize}
 
 \subsection{Data Population Strategy}
-The initial data for the \texttt{user}, \texttt{course}, and \texttt{library\_resources}
-tables will be seeded by administrators during development and testing phases. As users
-interact with the system, data will be dynamically added to the \texttt{course\_registration},
-\texttt{student\_grades}, \texttt{library\_loan}, \texttt{e\_bike\_license}, \texttt{forum\_post},
-\texttt{forum\_reply}, and \texttt{ui\_preferences} tables. The system will ensure that all data
-remains up-to-date and consistent across these entities, allowing users to track their course
+The initial data for the \texttt{user}, \texttt{course}, and \texttt{library\_resources} 
+tables will be seeded by administrators during development and testing phases. As users 
+interact with the system, data will be dynamically added to the \texttt{course\_registration}, 
+\texttt{student\_grades}, \texttt{library\_loan}, \texttt{e\_bike\_license}, \texttt{forum\_post}, 
+\texttt{forum\_reply}, and \texttt{ui\_preferences} tables. The system will ensure that all data 
+remains up-to-date and consistent across these entities, allowing users to track their course 
 registrations, grades, library loans, and personalized interface preferences.
 
 \newpage
 \section{Web Page Design}
 \subsection{Overview}
+
+The following sections provide an overview of the user interface elements. The \textit{Mockups for common functions} subsection presents interfaces accessible by multiple user types, such as the library search page and profile management. Subsequent sections detail user-specific interfaces, including course management for teachers and e-bike registration for students.
 
 \subsection{Mockups for common functions}
 
@@ -615,6 +624,27 @@ registrations, grades, library loans, and personalized interface preferences.
     \includegraphics[width=\textwidth]{mockups/common/loanrecord.png}
     \caption{Loan Record Page}
     \label{fig:loanrecord_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/common/forum.png}
+    \caption{Forum Page}
+    \label{fig:forum_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/common/forumdetail.png}
+    \caption{Forum Detail Page}
+    \label{fig:forudetail_page}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{mockups/common/postforum.png}
+    \caption{Posting Page}
+    \label{fig:posting_page}
 \end{figure}
 
 \subsection{Mockups for student functions}
@@ -805,30 +835,104 @@ registrations, grades, library loans, and personalized interface preferences.
     \label{fig:visitor_contact_page}
 \end{figure}
 
-
 \subsection{Color Schemes and Style Guidelines}
-% 在这里描述网页的配色方案和风格指南。
+The interface uses a consistent blue and white color scheme aligned with the university’s branding. Interactive elements are highlighted with accent colors for clarity, and fonts are chosen for readability and accessibility.
+
 \subsection{User Experience Considerations}
-% 在这里描述用户体验相关的设计考量。
-\subsection{Responsive Design}
-% 在这里描述响应式设计方案。
+The design focuses on intuitive navigation, mobile responsiveness, and accessibility. Key elements like search, forum, and loan records are easy to locate, and feedback is provided for user actions to enhance usability.
 
 \newpage
 \section{Technical Details}
-\subsection{File and Directory Structure}
-% 在这里描述项目的文件和目录结构。
-\subsection{Code Components and Dependencies}
-% 在这里描述代码的各个组成部分和依赖关系。
-\subsection{API and Database Interaction}
-% 在这里描述API与数据库的交互方式。
-\subsection{Version Control and Repository Details}
-% 在这里描述版本控制系统的使用和代码库的详细信息。
 
+\section{Technical Details}
+
+\subsection{File and Directory Structure}
+The project is organized in the following file and directory structure:
+\begin{itemize}
+    \item \texttt{web-application/}: Root directory containing the main application, virtual environment, and project files.
+    \begin{itemize}
+        \item \texttt{app/}: Contains the main application logic and related files.
+        \begin{itemize}
+            \item \texttt{admin/}: Contains administrative functionality and management scripts.
+            \item \texttt{api/}: Contains API endpoints and functions related to interactions between the web application and other services.
+            \item \texttt{static/}: Stores static resources such as CSS files, JavaScript, and images.
+            \item \texttt{templates/}: Contains the HTML files for rendering the front-end views.
+            \item \texttt{\_\_init\_\_.py}: Initializes the application and its modules.
+            \item \texttt{forms.py}: Contains the form classes used in the application, such as RegisterForm, LoginForm, TeacherProfileForm, StudentProfileForm, CreateCourseForm, and RegisterCourseForm.
+            \item \texttt{models.py}: Defines the database models including User, Course, TeacherProfile, StudentProfile, and CourseRegistration.
+            \item \texttt{routes.py}: Defines the routes (endpoints) for the web application, including login, logout, user profile, course creation, editing, and deletion.
+        \end{itemize}
+        \item \texttt{Project Document/}: Contains project documentation files, including design documents and technical reports.
+        \item \texttt{tests/}: Directory for storing test cases for different modules.
+        \begin{itemize}
+            \item \texttt{test.py}: Contains unit and functional tests to validate the application features.
+        \end{itemize}
+        \item \texttt{.gitignore}: Specifies files and directories for Git to ignore.
+        \item \texttt{config.py}: Contains the configuration settings for the application, including the MySQL database URI and secret keys.
+        \item \texttt{README.md}: Readme file that provides an overview of the project, setup instructions, and other relevant information.
+        \item \texttt{run.py}: The entry point for running the web application. This script starts the Flask server.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Code Components and Dependencies}
+The application is built using Flask, a lightweight web framework for Python. The key components and their dependencies are:
+\begin{itemize}
+    \item \textbf{Flask Framework}: Provides the web framework for handling HTTP requests, routing, and rendering templates.
+    \item \textbf{Flask-SQLAlchemy}: ORM for handling database interactions, providing seamless integration with MySQL for data persistence.
+    \item \textbf{Flask-Login}: Manages user authentication and session management.
+    \item \textbf{pymysql}: Used as the MySQL database driver for connecting to the remote database.
+    \item \textbf{Werkzeug}: Provides password hashing and security utilities.
+    \item \textbf{WTForms}: Provides form handling, validation, and CSRF protection.
+    \item \textbf{Flask-Limiter}: Implements rate limiting to prevent abuse and ensure security.
+\end{itemize}
+
+\subsection{Database Interaction}
+The application utilizes a remote MySQL database managed through SQLAlchemy, which acts as the Object Relational Mapper (ORM). The ORM abstracts the database operations into high-level Python objects, allowing the software framework to interact with the database seamlessly. CRUD (Create, Read, Update, Delete) operations are performed using model classes, which represent tables in the database.\\ \\ 
+The database is remotely connected, with connection settings specified in the configuration file. The database connection is established during application initialization, ensuring a stable and secure interaction with the database throughout the application lifecycle. Below is the database host information:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \textbf{User} & \textbf{Database Host} & \textbf{Database Name} \\
+        \hline
+        root & \texttt{39.105.0.202:3306} & \texttt{WebApp} \\
+        \hline
+    \end{tabular}
+    \caption{Database Host Information}
+\end{table}
+
+\subsection{Version Control and Repository Details}
+The project uses Git for version control. The repository is hosted on GitLab, providing collaborative features such as pull requests, issue tracking, and version management. The main branch is used for stable releases, while development is done in separate feature branches. Commits are documented with clear messages, ensuring that changes are traceable, and the development workflow follows a feature-based branching model for effective collaboration.\\ \\
+The repository can be accessed at: \url{https://csgitlab.ucd.ie/webApplication/web-application}
 \newpage
 \section{Conclusion}
+
 \subsection{Summary of Features}
-% 在这里总结网站功能。
+The university website project offers a range of functionalities to meet the needs of diverse user groups, including students, teachers, library staff, security personnel, administrative staff, and external visitors. Key features include:
+
+\begin{itemize}
+    \item \textbf{Student Dashboard}: Students can manage course registrations, check grades, view personal profiles, and register electric bikes.
+    \item \textbf{Teacher Dashboard}: Teachers can manage courses, including creating, editing, and deleting courses, and handling student enrollments and grade entries.
+    \item \textbf{Library Management}: Library staff can manage resources, process borrowing records, and monitor library inventory.
+    \item \textbf{E-bike and Campus Security}: Security personnel can manage electric bike registrations and ensure compliance with campus regulations.
+    \item \textbf{Administrative Controls}: Administrators can handle user management, system configurations, and ensure the proper functioning of the platform.
+    \item \textbf{Forum and Customization Features}: Students and teachers can participate in forums for academic discussions, while all users can customize their interface preferences for an improved user experience.
+\end{itemize}
+The project successfully integrates personalized role-based dashboards, secure user authentication, and effective database management, offering a streamlined user experience for all stakeholders.
+
 \subsection{Future Development Plans}
-% 在这里描述未来的开发计划和功能改进。
+Future development plans for the university website project include:
+
+\begin{itemize}
+    \item \textbf{Enhanced User Experience}: Improving the user interface and experience by implementing more dynamic and responsive designs, optimizing navigation, and integrating user feedback mechanisms.
+    \item \textbf{Advanced Role-Based Access Control}: Expanding role-based access control to facilitate more granular permission levels, including more administrative and library management features.
+    \item \textbf{Automated Notifications and Alerts}: Adding features such as automated email notifications for course registration updates, grade availability, library due dates, and other user-specific events.
+    \item \textbf{Analytics Dashboard}: Providing teachers and administrators with dashboards to monitor student engagement, analyze course registration trends, and track library resource usage.
+    \item \textbf{Integration with External Systems}: Exploring integrations with learning management systems (LMS) and other external services to enhance the platform's capabilities.
+    \item \textbf{Mobile Application Development}: Developing a mobile version of the platform to extend accessibility and usability on smartphones and tablets.
+\end{itemize}
+These future enhancements aim to improve functionality, provide deeper insights through analytics, and create a more connected and integrated educational environment. The ongoing development will continue to focus on user needs and adopting best practices to enhance performance and usability.
+
 
 \end{document}
