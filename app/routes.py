@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, current_user, login_required, logout_user
-from app.forms import RegisterForm, LoginForm, TeacherProfileForm, StudentProfileForm, CreateCourseForm, RegisterCourseForm
-from app.models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db
+from app.forms import RegisterForm, LoginForm, TeacherProfileForm, StudentProfileForm, CreateCourseForm, \
+    RegisterCourseForm, ForumPostForm, ForumReplyForm
+from app.models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db, ForumPost, ForumReply
 from werkzeug.security import generate_password_hash, check_password_hash
 
 main_routes = Blueprint('main', __name__)
@@ -171,3 +172,56 @@ def delete_course(course_id):
     flash('Course deleted successfully!', 'success')
     return redirect(url_for('main.profile', user_id=current_user.id))
 
+@main_routes.route('/forum/<string:board_type>')
+@login_required
+def forum(board_type):
+    if board_type == "course":
+        if current_user.user_type == "student":
+            # Get courses the student is registered for
+            registrations = CourseRegistration.query.filter_by(user_id=current_user.id).all()
+            course_ids = [reg.course_id for reg in registrations]
+            posts = ForumPost.query.filter(ForumPost.board_type == "course", ForumPost.course_id.in_(course_ids)).all()
+        else:
+            posts = ForumPost.query.filter_by(board_type="course").all()
+    else:
+        posts = ForumPost.query.filter_by(board_type="chat").all()
+
+    return render_template('forum.html', posts=posts, board_type=board_type)
+
+@main_routes.route('/forum/<string:board_type>/create', methods=['GET', 'POST'])
+@login_required
+def create_post(board_type):
+    form = ForumPostForm(board_type=board_type)  # Set the board type in the form
+
+    if form.validate_on_submit():
+        new_post = ForumPost(
+            author_id=current_user.id,
+            post_title=form.post_title.data,
+            post_content=form.post_content.data,
+            board_type=board_type,  # Directly from URL param
+            course_id=form.course_id.data if board_type == "course" else None
+        )
+        db.session.add(new_post)
+        db.session.commit()
+        flash("Post created successfully!", "success")
+        return redirect(url_for('main.forum', board_type=board_type))
+    return render_template('create_post.html', form=form, board_type=board_type)
+
+@main_routes.route('/forum/post/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+def view_post(post_id):
+    post = ForumPost.query.get_or_404(post_id)
+    form = ForumReplyForm()
+    if form.validate_on_submit():
+        new_reply = ForumReply(
+            post_id=post_id,
+            replier_id=current_user.id,
+            reply_content=form.reply_content.data
+        )
+        db.session.add(new_reply)
+        db.session.commit()
+        flash("Reply posted successfully!", "success")
+        return redirect(url_for('main.view_post', post_id=post_id))
+
+    replies = ForumReply.query.filter_by(post_id=post_id).all()
+    return render_template('view_post.html', post=post, replies=replies, form=form)

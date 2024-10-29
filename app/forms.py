@@ -38,3 +38,14 @@ class CreateCourseForm(FlaskForm):
 class RegisterCourseForm(FlaskForm):
     course_code = StringField('Course Code', validators=[DataRequired()])
     submit = SubmitField('Register Course')
+
+class ForumPostForm(FlaskForm):
+    post_title = StringField('Title', validators=[DataRequired()])
+    post_content = TextAreaField('Content', validators=[DataRequired()])
+    board_type = SelectField('Board Type', choices=[('chat', 'Chat'), ('course', 'Course')], validators=[DataRequired()])
+    course_id = IntegerField('Course ID')  # Only required if board_type is 'course'
+    submit = SubmitField('Post')
+
+class ForumReplyForm(FlaskForm):
+    reply_content = TextAreaField('Reply', validators=[DataRequired()])
+    submit = SubmitField('Reply')

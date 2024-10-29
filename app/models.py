@@ -42,3 +42,27 @@ class CourseRegistration(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+class ForumPost(db.Model):
+    __tablename__ = 'forum_post'
+    post_id = db.Column(db.Integer, primary_key=True)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    post_title = db.Column(db.String(255), nullable=False)
+    post_content = db.Column(db.Text, nullable=False)
+    post_date = db.Column(db.DateTime, default=datetime.utcnow)
+    board_type = db.Column(db.String(20), nullable=False)  # "chat" or "course"
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=True)  # Only for "course" board posts
+
+    # Define the relationship to access the User model
+    author = db.relationship('User', backref='posts')
+
+class ForumReply(db.Model):
+    __tablename__ = 'forum_reply'
+    reply_id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('forum_post.post_id'), nullable=False)
+    replier_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    reply_content = db.Column(db.Text, nullable=False)
+    reply_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Define the relationship to access the User model
+    replier = db.relationship('User', backref='replies')
