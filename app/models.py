@@ -51,8 +51,10 @@ class ForumPost(db.Model):
     post_content = db.Column(db.Text, nullable=False)
     post_date = db.Column(db.DateTime, default=datetime.utcnow)
     board_type = db.Column(db.String(20), nullable=False)  # "chat" or "course"
-    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=True)  # Only for "course" board posts
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=True)
 
+    # Cascade delete replies when a post is deleted
+    replies = db.relationship('ForumReply', cascade="all, delete-orphan", backref='post')
     # Define the relationship to access the User model
     author = db.relationship('User', backref='posts')
 
@@ -63,6 +65,5 @@ class ForumReply(db.Model):
     replier_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     reply_content = db.Column(db.Text, nullable=False)
     reply_date = db.Column(db.DateTime, default=datetime.utcnow)
-
     # Define the relationship to access the User model
     replier = db.relationship('User', backref='replies')

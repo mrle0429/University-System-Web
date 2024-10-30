@@ -10,6 +10,13 @@
             <li class="forum-post">
                 <a href="{{ url_for('main.view_post', post_id=post.post_id) }}">{{ post.post_title }}</a>
                 <p>by {{ post.author.username }} on {{ post.post_date.strftime('%Y-%m-%d %H:%M') }}</p>
+
+                {% if post.author_id == current_user.id %}
+                    <!-- Only show delete button to post author -->
+                    <form method="POST" action="{{ url_for('main.delete_post', post_id=post.post_id) }}" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                {% endif %}
             </li>
         {% endfor %}
     </ul>

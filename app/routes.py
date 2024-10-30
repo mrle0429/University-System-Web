@@ -225,3 +225,29 @@ def view_post(post_id):
 
     replies = ForumReply.query.filter_by(post_id=post_id).all()
     return render_template('view_post.html', post=post, replies=replies, form=form)
+
+@main_routes.route('/forum/post/<int:post_id>/delete', methods=['POST'])
+@login_required
+def delete_post(post_id):
+    post = ForumPost.query.get_or_404(post_id)
+    if post.author_id != current_user.id:
+        flash("You can only delete your own posts.", "danger")
+        return redirect(url_for('main.forum', board_type=post.board_type))
+
+    db.session.delete(post)
+    db.session.commit()
+    flash("Post and its replies have been deleted.", "success")
+    return redirect(url_for('main.forum', board_type=post.board_type))
+
+@main_routes.route('/forum/reply/<int:reply_id>/delete', methods=['POST'])
+@login_required
+def delete_reply(reply_id):
+    reply = ForumReply.query.get_or_404(reply_id)
+    if reply.replier_id != current_user.id:
+        flash("You can only delete your own replies.", "danger")
+        return redirect(url_for('main.view_post', post_id=reply.post_id))
+
+    db.session.delete(reply)
+    db.session.commit()
+    flash("Reply has been deleted.", "success")
+    return redirect(url_for('main.view_post', post_id=reply.post_id))

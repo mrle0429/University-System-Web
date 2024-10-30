@@ -5,6 +5,13 @@
     <div class="forum-post">
         <p>{{ post.post_content }}</p>
         <small>Posted by {{ post.author.username }} on {{ post.post_date.strftime('%Y-%m-%d %H:%M') }}</small>
+
+        {% if post.author_id == current_user.id %}
+            <!-- Delete post button for the author -->
+            <form method="POST" action="{{ url_for('main.delete_post', post_id=post.post_id) }}" style="display:inline;">
+                <button type="submit">Delete Post</button>
+            </form>
+        {% endif %}
     </div>
 
     <!-- Toggle button for replies -->
@@ -16,6 +23,13 @@
         <div class="forum-reply">
             <p>{{ reply.reply_content }}</p>
             <small>by {{ reply.replier.username }} on {{ reply.reply_date.strftime('%Y-%m-%d %H:%M') }}</small>
+
+            {% if reply.replier_id == current_user.id %}
+                <!-- Delete reply button for the author -->
+                <form method="POST" action="{{ url_for('main.delete_reply', reply_id=reply.reply_id) }}" style="display:inline;">
+                    <button type="submit">Delete Reply</button>
+                </form>
+            {% endif %}
         </div>
         {% endfor %}
     </div>
