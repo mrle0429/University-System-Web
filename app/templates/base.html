@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>University Website</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('main.index') }}">Home</a></li>
+                {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('main.profile', user_id=current_user.id) }}">Profile</a></li>
+
+                    <!-- Forum Navigation -->
+                    <li><a href="{{ url_for('main.forum', board_type='chat') }}">Chat Board</a></li>
+                    <li><a href="{{ url_for('main.forum', board_type='course') }}">Course Board</a></li>
+
+                    {% if current_user.user_type == 'teacher' %}
+                        <li><a href="{{ url_for('main.create_course') }}">Create Course</a></li>
+                    {% elif current_user.user_type == 'student' %}
+                        <li><a href="{{ url_for('main.register_course') }}">Register for Course</a></li>
+                    {% endif %}
+
+                    <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('main.register') }}">Register</a></li>
+                    <li><a href="{{ url_for('main.login') }}">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>University Website &copy; 2024</p>
+    </footer>
+    <!-- Include the JavaScript file -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

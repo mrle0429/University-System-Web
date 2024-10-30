@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2>Register for Course</h2>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div>{{ form.course_code.label }} {{ form.course_code(size=32) }}</div>
+        <div>{{ form.submit() }}</div>
+    </form>
+</div>
+{% endblock %}
