@@ -1,0 +1,8 @@
+# 忽略IDE配置
+.idea
+
+# 忽略本地目录
+__pycache__/
+
+# 忽略flask库
+.venv
