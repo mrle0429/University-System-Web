@@ -1,22 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Create Post in {{ board_type | capitalize }} Board</h2>
-<form method="POST">
-    {{ form.hidden_tag() }}
-    <div>
-        {{ form.post_title.label }} {{ form.post_title(size=50) }}
-    </div>
-    <div>
-        {{ form.post_content.label }} {{ form.post_content(rows=10) }}
-    </div>
-    {% if board_type == 'course' %}
-    <div>
-        {{ form.course_id.label }} {{ form.course_id() }}
-        <small>Specify the course ID if posting in the Course board</small>
-    </div>
-    {% endif %}
-    <div>
-        {{ form.submit() }}
-    </div>
-</form>
+<div class="container">
+    <h2>Create Post in {{ board_type | capitalize }} Board</h2>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div>{{ form.post_title.label }} {{ form.post_title(size=50) }}</div>
+        <div>{{ form.post_content.label }} {{ form.post_content(rows=10) }}</div>
+        {% if board_type == 'course' %}
+            <div>{{ form.course_id.label }} {{ form.course_id() }}</div>
+        {% endif %}
+        <div>{{ form.submit() }}</div>
+    </form>
+</div>
 {% endblock %}

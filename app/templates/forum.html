@@ -1,18 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>{{ board_type | capitalize }} Board</h2>
-{% if current_user.is_authenticated %}
-    <a href="{{ url_for('main.create_post', board_type=board_type) }}">Create New Post</a>
-{% endif %}
-<ul>
-    {% for post in posts %}
-    <li>
-        <a href="{{ url_for('main.view_post', post_id=post.post_id) }}">{{ post.post_title }}</a>
-        by {{ post.author.username }} on {{ post.post_date.strftime('%Y-%m-%d %H:%M') }}
-    </li>
-    {% endfor %}
-</ul>
-{% if posts|length == 0 %}
-    <p>No posts in this board yet.</p>
-{% endif %}
+<div class="container">
+    <h2>{{ board_type | capitalize }} Board</h2>
+    {% if current_user.is_authenticated and (board_type == 'chat' or current_user.user_type == 'teacher') %}
+        <a href="{{ url_for('main.create_post', board_type=board_type) }}" class="button">Create New Post</a>
+    {% endif %}
+    <ul>
+        {% for post in posts %}
+            <li class="forum-post">
+                <a href="{{ url_for('main.view_post', post_id=post.post_id) }}">{{ post.post_title }}</a>
+                <p>by {{ post.author.username }} on {{ post.post_date.strftime('%Y-%m-%d %H:%M') }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+    {% if posts|length == 0 %}
+        <p>No posts in this board yet.</p>
+    {% endif %}
+</div>
 {% endblock %}

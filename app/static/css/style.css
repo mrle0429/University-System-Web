@@ -3,37 +3,103 @@ body {
     background-color: #f8f9fa;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 nav {
     background-color: #007bff;
     padding: 1em;
+    width: 100%;
+    text-align: center;
 }
 
-nav a {
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+nav ul li {
+    margin: 0 1em;
+}
+
+nav ul li a {
     color: white;
-    margin-right: 1em;
     text-decoration: none;
 }
 
 .container {
-    margin: 2em;
+    margin: 2em auto;
+    max-width: 800px;
+    padding: 1em;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
     color: #007bff;
+    text-align: center;
+    margin-top: 0;
 }
 
-form div {
+form div, .reply-form-container {
+    background-color: #f1f1f1;
+    padding: 1em;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-bottom: 1em;
 }
 
 form label {
-    display: inline-block;
-    width: 100px;
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5em;
 }
 
-form input {
+form input[type="text"], form input[type="email"], form input[type="password"], form textarea, form select {
+    width: 100%;
     padding: 0.5em;
-    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+form input[type="submit"], .toggle-replies {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5em 1em;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.forum-post, .forum-reply {
+    background-color: #f1f1f1;
+    padding: 1em;
+    margin-bottom: 1em;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+}
+
+table, th, td {
+    border: 1px solid #ccc;
+    padding: 0.5em;
+    text-align: left;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
 }
