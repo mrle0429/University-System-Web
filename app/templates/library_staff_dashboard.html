@@ -19,7 +19,7 @@
     <div class="management-section" style="margin-top: 30px;">
         <div class="quick-actions" style="margin-bottom: 20px;">
             <a href="{{ url_for('main.add_book') }}" class="action-button" style="background-color: #007bff; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; margin-right: 10px;">Add New Book</a>
-            <a href="#" class="action-button" style="background-color: #28a745; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; margin-right: 10px;">Manage Borrowings</a>
+            <a href="{{ url_for('main.manage_books') }}" class="action-button" style="background-color: #28a745; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; margin-right: 10px;">Manage Books</a>
             <a href="{{ url_for('main.library_statistics') }}" class="action-button" style="background-color: #17a2b8; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">View Statistics</a>
         </div>
 

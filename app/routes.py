@@ -429,3 +429,64 @@ def library_statistics():
                          borrowed_books=borrowed_books,
                          reserved_books=reserved_books,
                          category_stats=category_stats)
+
+@main_routes.route('/manage_books', methods=['GET', 'POST'])
+@login_required
+def manage_books():
+    if current_user.user_type != 'library_staff':
+        flash('Access denied. Library staff only.', 'danger')
+        return redirect(url_for('main.index'))
+    
+    search_form = SearchBookForm()
+    add_book_form = AddBookForm()
+    query = LibraryResource.query
+    
+    if search_form.validate_on_submit():
+        if search_form.title.data:
+            query = query.filter(LibraryResource.title.ilike(f'%{search_form.title.data}%'))
+        if search_form.author.data:
+            query = query.filter(LibraryResource.author.ilike(f'%{search_form.author.data}%'))
+        if search_form.publication_year.data:
+            query = query.filter(LibraryResource.publication_year == search_form.publication_year.data)
+        if search_form.availability_status.data:
+            query = query.filter(LibraryResource.availability_status == search_form.availability_status.data)
+    
+    books = query.all()
+    return render_template('manage_books.html', 
+                         search_form=search_form, 
+                         add_book_form=add_book_form, 
+                         books=books)
+
+@main_routes.route('/edit_book/<int:book_id>', methods=['GET', 'POST'])
+@login_required
+def edit_book(book_id):
+    if current_user.user_type != 'library_staff':
+        flash('Access denied. Library staff only.', 'danger')
+        return redirect(url_for('main.index'))
+    
+    book = LibraryResource.query.get_or_404(book_id)
+    form = AddBookForm(obj=book)
+    
+    if form.validate_on_submit():
+        book.title = form.title.data
+        book.author = form.author.data
+        book.publication_year = form.publication_year.data
+        book.category = form.category.data
+        db.session.commit()
+        flash('Book updated successfully!', 'success')
+        return redirect(url_for('main.manage_books'))
+    
+    return render_template('edit_book.html', form=form, book=book)
+
+@main_routes.route('/delete_book/<int:book_id>', methods=['POST'])
+@login_required
+def delete_book(book_id):
+    if current_user.user_type != 'library_staff':
+        flash('Access denied. Library staff only.', 'danger')
+        return redirect(url_for('main.index'))
+    
+    book = LibraryResource.query.get_or_404(book_id)
+    db.session.delete(book)
+    db.session.commit()
+    flash('Book deleted successfully!', 'success')
+    return redirect(url_for('main.manage_books'))
