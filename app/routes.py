@@ -403,3 +403,29 @@ def search_books():
     
     books = query.all()
     return render_template('search_books.html', form=form, books=books)
+
+@main_routes.route('/library_statistics')
+@login_required
+def library_statistics():
+    if current_user.user_type != 'library_staff':
+        flash('Access denied. Library staff only.', 'danger')
+        return redirect(url_for('main.index'))
+    
+    # 获取基本统计数据
+    total_books = LibraryResource.query.count()
+    available_books = LibraryResource.query.filter_by(availability_status='available').count()
+    borrowed_books = LibraryResource.query.filter_by(availability_status='borrowed').count()
+    reserved_books = LibraryResource.query.filter_by(availability_status='reserved').count()
+    
+    # 获取分类统计
+    category_stats = db.session.query(
+        LibraryResource.category, 
+        db.func.count(LibraryResource.resource_id)
+    ).group_by(LibraryResource.category).all()
+    
+    return render_template('library_statistics.html',
+                         total_books=total_books,
+                         available_books=available_books,
+                         borrowed_books=borrowed_books,
+                         reserved_books=reserved_books,
+                         category_stats=category_stats)
