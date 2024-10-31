@@ -275,6 +275,16 @@ def delete_course(course_id):
 @main_routes.route('/forum/<string:board_type>')
 @login_required
 def forum(board_type):
+    # 确保只有学生和老师可以访问
+    if current_user.user_type not in ['student', 'teacher']:
+        flash("You are not authorized to access this board.", "danger")
+        return redirect(url_for('main.index'))
+
+    # 检查 board_type 是否有效
+    if board_type not in ['chat', 'course']:
+        flash("Invalid board type.", "danger")
+        return redirect(url_for('main.index'))
+
     if board_type == "course":
         if current_user.user_type == "student":
             # Get courses the student is registered for

@@ -12,11 +12,14 @@
             <ul>
                 <li><a href="{{ url_for('main.index') }}">Home</a></li>
                 {% if current_user.is_authenticated %}
-                    <li><a href="{{ url_for('main.profile', user_id=current_user.id) }}">Profile</a></li>
+                    <li><a href="{{ url_for('main.profile', user_id=current_user.id) }}">Dashboard</a></li>
 
                     <!-- Forum Navigation -->
-                    <li><a href="{{ url_for('main.forum', board_type='chat') }}">Chat Board</a></li>
-                    <li><a href="{{ url_for('main.forum', board_type='course') }}">Course Board</a></li>
+                    {% if current_user.is_authenticated and (current_user.user_type == 'student' or current_user.user_type == 'teacher') %}
+                        <li><a href="{{ url_for('main.forum', board_type='chat') }}">Chat Board</a></li>
+                        <li><a href="{{ url_for('main.forum', board_type='course') }}">Course Board</a></li>
+                    {% endif %}
+
 
                     <!-- Library Navigation -->
                     <li><a href="{{ url_for('main.search_books') }}">Search Books</a></li>
