@@ -15,14 +15,28 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 class TeacherProfileForm(FlaskForm):
-    modules = StringField('Modules Taught', validators=[DataRequired()])
+    school_id = StringField('School ID', validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+    gender = SelectField('Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')], validators=[DataRequired()])
     office_location = StringField('Office Location', validators=[DataRequired()])
     office_hours = StringField('Office Hours', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    biography = TextAreaField('Biography')
     submit = SubmitField('Update Profile')
 
+
 class StudentProfileForm(FlaskForm):
+    school_id = StringField('School ID', validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+    gender = SelectField('Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')], validators=[DataRequired()])
+    birth = StringField('Birth Date (YYYY-MM-DD)', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    college = StringField('College', validators=[DataRequired()])
+    major = StringField('Major', validators=[DataRequired()])
     dorm = StringField('Dorm', validators=[DataRequired()])
+    biography = TextAreaField('Biography')
     submit = SubmitField('Update Profile')
+
 
 class CreateCourseForm(FlaskForm):
     course_name = StringField('Course Name', validators=[DataRequired()])

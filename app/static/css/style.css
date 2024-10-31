@@ -1,3 +1,4 @@
+/* Original styles */
 body {
     font-family: Arial, sans-serif;
     background-color: #f8f9fa;
@@ -103,3 +104,115 @@ th {
     color: white;
     font-weight: bold;
 }
+
+/* New styles for profile sections */
+.dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 1200px;
+}
+
+.profile-section, .timetable-section, .course-section {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    flex: 1 1 300px;
+}
+
+.profile-section {
+    max-width: 300px;
+}
+
+.edit-profile-button, .my-course-button {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.edit-profile-button:hover, .my-course-button:hover {
+    background-color: #0056b3;
+}
+
+.profile-info p {
+    margin: 5px 0;
+    font-weight: normal;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 10px;
+    resize: vertical;
+}
+
+.course-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.course-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.course-item:last-child {
+    border-bottom: none;
+}
+
+.replies {
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    margin-top: 15px; /* Adds space between button and replies */
+}
+
+
+/* Background with interactive particles */
+.interactive-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;  /* Full viewport width */
+    height: 100vh; /* Full viewport height */
+    background: linear-gradient(135deg, #cceeff, #99ccff); /* Light blue gradient */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #333;
+    text-align: center;
+    z-index: -1; /* Place background behind content */
+}
+
+.content {
+    z-index: 10;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.8); /* Optional: semi-transparent background for readability */
+    border-radius: 10px;
+}
+
+.particle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float 6s ease-in-out infinite alternate;
+    transition: transform 0.3s ease;
+}
+/* Floating animation */
+@keyframes float {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-30px); }
+}
+
+

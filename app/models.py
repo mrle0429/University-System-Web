@@ -17,14 +17,30 @@ class User(UserMixin, db.Model):
 class TeacherProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    modules = db.Column(db.String(255))  # List of modules taught
-    office_location = db.Column(db.String(255))
-    office_hours = db.Column(db.String(255))
+    school_id = db.Column(db.String(20), unique=True)
+    name = db.Column(db.String(100))
+    gender = db.Column(db.String(10))
+    office_location = db.Column(db.String(100))
+    office_hours = db.Column(db.String(50))
+    email = db.Column(db.String(120))
+    biography = db.Column(db.Text)
+
 
 class StudentProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    dorm = db.Column(db.String(255))  # Dorm information
+    school_id = db.Column(db.String(20), unique=True, nullable=False)  # Unique student ID
+    name = db.Column(db.String(100), nullable=False)  # Student name
+    gender = db.Column(db.String(10), nullable=True)  # Gender
+    birth = db.Column(db.String(10), nullable=True)  # Birth date in "YYYY-MM-DD" format
+    email = db.Column(db.String(120), nullable=False)  # Email
+    college = db.Column(db.String(100), nullable=True)  # College information
+    major = db.Column(db.String(100), nullable=True)  # Major
+    dorm = db.Column(db.String(255), nullable=True)  # Dorm information
+    biography = db.Column(db.Text, nullable=True)  # Biography field for additional info
+
+    # Define relationship with User
+    user = db.relationship('User', backref=db.backref('student_profile', uselist=False))
 
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -1,57 +1,67 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
-    <h2>Student Profile</h2>
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        <div>{{ form.dorm.label }} {{ form.dorm(size=32) }}</div>
-        <div>{{ form.submit() }}</div>
-    </form>
+<div class="container" style="max-width: 1400px; padding: 30px;">
+    <div class="dashboard">
 
-    <h3>Registered Courses</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Course Code</th>
-                <th>Course Name</th>
-                <th>Day of the Week</th>
-                <th>Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for course in courses %}
-            <tr>
-                <td>{{ course.course_code }}</td>
-                <td>{{ course.course_name }}</td>
-                <td>{{ course.day_of_week }}</td>
-                <td>{{ course.start_period }} - {{ course.end_period }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <!-- Profile and Timetable Wrapper -->
+        <div class="profile-timetable-wrapper" style="display: flex; gap: 30px;">
 
-    <h3>Timetable</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Period</th>
-                <th>Monday</th>
-                <th>Tuesday</th>
-                <th>Wednesday</th>
-                <th>Thursday</th>
-                <th>Friday</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for period in range(1, 13) %}
-            <tr>
-                <td>{{ period }}</td>
-                {% for day in timetable[period - 1] %}
-                <td>{{ day }}</td>
+            <!-- Profile Section -->
+            <div class="profile-section" style="flex: 1; max-width: 400px; background-color: #ffffff; border-radius: 10px; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); padding: 30px; font-size: 1.1em;">
+                <h2>Profile</h2>
+                <a href="{{ url_for('main.edit_profile', user_id=user.id) }}" class="edit-profile-button">Edit Profile</a>
+                <div class="profile-info">
+                    <p><strong>ID:</strong> {{ student.school_id }}</p>
+                    <p><strong>Name:</strong> {{ student.name }}</p>
+                    <p><strong>Gender:</strong> {{ student.gender }}</p>
+                    <p><strong>Birth:</strong> {{ student.birth }}</p>
+                    <p><strong>Email:</strong> {{ student.email }}</p>
+                    <p><strong>College:</strong> {{ student.college }}</p>
+                    <p><strong>Major:</strong> {{ student.major }}</p>
+                    <p><strong>Dorm Information:</strong> {{ student.dorm }}</p>
+                    <p><strong>Biography:</strong> {{ student.biography }}</p>
+                </div>
+            </div>
+
+            <!-- Timetable Section -->
+            <div class="timetable-section" style="flex: 2; background-color: #ffffff; border-radius: 10px; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); padding: 30px; font-size: 1.1em;">
+                <h3>Timetable</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 1.1em;">
+                    <thead>
+                        <tr>
+                            <th style="background-color: #007bff; color: white; padding: 12px; border: 1px solid #ccc;">Period</th>
+                            <th style="background-color: #007bff; color: white; padding: 12px; border: 1px solid #ccc;">Monday</th>
+                            <th style="background-color: #007bff; color: white; padding: 12px; border: 1px solid #ccc;">Tuesday</th>
+                            <th style="background-color: #007bff; color: white; padding: 12px; border: 1px solid #ccc;">Wednesday</th>
+                            <th style="background-color: #007bff; color: white; padding: 12px; border: 1px solid #ccc;">Thursday</th>
+                            <th style="background-color: #007bff; color: white; padding: 12px; border: 1px solid #ccc;">Friday</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for period in range(1, 13) %}
+                        <tr>
+                            <td style="border: 1px solid #ccc; padding: 10px;">{{ period }}</td>
+                            {% for day in timetable[period - 1] %}
+                            <td style="border: 1px solid #ccc; padding: 10px;">{{ day }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <!-- Course Section -->
+        <div class="course-section" style="background-color: #ffffff; border-radius: 10px; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); padding: 30px; margin-top: 30px; font-size: 1.1em;">
+            <h3>Courses This Semester</h3>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                {% for course in courses %}
+                <li class="course-item" style="padding: 12px; border-bottom: 1px solid #ddd;">{{ course.course_code }} - {{ course.course_name }} {{ course.year }}</li>
                 {% endfor %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </ul>
+        </div>
+
+    </div>
 </div>
 {% endblock %}

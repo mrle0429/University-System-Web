@@ -15,24 +15,24 @@
     </div>
 
     <!-- Toggle button for replies -->
-    <button class="toggle-replies" onclick="toggleReplies()">Show Replies</button>
+    <button class="toggle-replies" onclick="toggleReplies()">Collapse Replies</button>
 
-    <!-- Replies section to be expanded or collapsed -->
-    <div class="replies" style="display: none;">
-        {% for reply in replies %}
-        <div class="forum-reply">
-            <p>{{ reply.reply_content }}</p>
-            <small>by {{ reply.replier.username }} on {{ reply.reply_date.strftime('%Y-%m-%d %H:%M') }}</small>
+    <!-- Replies section initially shown -->
+    <div class="replies" style="display: block; max-height: 1000px;">
+    {% for reply in replies %}
+    <div class="forum-reply">
+        <p>{{ reply.reply_content }}</p>
+        <small>by {{ reply.replier.username }} on {{ reply.reply_date.strftime('%Y-%m-%d %H:%M') }}</small>
 
-            {% if reply.replier_id == current_user.id %}
-                <!-- Delete reply button for the author -->
-                <form method="POST" action="{{ url_for('main.delete_reply', reply_id=reply.reply_id) }}" style="display:inline;">
-                    <button type="submit">Delete Reply</button>
-                </form>
-            {% endif %}
-        </div>
-        {% endfor %}
+        {% if reply.replier_id == current_user.id %}
+            <!-- Delete reply button for the author -->
+            <form method="POST" action="{{ url_for('main.delete_reply', reply_id=reply.reply_id) }}" style="display:inline;">
+                <button type="submit">Delete Reply</button>
+            </form>
+        {% endif %}
     </div>
+    {% endfor %}
+</div>
 
     {% if current_user.is_authenticated %}
     <!-- Leave a Reply Form Section -->

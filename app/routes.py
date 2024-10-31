@@ -50,45 +50,112 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('main.index'))
 
+
 @main_routes.route('/profile/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 def profile(user_id):
     user = User.query.get_or_404(user_id)
-    if user.user_type == 'teacher':
-        profile = TeacherProfile.query.filter_by(user_id=user.id).first()
-        form = TeacherProfileForm(obj=profile)
-        if form.validate_on_submit():
-            if not profile:
-                profile = TeacherProfile(user_id=user.id)
-            profile.modules = form.modules.data
-            profile.office_location = form.office_location.data
-            profile.office_hours = form.office_hours.data
-            db.session.add(profile)
-            db.session.commit()
-            flash('Profile updated successfully!', 'success')
-            return redirect(url_for('main.profile', user_id=user.id))
-        courses = Course.query.filter_by(created_by=user.id).all()
-        return render_template('teacher_dashboard.html', form=form, user=user, courses=courses)
-    elif user.user_type == 'student':
+
+    # Check if the user is a student
+    if user.user_type == 'student':
         profile = StudentProfile.query.filter_by(user_id=user.id).first()
-        form = StudentProfileForm(obj=profile)
-        if form.validate_on_submit():
-            if not profile:
-                profile = StudentProfile(user_id=user.id)
-            profile.dorm = form.dorm.data
-            db.session.add(profile)
-            db.session.commit()
-            flash('Profile updated successfully!', 'success')
-            return redirect(url_for('main.profile', user_id=user.id))
-        # Get the registered courses for this student
         registrations = CourseRegistration.query.filter_by(user_id=user.id).all()
         courses = [Course.query.get(reg.course_id) for reg in registrations]
+
+        # Generate a timetable for the student
         timetable = [['' for _ in range(5)] for _ in range(12)]
         for course in courses:
             day_index = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].index(course.day_of_week)
             for period in range(course.start_period - 1, course.end_period):
                 timetable[period][day_index] = course.course_name
-        return render_template('student_dashboard.html', form=form, user=user, courses=courses, timetable=timetable)
+
+        return render_template(
+            'student_dashboard.html',
+            user=user,
+            student=profile,
+            courses=courses,
+            timetable=timetable
+        )
+
+    # Check if the user is a teacher
+    elif user.user_type == 'teacher':
+        profile = TeacherProfile.query.filter_by(user_id=user.id).first()
+        form = TeacherProfileForm(obj=profile)
+
+        # Get courses created by the teacher
+        courses = Course.query.filter_by(created_by=user.id).all()
+
+        return render_template(
+            'teacher_dashboard.html',
+            user=user,
+            profile=profile,  # Pass profile data to the template
+            courses=courses
+        )
+
+    # If user_type is not recognized, return an error
+    flash("Invalid user type.", "danger")
+    return redirect(url_for('main.profile', user_id=user_id))
+
+@main_routes.route('/edit_profile/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def edit_profile(user_id):
+    user = User.query.get_or_404(user_id)
+
+    # Ensure only the current user can edit their profile
+    if user.id != current_user.id:
+        flash("You are not authorized to edit this profile.", "danger")
+        return redirect(url_for('main.profile', user_id=user_id))
+
+    # Handle student profile editing
+    if user.user_type == 'student':
+        profile = StudentProfile.query.filter_by(user_id=user.id).first()
+        form = StudentProfileForm(obj=profile)
+
+        if form.validate_on_submit():
+            if not profile:
+                profile = StudentProfile(user_id=user.id)
+            profile.school_id = form.school_id.data
+            profile.name = form.name.data
+            profile.gender = form.gender.data
+            profile.birth = form.birth.data
+            profile.email = form.email.data
+            profile.college = form.college.data
+            profile.major = form.major.data
+            profile.dorm = form.dorm.data
+            profile.biography = form.biography.data
+
+            db.session.add(profile)
+            db.session.commit()
+            flash('Profile updated successfully!', 'success')
+            return redirect(url_for('main.profile', user_id=user.id))
+
+        return render_template('edit_profile.html', form=form, user=user)
+
+    # Handle teacher profile editing
+    elif user.user_type == 'teacher':
+        profile = TeacherProfile.query.filter_by(user_id=user.id).first()
+        form = TeacherProfileForm(obj=profile)
+
+        if form.validate_on_submit():
+            if not profile:
+                profile = TeacherProfile(user_id=user.id)
+            profile.school_id = form.school_id.data
+            profile.name = form.name.data
+            profile.gender = form.gender.data
+            profile.office_location = form.office_location.data
+            profile.office_hours = form.office_hours.data
+            profile.email = form.email.data
+            profile.biography = form.biography.data
+
+            db.session.add(profile)
+            db.session.commit()
+            flash('Profile updated successfully!', 'success')
+            return redirect(url_for('main.profile', user_id=user.id))
+
+        return render_template('edit_profile.html', form=form, user=user)
+
+    flash("Invalid user type.", "danger")
+    return redirect(url_for('main.profile', user_id=user_id))
 
 @main_routes.route('/create_course', methods=['GET', 'POST'])
 @login_required
