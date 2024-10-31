@@ -83,3 +83,33 @@ class ForumReply(db.Model):
     reply_date = db.Column(db.DateTime, default=datetime.utcnow)
     # Define the relationship to access the User model
     replier = db.relationship('User', backref='replies')
+
+class LibraryStaffProfile(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    staff_id = db.Column(db.String(20), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    gender = db.Column(db.String(10))
+    email = db.Column(db.String(120), nullable=False)
+    department = db.Column(db.String(100), nullable=False)  # 图书馆部门
+    position = db.Column(db.String(100), nullable=False)    # 职位
+    work_hours = db.Column(db.String(100))                 # 工作时间
+    biography = db.Column(db.Text, nullable=True)
+
+    # Define relationship with User
+    user = db.relationship('User', backref=db.backref('library_staff_profile', uselist=False))
+
+class LibraryResource(db.Model):
+    __tablename__ = 'library_resources'
+    
+    resource_id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    author = db.Column(db.String(100), nullable=False)
+    publication_year = db.Column(db.Integer, nullable=False)
+    availability_status = db.Column(db.String(20), nullable=False, default='available')
+    category = db.Column(db.String(50), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<LibraryResource {self.title}>'

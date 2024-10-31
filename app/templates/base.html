@@ -18,6 +18,9 @@
                     <li><a href="{{ url_for('main.forum', board_type='chat') }}">Chat Board</a></li>
                     <li><a href="{{ url_for('main.forum', board_type='course') }}">Course Board</a></li>
 
+                    <!-- Library Navigation -->
+                    <li><a href="{{ url_for('main.search_books') }}">Search Books</a></li>
+
                     {% if current_user.user_type == 'teacher' %}
                         <li><a href="{{ url_for('main.create_course') }}">Create Course</a></li>
                     {% elif current_user.user_type == 'student' %}

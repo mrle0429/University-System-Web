@@ -1,12 +1,12 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField, TextAreaField, DateTimeField, IntegerField
-from wtforms.validators import DataRequired, Length, Email
+from wtforms.validators import DataRequired, Length, Email, Optional
 
 class RegisterForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
-    user_type = SelectField('User Type', choices=[('student', 'Student'), ('teacher', 'Teacher')], validators=[DataRequired()])
+    user_type = SelectField('User Type', choices=[('student', 'Student'), ('teacher', 'Teacher'), ('library_staff', 'Library Staff')], validators=[DataRequired()])
     submit = SubmitField('Sign Up')
 
 class LoginForm(FlaskForm):
@@ -63,3 +63,40 @@ class ForumPostForm(FlaskForm):
 class ForumReplyForm(FlaskForm):
     reply_content = TextAreaField('Reply', validators=[DataRequired()])
     submit = SubmitField('Reply')
+
+class LibraryStaffProfileForm(FlaskForm):
+    staff_id = StringField('Staff ID', validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+    gender = SelectField('Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')], validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    department = StringField('Department', validators=[DataRequired()])
+    position = StringField('Position', validators=[DataRequired()])
+    work_hours = StringField('Work Hours')
+    biography = TextAreaField('Biography')
+    submit = SubmitField('Update Profile')
+
+class AddBookForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    author = StringField('Author', validators=[DataRequired()])
+    publication_year = IntegerField('Publication Year', validators=[DataRequired()])
+    category = SelectField('Category', choices=[
+        ('fiction', 'Fiction'),
+        ('non-fiction', 'Non-Fiction'),
+        ('textbook', 'Textbook'),
+        ('reference', 'Reference'),
+        ('magazine', 'Magazine'),
+        ('other', 'Other')
+    ], validators=[DataRequired()])
+    submit = SubmitField('Add Book')
+
+class SearchBookForm(FlaskForm):
+    title = StringField('Title')
+    author = StringField('Author')
+    publication_year = IntegerField('Publication Year', validators=[Optional()])
+    availability_status = SelectField('Status', choices=[
+        ('', 'All'),
+        ('available', 'Available'),
+        ('borrowed', 'Borrowed'),
+        ('reserved', 'Reserved')
+    ])
+    submit = SubmitField('Search')

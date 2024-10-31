@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, current_user, login_required, logout_user
 from app.forms import RegisterForm, LoginForm, TeacherProfileForm, StudentProfileForm, CreateCourseForm, \
-    RegisterCourseForm, ForumPostForm, ForumReplyForm
-from app.models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db, ForumPost, ForumReply
+    RegisterCourseForm, ForumPostForm, ForumReplyForm, LibraryStaffProfileForm, AddBookForm, SearchBookForm
+from app.models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db, ForumPost, ForumReply, LibraryStaffProfile, LibraryResource
 from werkzeug.security import generate_password_hash, check_password_hash
 
 main_routes = Blueprint('main', __name__)
@@ -92,6 +92,15 @@ def profile(user_id):
             courses=courses
         )
 
+    # Check if the user is a library_staff
+    elif user.user_type == 'library_staff':
+        profile = LibraryStaffProfile.query.filter_by(user_id=user.id).first()
+        return render_template(
+            'library_staff_dashboard.html',
+            user=user,
+            profile=profile
+        )
+
     # If user_type is not recognized, return an error
     flash("Invalid user type.", "danger")
     return redirect(url_for('main.profile', user_id=user_id))
@@ -152,6 +161,30 @@ def edit_profile(user_id):
             flash('Profile updated successfully!', 'success')
             return redirect(url_for('main.profile', user_id=user.id))
 
+        return render_template('edit_profile.html', form=form, user=user)
+
+    # Check if the user is a library_staff
+    elif user.user_type == 'library_staff':
+        profile = LibraryStaffProfile.query.filter_by(user_id=user.id).first()
+        form = LibraryStaffProfileForm(obj=profile)
+        
+        if form.validate_on_submit():
+            if not profile:
+                profile = LibraryStaffProfile(user_id=user.id)
+            profile.staff_id = form.staff_id.data
+            profile.name = form.name.data
+            profile.gender = form.gender.data
+            profile.email = form.email.data
+            profile.department = form.department.data
+            profile.position = form.position.data
+            profile.work_hours = form.work_hours.data
+            profile.biography = form.biography.data
+            
+            db.session.add(profile)
+            db.session.commit()
+            flash('Profile updated successfully!', 'success')
+            return redirect(url_for('main.profile', user_id=user.id))
+            
         return render_template('edit_profile.html', form=form, user=user)
 
     flash("Invalid user type.", "danger")
@@ -318,3 +351,45 @@ def delete_reply(reply_id):
     db.session.commit()
     flash("Reply has been deleted.", "success")
     return redirect(url_for('main.view_post', post_id=reply.post_id))
+
+@main_routes.route('/add_book', methods=['GET', 'POST'])
+@login_required
+def add_book():
+    # 检查是否是图书馆工作人员
+    if current_user.user_type != 'library_staff':
+        flash('Access denied. Library staff only.', 'danger')
+        return redirect(url_for('main.index'))
+    
+    form = AddBookForm()
+    if form.validate_on_submit():
+        new_book = LibraryResource(
+            title=form.title.data,
+            author=form.author.data,
+            publication_year=form.publication_year.data,
+            category=form.category.data,
+            availability_status='available'
+        )
+        db.session.add(new_book)
+        db.session.commit()
+        flash('New book added successfully!', 'success')
+        return redirect(url_for('main.profile', user_id=current_user.id))
+    
+    return render_template('add_book.html', form=form)
+
+@main_routes.route('/search_books', methods=['GET', 'POST'])
+def search_books():
+    form = SearchBookForm()
+    query = LibraryResource.query
+    
+    if form.validate_on_submit():
+        if form.title.data:
+            query = query.filter(LibraryResource.title.ilike(f'%{form.title.data}%'))
+        if form.author.data:
+            query = query.filter(LibraryResource.author.ilike(f'%{form.author.data}%'))
+        if form.publication_year.data:
+            query = query.filter(LibraryResource.publication_year == form.publication_year.data)
+        if form.availability_status.data:
+            query = query.filter(LibraryResource.availability_status == form.availability_status.data)
+    
+    books = query.all()
+    return render_template('search_books.html', form=form, books=books)
