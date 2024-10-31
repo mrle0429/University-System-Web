@@ -214,5 +214,79 @@ textarea {
     0% { transform: translateY(0); }
     100% { transform: translateY(-30px); }
 }
+/* 帖子页面的 Flexbox 布局 */
+.forum-layout {
+    display: flex;
+    gap: 20px;
+}
+
+/* 左侧：帖子内容 */
+.forum-post-content {
+    flex: 1;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.forum-post-main {
+    padding: 15px;
+    background-color: #ffffff;
+    border-left: 5px solid #007bff;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+/* 右侧：回复和回复表单 */
+.forum-replies {
+    flex: 1;
+}
+
+/* 回复卡片 */
+.forum-reply-card {
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 删除按钮 */
+.delete-btn {
+    background-color: #ff5c5c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background-color: #e60000;
+}
+
+.create-post-container {
+    margin: 10px 0 20px; /* 控制按钮与标题和内容之间的间距 */
+    text-align: left;
+}
+
+/* Create New Post button style */
+.create-post-btn {
+    display: inline-block;
+    padding: 8px 16px; /* 缩小按钮尺寸 */
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.create-post-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
 
 
