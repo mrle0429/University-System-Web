@@ -42,6 +42,21 @@ class StudentProfile(db.Model):
     # Define relationship with User
     user = db.relationship('User', backref=db.backref('student_profile', uselist=False))
 
+class StudentGrade(db.Model):
+    __tablename__ = 'student_grades'
+
+    grade_id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
+    grade = db.Column(db.String(5), nullable=False)
+
+    # Define relationships to access related models
+    student = db.relationship('User', backref='grades', foreign_keys=[student_id])
+    course = db.relationship('Course', backref='grades', foreign_keys=[course_id])
+
+    def __repr__(self):
+        return f'<StudentGrade {self.grade}>'
+
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     course_name = db.Column(db.String(255), nullable=False)

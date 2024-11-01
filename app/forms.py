@@ -128,3 +128,12 @@ class SearchBookForm(FlaskForm):
         ('reserved', 'Reserved')
     ])
     submit = SubmitField('Search')
+
+class AddGradeForm(FlaskForm):
+    grade = SelectField('Grade', choices=[
+        ('A+', 'A+'), ('A', 'A'), ('A-', 'A-'),
+        ('B+', 'B+'), ('B', 'B'), ('B-', 'B-'),
+        ('C+', 'C+'), ('C', 'C'), ('C-', 'C-'),
+        ('D+', 'D+'), ('D', 'D'), ('F', 'F')
+    ], validators=[DataRequired()])
+    submit = SubmitField('Add Grade')

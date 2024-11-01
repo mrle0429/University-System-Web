@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2>Select Course and Student for Grade Entry</h2>
+    <form action="{{ url_for('main.add_grade') }}" method="GET">
+        <div class="form-group">
+            <label for="course">Course</label>
+            <select name="course_id" id="courseSelect" class="form-control" required>
+                <option value="">Select a Course</option>
+                {% for course in courses %}
+                <option value="{{ course.id }}">{{ course.course_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="student">Student</label>
+            <select name="student_id" id="studentSelect" class="form-control" required>
+                <option value="">Select a Student</option>
+                <!-- 学生选项将通过 JavaScript 动态加载 -->
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Proceed to Add Grade</button>
+    </form>
+</div>
+
+<script>
+document.getElementById('courseSelect').addEventListener('change', function() {
+    const courseId = this.value;
+    const studentSelect = document.getElementById('studentSelect');
+
+    // 清空学生选项
+    studentSelect.innerHTML = '<option value="">Select a Student</option>';
+
+    // AJAX 请求获取已注册该课程的学生
+    if (courseId) {
+        fetch(`/get_students_by_course/${courseId}`)
+            .then(response => response.json())
+            .then(data => {
+                data.students.forEach(student => {
+                    const option = document.createElement('option');
+                    option.value = student.id;
+                    option.textContent = student.username;
+                    studentSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+});
+</script>
+{% endblock %}

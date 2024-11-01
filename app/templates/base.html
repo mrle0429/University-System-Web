@@ -11,15 +11,15 @@
         <nav>
             <ul>
                 <li><a href="{{ url_for('main.index') }}">Home</a></li>
+
                 {% if current_user.is_authenticated %}
                     <li><a href="{{ url_for('main.profile', user_id=current_user.id) }}">Dashboard</a></li>
 
                     <!-- Forum Navigation -->
-                    {% if current_user.is_authenticated and (current_user.user_type == 'student' or current_user.user_type == 'teacher') %}
+                    {% if current_user.user_type in ['student', 'teacher'] %}
                         <li><a href="{{ url_for('main.forum', board_type='chat') }}">Chat Board</a></li>
                         <li><a href="{{ url_for('main.forum', board_type='course') }}">Course Board</a></li>
                     {% endif %}
-
 
                     <!-- Library Navigation -->
                     {% if current_user.user_type == 'library_staff' %}
@@ -28,9 +28,15 @@
                         <li><a href="{{ url_for('main.search_books') }}">Search Books</a></li>
                     {% endif %}
 
+                    <!-- Teacher-specific links -->
                     {% if current_user.user_type == 'teacher' %}
                         <li><a href="{{ url_for('main.create_course') }}">Create Course</a></li>
-                    {% elif current_user.user_type == 'student' %}
+                        <li><a href="{{ url_for('main.select_grade_entry') }}">Add Grades</a></li>
+                    {% endif %}
+
+                    <!-- Student-specific links -->
+                    {% if current_user.user_type == 'student' %}
+                        <li><a href="{{ url_for('main.view_grades', student_id=current_user.id) }}">View Grades</a></li>
                         <li><a href="{{ url_for('main.register_course') }}">Register for Course</a></li>
                     {% endif %}
 

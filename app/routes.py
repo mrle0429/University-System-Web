@@ -1,8 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, current_user, login_required, logout_user
 from app.forms import RegisterForm, LoginForm, TeacherProfileForm, StudentProfileForm, CreateCourseForm, \
-    RegisterCourseForm, ForumPostForm, ForumReplyForm, LibraryStaffProfileForm, AddBookForm, SearchBookForm
-from app.models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db, ForumPost, ForumReply, LibraryStaffProfile, LibraryResource
+    RegisterCourseForm, ForumPostForm, ForumReplyForm, LibraryStaffProfileForm, AddBookForm, SearchBookForm, \
+    AddGradeForm
+from app.models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db, ForumPost, ForumReply, \
+    LibraryStaffProfile, LibraryResource, StudentGrade
 from werkzeug.security import generate_password_hash, check_password_hash
 
 main_routes = Blueprint('main', __name__)
@@ -490,3 +492,91 @@ def delete_book(book_id):
     db.session.commit()
     flash('Book deleted successfully!', 'success')
     return redirect(url_for('main.manage_books'))
+
+@main_routes.route('/view_grades/<int:student_id>', methods=['GET'])
+@login_required
+def view_grades(student_id):
+    if current_user.user_type != 'student' or current_user.id != student_id:
+        flash("You are not authorized to view this page.", "danger")
+        return redirect(url_for('main.index'))
+
+    # 查询该学生的所有成绩
+    grades = StudentGrade.query.filter_by(student_id=student_id).all()
+
+    # 将课程名称与成绩关联
+    grade_data = [
+        {
+            'course_name': Course.query.get(grade.course_id).course_name,
+            'grade': grade.grade
+        }
+        for grade in grades
+    ]
+
+    return render_template('view_grades.html', grade_data=grade_data)
+
+
+@main_routes.route('/add_grade', methods=['GET', 'POST'])
+@login_required
+def add_grade():
+    course_id = request.args.get('course_id', type=int)
+    student_id = request.args.get('student_id', type=int)
+
+    # 检查用户权限，仅允许教师访问
+    if current_user.user_type != 'teacher':
+        flash("You are not authorized to access this page.", "danger")
+        return redirect(url_for('main.index'))
+
+    # 查询表单
+    form = AddGradeForm()
+    if form.validate_on_submit():
+        # 检查是否已存在该学生和课程的成绩记录
+        grade_entry = StudentGrade.query.filter_by(student_id=student_id, course_id=course_id).first()
+
+        if grade_entry:
+            # 更新现有成绩
+            grade_entry.grade = form.grade.data
+            flash("Grade updated successfully!", "success")
+        else:
+            # 创建新的成绩记录
+            grade_entry = StudentGrade(student_id=student_id, course_id=course_id, grade=form.grade.data)
+            db.session.add(grade_entry)
+            flash("Grade added successfully!", "success")
+
+        db.session.commit()
+        return redirect(url_for('main.select_grade_entry'))
+
+    return render_template('add_grade.html', form=form)
+
+
+@main_routes.route('/select_grade_entry', methods=['GET', 'POST'])
+@login_required
+def select_grade_entry():
+    # 检查用户权限，仅允许教师访问
+    if current_user.user_type != 'teacher':
+        flash("You are not authorized to access this page.", "danger")
+        return redirect(url_for('main.index'))
+
+    # 获取当前教师创建的课程
+    courses = Course.query.filter_by(created_by=current_user.id).all()
+
+    # 初始化学生为空，在前端根据选择的课程动态加载
+    students = []
+
+    return render_template('select_grade_entry.html', courses=courses, students=students)
+
+@main_routes.route('/get_students_by_course/<int:course_id>', methods=['GET'])
+@login_required
+def get_students_by_course(course_id):
+    # 验证该课程是否由当前教师创建
+    course = Course.query.filter_by(id=course_id, created_by=current_user.id).first()
+    if not course:
+        return jsonify({'error': 'Unauthorized access'}), 403
+
+    # 查询注册了该课程的学生
+    registrations = CourseRegistration.query.filter_by(course_id=course_id).all()
+    students = [
+        {'id': reg.user_id, 'username': User.query.get(reg.user_id).username}
+        for reg in registrations
+    ]
+
+    return jsonify({'students': students})
