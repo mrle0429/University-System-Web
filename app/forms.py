@@ -6,7 +6,7 @@ class RegisterForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
-    user_type = SelectField('User Type', choices=[('student', 'Student'), ('teacher', 'Teacher'), ('library_staff', 'Library Staff')], validators=[DataRequired()])
+    user_type = SelectField('User Type', choices=[('student', 'Student'), ('teacher', 'Teacher'), ('library_staff', 'Library Staff'),('security', 'Security Personnel')], validators=[DataRequired()])
     submit = SubmitField('Sign Up')
 
 class LoginForm(FlaskForm):
@@ -72,6 +72,16 @@ class LibraryStaffProfileForm(FlaskForm):
     department = StringField('Department', validators=[DataRequired()])
     position = StringField('Position', validators=[DataRequired()])
     work_hours = StringField('Work Hours')
+    biography = TextAreaField('Biography')
+    submit = SubmitField('Update Profile')
+
+class SecurityProfileForm(FlaskForm):
+    staff_id = StringField('Staff ID', validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+    gender = SelectField('Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')], validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    shift_hours = StringField('Shift Hours', validators=[DataRequired()])
+    assigned_area = StringField('Assigned Area', validators=[DataRequired()])
     biography = TextAreaField('Biography')
     submit = SubmitField('Update Profile')
 

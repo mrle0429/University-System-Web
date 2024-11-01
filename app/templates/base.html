@@ -41,6 +41,10 @@
                         <li><a href="{{ url_for('main.e_bike_management') }}">E-bike Management</a></li>
                     {% endif %}
 
+                    {% if current_user.user_type == 'security' %}
+                        <li><a href="{{ url_for('main.manage_ebikes') }}">E-bike Management</a></li>
+                    {% endif %}
+
                     <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
                 {% else %}
                     <li><a href="{{ url_for('main.register') }}">Register</a></li>

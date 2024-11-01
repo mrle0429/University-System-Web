@@ -114,6 +114,20 @@ class LibraryStaffProfile(db.Model):
     # Define relationship with User
     user = db.relationship('User', backref=db.backref('library_staff_profile', uselist=False))
 
+class SecurityProfile(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    staff_id = db.Column(db.String(20), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    gender = db.Column(db.String(10))
+    email = db.Column(db.String(120), nullable=False)
+    shift_hours = db.Column(db.String(100), nullable=False)
+    assigned_area = db.Column(db.String(100), nullable=False)
+    biography = db.Column(db.Text, nullable=True)
+
+    user = db.relationship('User', backref=db.backref('security_profile', uselist=False))
+
+
 class LibraryResource(db.Model):
     __tablename__ = 'library_resources'
     
@@ -139,7 +153,7 @@ class EBikeLicense(db.Model):
     registration_date = db.Column(db.Date)
     expiration_date = db.Column(db.Date)
     approved_by = db.Column(db.Integer, db.ForeignKey('user.id'))
-    status = db.Column(db.Enum('Pending', 'Approved', 'Expired'), default='Pending')
+    status = db.Column(db.Enum('Pending', 'Approved', 'Expired', "Rejected", "Cancelled"), default='Pending')
 
     owner = db.relationship('User', foreign_keys=[owner_id])
     approver = db.relationship('User', foreign_keys=[approved_by])

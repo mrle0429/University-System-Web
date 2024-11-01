@@ -335,6 +335,14 @@ textarea {
     background-color: #dc3545; /* 红色 - 已过期 */
 }
 
+.status-badge-rejected {
+    background-color: #ff4d4d; /* 深红色 - 已拒绝 */
+}
+
+.status-badge-cancelled {
+    background-color: #ff9800; /* 橙色 - 已取消 */
+}
+
 /* 卡片标题 */
 .e-bike-card-title {
     font-size: 1.4rem;

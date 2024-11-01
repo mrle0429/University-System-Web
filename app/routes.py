@@ -2,9 +2,9 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, current_user, login_required, logout_user
 from app.forms import RegisterForm, LoginForm, TeacherProfileForm, StudentProfileForm, CreateCourseForm, \
     RegisterCourseForm, ForumPostForm, ForumReplyForm, LibraryStaffProfileForm, AddBookForm, SearchBookForm, \
-    AddGradeForm, EBikeForm
+    AddGradeForm, EBikeForm, SecurityProfileForm
 from app.models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db, ForumPost, ForumReply, \
-    LibraryStaffProfile, LibraryResource, StudentGrade, EBikeLicense
+    LibraryStaffProfile, LibraryResource, StudentGrade, EBikeLicense, SecurityProfile
 from werkzeug.security import generate_password_hash, check_password_hash
 
 main_routes = Blueprint('main', __name__)
@@ -102,6 +102,15 @@ def profile(user_id):
             user=user,
             profile=profile
         )
+    
+    # Check if the user is a security personnel
+    elif user.user_type == 'security':
+        profile = SecurityProfile.query.filter_by(user_id=user.id).first()
+        return render_template(
+            'security_dashboard.html',
+            user=user,
+            profile=profile
+        )
 
     # If user_type is not recognized, return an error
     flash("Invalid user type.", "danger")
@@ -187,6 +196,29 @@ def edit_profile(user_id):
             flash('Profile updated successfully!', 'success')
             return redirect(url_for('main.profile', user_id=user.id))
             
+        return render_template('edit_profile.html', form=form, user=user)
+    
+    # Handle security personnel profile editing
+    elif user.user_type == 'security':
+        profile = SecurityProfile.query.filter_by(user_id=user.id).first()
+        form = SecurityProfileForm(obj=profile)
+
+        if form.validate_on_submit():
+            if not profile:
+                profile = SecurityProfile(user_id=user.id)
+            profile.staff_id = form.staff_id.data
+            profile.name = form.name.data
+            profile.gender = form.gender.data
+            profile.shift_hours = form.shift_hours.data
+            profile.assigned_area = form.assigned_area.data
+            profile.email = form.email.data
+            profile.biography = form.biography.data
+
+            db.session.add(profile)
+            db.session.commit()
+            flash('Profile updated successfully!', 'success')
+            return redirect(url_for('main.profile', user_id=user.id))
+        
         return render_template('edit_profile.html', form=form, user=user)
 
     flash("Invalid user type.", "danger")
@@ -598,9 +630,71 @@ def e_bike_management():
         e_bike.license_plate = form.license_plate.data
         e_bike.bike_model = form.bike_model.data
         e_bike.status = 'Pending'  # 每次创建或修改后自动变为“申请”状态
+        e_bike.registration_date = None
+        e_bike.expiration_date = None
+        e_bike.approved_by = None
         db.session.add(e_bike)
         db.session.commit()
         flash("E-bike registration updated successfully!", "success")
         return redirect(url_for('main.e_bike_management'))
 
     return render_template('e_bike_management.html', form=form, e_bike=e_bike)
+
+
+
+@main_routes.route('/manage_ebikes', methods=['GET'])
+@login_required
+def manage_ebikes():
+    if current_user.user_type != 'security':
+        flash('Access denied. Security personnel only.', 'danger')
+        return redirect(url_for('main.index'))
+
+    # 获取所有电动车申请，并按 ID 倒序排列
+    ebikes = EBikeLicense.query.order_by(EBikeLicense.license_id.desc()).all()
+    return render_template('manage_ebikes.html', ebikes=ebikes)
+
+
+@main_routes.route('/approve_ebike/<int:ebike_id>', methods=['POST'])
+@login_required
+def approve_ebike(ebike_id):
+    if current_user.user_type != 'security':
+        flash('Access denied. Security personnel only.', 'danger')
+        return redirect(url_for('main.index'))
+
+    ebike = EBikeLicense.query.get_or_404(ebike_id)
+    ebike.status = 'Approved'
+    ebike.registration_date = request.form['registration_date']
+    ebike.expiration_date = request.form['expiration_date']
+    ebike.approved_by = current_user.id
+    db.session.commit()
+    flash('E-bike approved successfully!', 'success')
+    return redirect(url_for('main.manage_ebikes'))
+
+@main_routes.route('/reject_ebike/<int:ebike_id>', methods=['POST'])
+@login_required
+def reject_ebike(ebike_id):
+    if current_user.user_type != 'security':
+        flash('Access denied. Security personnel only.', 'danger')
+        return redirect(url_for('main.index'))
+
+    ebike = EBikeLicense.query.get_or_404(ebike_id)
+    ebike.status = 'Rejected'
+    db.session.commit()
+    flash('E-bike rejected successfully!', 'success')
+    return redirect(url_for('main.manage_ebikes'))
+
+@main_routes.route('/cancel_ebike/<int:ebike_id>', methods=['POST'])
+@login_required
+def cancel_ebike(ebike_id):
+    if current_user.user_type != 'security':
+        flash('Access denied. Security personnel only.', 'danger')
+        return redirect(url_for('main.index'))
+
+    ebike = EBikeLicense.query.get_or_404(ebike_id)
+    ebike.status = 'Cancelled'
+    ebike.registration_date = None
+    ebike.expiration_date = None
+    ebike.approved_by = None
+    db.session.commit()
+    flash('E-bike registration cancelled successfully!', 'success')
+    return redirect(url_for('main.manage_ebikes'))
