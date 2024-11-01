@@ -45,19 +45,6 @@ def register():
         return redirect(url_for('main.index'))
     return render_template('register.html', form=form)
 
-@main_routes.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and check_password_hash(user.password, form.password.data):
-            login_user(user)
-            flash('Login successful!', 'success')
-            return redirect(url_for('main.profile', user_id=user.id))
-        else:
-            flash('Login failed. Please check your email and password.', 'danger')
-    return render_template('login.html', form=form)
-
 @main_routes.route('/logout')
 @login_required
 def logout():
