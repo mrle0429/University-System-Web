@@ -9,9 +9,22 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 main_routes = Blueprint('main', __name__)
 
-@main_routes.route('/')
+@main_routes.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    if current_user.is_authenticated:
+        return redirect(url_for('main.profile', user_id=current_user.id))
+    
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and check_password_hash(user.password, form.password.data):
+            login_user(user)
+            flash('Login successful!', 'success')
+            return redirect(url_for('main.profile', user_id=user.id))
+        else:
+            flash('Login failed. Please check your email and password.', 'danger')
+    
+    return render_template('index.html', form=form)
 
 @main_routes.route('/register', methods=['GET', 'POST'])
 def register():
@@ -42,7 +55,7 @@ def login():
             flash('Login successful!', 'success')
             return redirect(url_for('main.profile', user_id=user.id))
         else:
-            flash('Login Unsuccessful. Please check email and password.', 'danger')
+            flash('Login failed. Please check your email and password.', 'danger')
     return render_template('login.html', form=form)
 
 @main_routes.route('/logout')
