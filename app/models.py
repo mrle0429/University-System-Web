@@ -128,3 +128,18 @@ class LibraryResource(db.Model):
 
     def __repr__(self):
         return f'<LibraryResource {self.title}>'
+
+class EBikeLicense(db.Model):
+    __tablename__ = 'e_bike_license'
+
+    license_id = db.Column(db.Integer, primary_key=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    license_plate = db.Column(db.String(20), nullable=False)
+    bike_model = db.Column(db.String(50), nullable=False)
+    registration_date = db.Column(db.Date)
+    expiration_date = db.Column(db.Date)
+    approved_by = db.Column(db.Integer, db.ForeignKey('user.id'))
+    status = db.Column(db.Enum('Pending', 'Approved', 'Expired'), default='Pending')
+
+    owner = db.relationship('User', foreign_keys=[owner_id])
+    approver = db.relationship('User', foreign_keys=[approved_by])

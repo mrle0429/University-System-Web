@@ -137,3 +137,8 @@ class AddGradeForm(FlaskForm):
         ('D+', 'D+'), ('D', 'D'), ('F', 'F')
     ], validators=[DataRequired()])
     submit = SubmitField('Add Grade')
+
+class EBikeForm(FlaskForm):
+    license_plate = StringField('License Plate', validators=[DataRequired(), Length(max=20)])
+    bike_model = StringField('Bike Model', validators=[DataRequired(), Length(max=50)])
+

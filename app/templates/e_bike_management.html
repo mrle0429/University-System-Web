@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2>E-bike Management</h2>
+
+    <div class="e-bike-layout">
+        <!-- 电动车注册表单 -->
+        <div class="e-bike-form">
+            <form method="POST" action="{{ url_for('main.e_bike_management') }}" class="mb-4">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.license_plate.label }}
+                    {{ form.license_plate(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.bike_model.label }}
+                    {{ form.bike_model(class="form-control") }}
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+
+        <!-- 电动车牌照详细信息 -->
+        {% if e_bike %}
+        <div class="e-bike-details">
+            <h3 class="e-bike-card-title">Current E-bike Registration Details</h3>
+            <hr>
+            <div class="status-info mb-2">
+                <span>Status:</span>
+                <span class="status-badge status-badge-{{ e_bike.status|lower }}">
+                    {{ e_bike.status }}
+                </span>
+            </div>
+            <div class="e-bike-info-row">
+                <span class="e-bike-info-title">License Plate:</span>
+                <span class="e-bike-info-content">{{ e_bike.license_plate }}</span>
+            </div>
+            <div class="e-bike-info-row">
+                <span class="e-bike-info-title">Bike Model:</span>
+                <span class="e-bike-info-content">{{ e_bike.bike_model }}</span>
+            </div>
+            <div class="e-bike-info-row">
+                <span class="e-bike-info-title">Registration Date:</span>
+                <span class="e-bike-info-content">{{ e_bike.registration_date or 'N/A' }}</span>
+            </div>
+            <div class="e-bike-info-row">
+                <span class="e-bike-info-title">Expiration Date:</span>
+                <span class="e-bike-info-content">{{ e_bike.expiration_date or 'N/A' }}</span>
+            </div>
+            <div class="e-bike-info-row">
+                <span class="e-bike-info-title">Approved By:</span>
+                <span class="e-bike-info-content">{{ e_bike.approver.username if e_bike.approver else 'N/A' }}</span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

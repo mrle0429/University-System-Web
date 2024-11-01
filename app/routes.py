@@ -2,9 +2,9 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, current_user, login_required, logout_user
 from app.forms import RegisterForm, LoginForm, TeacherProfileForm, StudentProfileForm, CreateCourseForm, \
     RegisterCourseForm, ForumPostForm, ForumReplyForm, LibraryStaffProfileForm, AddBookForm, SearchBookForm, \
-    AddGradeForm
+    AddGradeForm, EBikeForm
 from app.models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db, ForumPost, ForumReply, \
-    LibraryStaffProfile, LibraryResource, StudentGrade
+    LibraryStaffProfile, LibraryResource, StudentGrade, EBikeLicense
 from werkzeug.security import generate_password_hash, check_password_hash
 
 main_routes = Blueprint('main', __name__)
@@ -580,3 +580,27 @@ def get_students_by_course(course_id):
     ]
 
     return jsonify({'students': students})
+
+@main_routes.route('/e_bike_management', methods=['GET', 'POST'])
+@login_required
+def e_bike_management():
+    if current_user.user_type != 'student':
+        flash("You are not authorized to access this page.", "danger")
+        return redirect(url_for('main.index'))
+
+    # 查询当前学生的电动车信息
+    e_bike = EBikeLicense.query.filter_by(owner_id=current_user.id).first()
+    form = EBikeForm(obj=e_bike)
+
+    if form.validate_on_submit():
+        if not e_bike:
+            e_bike = EBikeLicense(owner_id=current_user.id)
+        e_bike.license_plate = form.license_plate.data
+        e_bike.bike_model = form.bike_model.data
+        e_bike.status = 'Pending'  # 每次创建或修改后自动变为“申请”状态
+        db.session.add(e_bike)
+        db.session.commit()
+        flash("E-bike registration updated successfully!", "success")
+        return redirect(url_for('main.e_bike_management'))
+
+    return render_template('e_bike_management.html', form=form, e_bike=e_bike)

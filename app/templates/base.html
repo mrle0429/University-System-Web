@@ -38,6 +38,7 @@
                     {% if current_user.user_type == 'student' %}
                         <li><a href="{{ url_for('main.view_grades', student_id=current_user.id) }}">View Grades</a></li>
                         <li><a href="{{ url_for('main.register_course') }}">Register for Course</a></li>
+                        <li><a href="{{ url_for('main.e_bike_management') }}">E-bike Management</a></li>
                     {% endif %}
 
                     <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
