@@ -1,49 +1,58 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="container visitor-container">
-    <div class="welcome-section">
-        <h1 class="welcome-title">Welcome to BJUT</h1>
-        <p class="welcome-subtitle">Explore our university resources and information</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to BJUT</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- 交互式背景 -->
+    <div class="interactive-background">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
     </div>
 
-    <div class="visitor-cards">
-        <!-- Library Resources Card -->
-        <div class="feature-card library-card">
-            <div class="card-content">
-                <div class="card-icon">
-                    <i class="fas fa-books"></i>
-                </div>
-                <h3>Library Resources</h3>
-                <p>Search through our extensive collection of academic resources</p>
-                {% if books %}
-                <div class="recent-books">
-                    <h4>Latest Resources</h4>
-                    <ul>
-                        {% for book in books[:3] %}
-                        <li>{{ book.title }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% endif %}
-                <a href="{{ url_for('main.search_books') }}" class="action-btn">Browse Library</a>
-            </div>
+    <div class="container visitor-container">
+        <div class="welcome-section">
+            <h1 class="welcome-title">Welcome to BJUT</h1>
+            <p class="welcome-subtitle">Explore our university resources and information</p>
         </div>
 
-        <!-- Contact Card -->
-        <div class="feature-card contact-card">
-            <div class="card-content">
-                <div class="card-icon">
-                    <i class="fas fa-envelope"></i>
+        <div class="visitor-cards">
+            <!-- Library Resources Card -->
+            <div class="feature-card library-card">
+                <div class="card-content">
+                    <h3>Library Resources</h3>
+                    <p>Search through our extensive collection of academic resources</p>
+                    {% if books %}
+                    <div class="recent-books">
+                        <h4>Latest Resources</h4>
+                        <ul>
+                            {% for book in books[:3] %}
+                            <li>{{ book.title }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    <a href="{{ url_for('main.search_books') }}" class="action-btn">Browse Library</a>
                 </div>
-                <h3>Contact Us</h3>
-                <p>Get in touch with our departments and staff</p>
-                <div class="quick-contacts">
-                    <p>Main Campus: +86 10-6739-XXXX</p>
-                    <p>Email: info@bjut.edu.cn</p>
+            </div>
+
+            <!-- Contact Card -->
+            <div class="feature-card contact-card">
+                <div class="card-content">
+                    <h3>Contact Us</h3>
+                    <p>Get in touch with our departments and staff</p>
+                    <div class="quick-contacts">
+                        <p>Main Campus: +86 10-6739-XXXX</p>
+                        <p>Email: info@bjut.edu.cn</p>
+                    </div>
+                    <a href="{{ url_for('main.contact') }}" class="action-btn">View Contacts</a>
                 </div>
-                <a href="{{ url_for('main.contact') }}" class="action-btn">View Contacts</a>
             </div>
         </div>
     </div>
-</div>
-{% endblock %} 
+</body>
+</html> 
