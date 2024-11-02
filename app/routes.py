@@ -309,7 +309,7 @@ def delete_course(course_id):
 @main_routes.route('/forum/<string:board_type>')
 @login_required
 def forum(board_type):
-    # 确保只有学生和老师可以访问
+    # 确���只有学生和老师可以访问
     if current_user.user_type not in ['student', 'teacher']:
         flash("You are not authorized to access this board.", "danger")
         return redirect(url_for('main.index'))
@@ -698,3 +698,11 @@ def cancel_ebike(ebike_id):
     db.session.commit()
     flash('E-bike registration cancelled successfully!', 'success')
     return redirect(url_for('main.manage_ebikes'))
+
+@main_routes.route('/visitor')
+def visitor():
+    return render_template('visitor.html')
+
+@main_routes.route('/contact')
+def contact():
+    return render_template('contact.html')

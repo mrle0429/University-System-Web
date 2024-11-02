@@ -1,7 +1,13 @@
 /* Original styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
+    font-family: "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #cceeff, #99ccff);
     margin: 0;
     padding: 0;
     display: flex;
@@ -10,10 +16,12 @@ body {
 }
 
 nav {
-    background-color: #007bff;
+    background: rgba(255, 255, 255, 0.95);
     padding: 1em;
     width: 100%;
     text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
 }
 
 nav ul {
@@ -29,30 +37,37 @@ nav ul li {
 }
 
 nav ul li a {
-    color: white;
+    color: #333;
     text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #2196F3;
 }
 
 .container {
     margin: 2em auto;
     max-width: 800px;
     padding: 1em;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
-    color: #007bff;
+    background: linear-gradient(45deg, #2196F3, #00BCD4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     text-align: center;
     margin-top: 0;
 }
 
 form div, .reply-form-container {
-    background-color: #f1f1f1;
+    background: rgba(255, 255, 255, 0.9);
     padding: 1em;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 1em;
 }
 
@@ -62,21 +77,29 @@ form label {
     margin-bottom: 0.5em;
 }
 
-form input[type="text"], form input[type="email"], form input[type="password"], form textarea, form select {
+form input[type="text"], form input[type="email"], 
+form input[type="password"], form textarea, form select {
     width: 100%;
-    padding: 0.5em;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    resize: vertical;
+    padding: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
 }
 
 form input[type="submit"], .toggle-replies {
-    background-color: #007bff;
+    background: linear-gradient(45deg, #2196F3, #00BCD4);
     color: white;
     border: none;
-    padding: 0.5em 1em;
-    border-radius: 4px;
+    padding: 10px 25px;
+    border-radius: 25px;
     cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+form input[type="submit"]:hover, .toggle-replies:hover {
+    transform: scale(1.05);
+    background: linear-gradient(45deg, #1976D2, #0097A7);
 }
 
 .forum-post, .forum-reply {
@@ -369,6 +392,161 @@ textarea {
     color: #333;
 }
 
+/* 游客页面样式 */
+.visitor-welcome {
+    text-align: center;
+    padding: 40px 0;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
 
+.visitor-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 20px;
+}
 
+.visitor-card {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
 
+.visitor-card:hover {
+    transform: translateY(-5px);
+}
+
+/* 联系页面样式 */
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 20px;
+}
+
+.contact-section {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.contact-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.contact-section li {
+    margin-bottom: 20px;
+}
+
+/* Visitor page styles */
+.visitor-container {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.welcome-section {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.welcome-title {
+    font-size: 3em;
+    margin-bottom: 10px;
+    background: linear-gradient(45deg, #2196F3, #00BCD4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.welcome-subtitle {
+    font-size: 1.2em;
+    color: #666;
+}
+
+.visitor-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-content {
+    padding: 30px;
+}
+
+.action-btn, .btn-primary, .edit-profile-button, .my-course-button {
+    display: inline-block;
+    padding: 12px 25px;
+    background: linear-gradient(45deg, #2196F3, #00BCD4);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    transition: transform 0.3s ease;
+    border: none;
+}
+
+.action-btn:hover, .btn-primary:hover, 
+.edit-profile-button:hover, .my-course-button:hover {
+    transform: scale(1.05);
+    background: linear-gradient(45deg, #1976D2, #0097A7);
+}
+
+/* 统一卡片容器样式 */
+.card-container, .feature-card, .forum-post-content, 
+.forum-reply-card, .contact-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 30px;
+    margin-bottom: 30px;
+    transition: transform 0.3s ease;
+}
+
+.card-container:hover, .feature-card:hover, 
+.forum-post-content:hover, .forum-reply-card:hover, 
+.contact-section:hover {
+    transform: translateY(-5px);
+}
+
+/* 统一表格样式 */
+.table {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-collapse: collapse;
+}
+
+.table thead th {
+    background: linear-gradient(45deg, #2196F3, #00BCD4);
+    color: white;
+    border: none;
+    padding: 15px;
+}
+
+.table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
