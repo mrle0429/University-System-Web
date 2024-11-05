@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width: 1200px; padding: 30px;">
+    <h2>Search Library Resources</h2>
+    
+    <div class="search-form" style="background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); margin-bottom: 30px;">
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="row">
+                <div class="col-md-3">
+                    {{ form.title.label(class="form-label") }}
+                    {{ form.title(class="form-control") }}
+                </div>
+                <div class="col-md-3">
+                    {{ form.author.label(class="form-label") }}
+                    {{ form.author(class="form-control") }}
+                </div>
+                <div class="col-md-2">
+                    {{ form.publication_year.label(class="form-label") }}
+                    {{ form.publication_year(class="form-control") }}
+                </div>
+                <div class="col-md-2">
+                    {{ form.availability_status.label(class="form-label") }}
+                    {{ form.availability_status(class="form-control") }}
+                </div>
+                <div class="col-md-2" style="display: flex; align-items: flex-end;">
+                    {{ form.submit(class="btn btn-primary w-100") }}
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="search-results">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Year</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                <tr>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.publication_year }}</td>
+                    <td>{{ book.category }}</td>
+                    <td>{{ book.availability_status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 

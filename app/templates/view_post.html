@@ -1,37 +1,54 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
-    <h2>{{ post.post_title }}</h2>
-    <div class="forum-post">
-        <p>{{ post.post_content }}</p>
-        <small>Posted by {{ post.author.username }} on {{ post.post_date.strftime('%Y-%m-%d %H:%M') }}</small>
-    </div>
+<div class="container forum-layout">
+    <!-- 左侧：帖子内容 -->
+    <div class="forum-post-content">
+        <h2>{{ post.post_title }}</h2>
+        <div class="forum-post-main">
+            <p>{{ post.post_content }}</p>
+            <small>Posted by {{ post.author.username }} on {{ post.post_date.strftime('%Y-%m-%d %H:%M') }}</small>
 
-    <!-- Toggle button for replies -->
-    <button class="toggle-replies" onclick="toggleReplies()">Show Replies</button>
-
-    <!-- Replies section to be expanded or collapsed -->
-    <div class="replies" style="display: none;">
-        {% for reply in replies %}
-        <div class="forum-reply">
-            <p>{{ reply.reply_content }}</p>
-            <small>by {{ reply.replier.username }} on {{ reply.reply_date.strftime('%Y-%m-%d %H:%M') }}</small>
+            {% if post.author_id == current_user.id %}
+                <!-- 删除按钮 -->
+                <form method="POST" action="{{ url_for('main.delete_post', post_id=post.post_id) }}" style="display:inline;">
+                    <button type="submit" class="delete-btn">Delete Post</button>
+                </form>
+            {% endif %}
         </div>
-        {% endfor %}
     </div>
 
-    {% if current_user.is_authenticated %}
-    <!-- Leave a Reply Form Section -->
-    <div class="reply-form-container">
-        <h3>Leave a Reply</h3>
-        <form method="POST">
-            {{ form.hidden_tag() }}
-            <div>{{ form.reply_content.label }} {{ form.reply_content(rows=5) }}</div>
-            <div>{{ form.submit() }}</div>
-        </form>
+    <!-- 右侧：回复和回复框 -->
+    <div class="forum-replies">
+        <button class="toggle-replies" onclick="toggleReplies()">Collapse Replies</button>
+
+        <div class="replies">
+            {% for reply in replies %}
+            <div class="forum-reply-card">
+                <p>{{ reply.reply_content }}</p>
+                <small>by {{ reply.replier.username }} on {{ reply.reply_date.strftime('%Y-%m-%d %H:%M') }}</small>
+
+                {% if reply.replier_id == current_user.id %}
+                    <!-- 删除按钮 -->
+                    <form method="POST" action="{{ url_for('main.delete_reply', reply_id=reply.reply_id) }}" style="display:inline;">
+                        <button type="submit" class="delete-btn">Delete Reply</button>
+                    </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if current_user.is_authenticated %}
+        <div class="reply-form-container">
+            <h3>Leave a Reply</h3>
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div>{{ form.reply_content.label }} {{ form.reply_content(rows=5) }}</div>
+                <div>{{ form.submit() }}</div>
+            </form>
+        </div>
+        {% else %}
+        <p><a href="{{ url_for('main.login') }}">Log in</a> to leave a reply.</p>
+        {% endif %}
     </div>
-    {% else %}
-    <p><a href="{{ url_for('main.login') }}">Log in</a> to leave a reply.</p>
-    {% endif %}
 </div>
 {% endblock %}

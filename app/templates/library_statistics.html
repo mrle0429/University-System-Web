@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width: 1200px; padding: 30px;">
+    <h2>Library Statistics</h2>
+    
+    <div class="stats-container">
+        <!-- 总体统计 -->
+        <div class="stats-card" style="background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
+            <h3>Overall Statistics</h3>
+            <div class="stats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+                <div class="stat-item">
+                    <h4>Total Books</h4>
+                    <p class="stat-number">{{ total_books }}</p>
+                </div>
+                <div class="stat-item">
+                    <h4>Available</h4>
+                    <p class="stat-number">{{ available_books }}</p>
+                </div>
+                <div class="stat-item">
+                    <h4>Borrowed</h4>
+                    <p class="stat-number">{{ borrowed_books }}</p>
+                </div>
+                <div class="stat-item">
+                    <h4>Reserved</h4>
+                    <p class="stat-number">{{ reserved_books }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 分类统计 -->
+        <div class="stats-card" style="background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);">
+            <h3>Category Statistics</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Number of Books</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category, count in category_stats %}
+                    <tr>
+                        <td>{{ category }}</td>
+                        <td>{{ count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,18 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
+<div class="container forum-layout">
     <h2>{{ board_type | capitalize }} Board</h2>
+
+    <!-- 将 Create New Post 按钮放置在标题正下方 -->
     {% if current_user.is_authenticated and (board_type == 'chat' or current_user.user_type == 'teacher') %}
-        <a href="{{ url_for('main.create_post', board_type=board_type) }}" class="button">Create New Post</a>
+        <div class="create-post-container">
+            <a href="{{ url_for('main.create_post', board_type=board_type) }}" class="create-post-btn">Create New Post</a>
+        </div>
     {% endif %}
-    <ul>
+
+    <!-- Forum posts grid -->
+    <div class="forum-posts-grid">
         {% for post in posts %}
-            <li class="forum-post">
-                <a href="{{ url_for('main.view_post', post_id=post.post_id) }}">{{ post.post_title }}</a>
-                <p>by {{ post.author.username }} on {{ post.post_date.strftime('%Y-%m-%d %H:%M') }}</p>
-            </li>
+        <div class="forum-post-card">
+            <a href="{{ url_for('main.view_post', post_id=post.post_id) }}">{{ post.post_title }}</a>
+            <p>by {{ post.author.username }} on {{ post.post_date.strftime('%Y-%m-%d %H:%M') }}</p>
+
+            {% if post.author_id == current_user.id %}
+                <!-- Delete button for post author -->
+                <form method="POST" action="{{ url_for('main.delete_post', post_id=post.post_id) }}" style="display:inline;">
+                    <button type="submit" class="delete-btn">Delete</button>
+                </form>
+            {% endif %}
+        </div>
         {% endfor %}
-    </ul>
+    </div>
+
     {% if posts|length == 0 %}
         <p>No posts in this board yet.</p>
     {% endif %}

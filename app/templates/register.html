@@ -1,14 +1,85 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="container">
-    <h2>Register</h2>
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        <div>{{ form.username.label }} {{ form.username(size=32) }}</div>
-        <div>{{ form.email.label }} {{ form.email(size=32) }}</div>
-        <div>{{ form.password.label }} {{ form.password(size=32) }}</div>
-        <div>{{ form.user_type.label }} {{ form.user_type() }}</div>
-        <div>{{ form.submit() }}</div>
-    </form>
-</div>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BJUT Unified Identity Authentication - Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+    <div class="login-page">
+        <!-- Left side -->
+        <div class="login-left">
+            <div class="school-title">
+                <span>Beijing University</span>
+                <span>of Technology</span>
+            </div>
+            <div class="wave-animation"></div>
+        </div>
+
+        <!-- Right side register area -->
+        <div class="login-right">
+            <div class="particles-background"></div>
+            <div class="login-content">
+                <div class="login-header">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+                    <div class="language-switch">
+                        <a href="#">中文</a> |
+                        <a href="#" class="active">EN</a>
+                    </div>
+                </div>
+
+                <div class="login-box">
+                    <form method="POST" action="{{ url_for('main.register') }}" class="login-form">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            {{ form.username(class="form-control", placeholder="Username") }}
+                            {% if form.username.errors %}
+                                {% for error in form.username.errors %}
+                                    <span class="error-message">{{ error }}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.email(class="form-control", placeholder="Email") }}
+                            {% if form.email.errors %}
+                                {% for error in form.email.errors %}
+                                    <span class="error-message">{{ error }}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.password(class="form-control", placeholder="Password") }}
+                            {% if form.password.errors %}
+                                {% for error in form.password.errors %}
+                                    <span class="error-message">{{ error }}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.user_type(class="form-control") }}
+                        </div>
+                        {{ form.submit(class="login-btn", value="Register") }}
+                    </form>
+
+                    <div class="login-footer">
+                        <a href="{{ url_for('main.index') }}">Back to Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+</body>
+</html>

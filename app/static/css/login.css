@@ -1,0 +1,241 @@
+/* 基础样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Microsoft YaHei", sans-serif;
+    background: #f5f5f5;
+}
+
+/* 登录页面布局 */
+.login-page {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* 左侧区域样式 */
+.login-left {
+    flex: 1;
+    background: #4ca0ff;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.school-title {
+    color: white;
+    font-size: 2.8em;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 5px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.school-title span {
+    margin: 5px 0;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 10px rgba(255,255,255,0.2),
+                     0 0 20px rgba(255,255,255,0.2),
+                     0 0 30px rgba(255,255,255,0.2);
+    }
+    to {
+        text-shadow: 0 0 20px rgba(255,255,255,0.4),
+                     0 0 30px rgba(255,255,255,0.4),
+                     0 0 40px rgba(255,255,255,0.4);
+    }
+}
+
+/* 右侧登录区域样式 */
+.login-right {
+    width: 400px;
+    background: white;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.particles-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.login-content {
+    position: relative;
+    z-index: 1;
+}
+
+.particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    transition: transform 0.3s ease-out;
+    animation: float-particle 15s infinite linear;
+}
+
+@keyframes float-particle {
+    0% {
+        transform: translate(-50px, -50px);
+    }
+    25% {
+        transform: translate(calc(100% + 50px), calc(25% + 50px));
+    }
+    50% {
+        transform: translate(calc(50% - 50px), calc(100% + 50px));
+    }
+    75% {
+        transform: translate(-50px, calc(75% - 50px));
+    }
+    100% {
+        transform: translate(-50px, -50px);
+    }
+}
+
+.particle::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    border-radius: inherit;
+    animation: pulse 2s ease-out infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+
+.login-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.logo {
+    height: 40px;
+}
+
+.language-switch a {
+    color: #666;
+    text-decoration: none;
+    padding: 0 5px;
+}
+
+.language-switch a.active {
+    color: #1e3c72;
+    font-weight: bold;
+}
+
+/* 登录表单样式 */
+.login-box {
+    background: white;
+    border-radius: 8px;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 320px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.captcha-group {
+    display: flex;
+    gap: 10px;
+}
+
+.captcha-img {
+    height: 42px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: #1e3c72;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.login-btn:hover {
+    background: #2a5298;
+}
+
+/* 页脚链接样式 */
+.login-footer, .help-links {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.login-footer a, .help-links a {
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+    margin: 0 10px;
+}
+
+.login-footer a:hover, .help-links a:hover {
+    color: #1e3c72;
+}
+
+/* 波浪动画 */
+.wave-animation {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: url('../images/wave.png');
+    background-size: 1000px 100px;
+    animation: wave 10s linear infinite;
+    opacity: 0.3;
+}
+
+@keyframes wave {
+    0% { background-position-x: 0; }
+    100% { background-position-x: 1000px; }
+} 
