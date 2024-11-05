@@ -4,7 +4,7 @@ from app.forms import RegisterForm, LoginForm, TeacherProfileForm, StudentProfil
     RegisterCourseForm, ForumPostForm, ForumReplyForm, LibraryStaffProfileForm, AddBookForm, SearchBookForm, \
     AddGradeForm, EBikeForm, SecurityProfileForm
 from app.models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db, ForumPost, ForumReply, \
-    LibraryStaffProfile, LibraryResource, StudentGrade, EBikeLicense, SecurityProfile
+    LibraryStaffProfile, LibraryResource, StudentGrade, EBikeLicense, SecurityProfile, AdminProfile
 from werkzeug.security import generate_password_hash, check_password_hash
 
 main_routes = Blueprint('main', __name__)
@@ -108,6 +108,14 @@ def profile(user_id):
         profile = SecurityProfile.query.filter_by(user_id=user.id).first()
         return render_template(
             'security_dashboard.html',
+            user=user,
+            profile=profile
+        )
+    
+    elif user.user_type == 'admin':
+        profile = AdminProfile.query.filter_by(user_id=user.id).first()
+        return render_template(
+            'admin_dashboard.html',
             user=user,
             profile=profile
         )
@@ -706,3 +714,101 @@ def visitor():
 @main_routes.route('/contact')
 def contact():
     return render_template('contact.html')
+
+@main_routes.route('/admin/manage_users', methods=['GET', 'POST'])
+@login_required
+def manage_users():
+    if current_user.user_type != 'admin':
+        flash('Access denied. Admins only.', 'danger')
+        return redirect(url_for('main.index'))
+
+    users = User.query.all()
+    return render_template('manage_users.html', users=users)
+
+@main_routes.route('/admin/delete_user/<int:user_id>', methods=['POST'])
+@login_required
+def delete_user(user_id):
+    if current_user.user_type != 'admin':
+        flash('访问被拒绝。仅限管理员使用。', 'danger')
+        return redirect(url_for('main.index'))
+
+    try:
+        user = User.query.get_or_404(user_id)
+        
+
+        if user.user_type == 'security':
+            # 1. 处理电动车许可证审批记录
+            # 将该安保人员审批的许可证的审批人设为 NULL
+            EBikeLicense.query.filter_by(approved_by=user.id).update({EBikeLicense.approved_by:None})
+            
+            # 2. 删除安保人员档案
+            SecurityProfile.query.filter_by(user_id=user.id).delete()
+            
+            # 3. 最后删除用户本身
+            db.session.delete(user)
+            db.session.commit()
+            
+            flash('安保人员删除成功！', 'success')
+            return redirect(url_for('main.manage_users'))
+        # 1. 处理课程相关
+        # 先删除该教师创建的课程的所有相关数据
+        courses = Course.query.filter_by(created_by=user.id).all()
+        for course in courses:
+            # 删除课程的所有成绩记录
+            StudentGrade.query.filter_by(course_id=course.id).delete()
+            # 删除课程的所有注册记录
+            CourseRegistration.query.filter_by(course_id=course.id).delete()
+            # 删除课程的所有论坛帖子和回复
+            course_posts = ForumPost.query.filter_by(course_id=course.id).all()
+            for post in course_posts:
+                ForumReply.query.filter_by(post_id=post.post_id).delete()
+            ForumPost.query.filter_by(course_id=course.id).delete()
+        
+        # 删除课程本身
+        Course.query.filter_by(created_by=user.id).delete()
+        
+        # 2. 删除用户的选课记录
+        CourseRegistration.query.filter_by(user_id=user.id).delete()
+        
+        # 3. 删除用户的成绩记录
+        StudentGrade.query.filter_by(student_id=user.id).delete()
+        
+        # 4. 处理论坛帖子和回复
+        # 先删除用户帖子下的所有回复
+        posts = ForumPost.query.filter_by(author_id=user.id).all()
+        for post in posts:
+            ForumReply.query.filter_by(post_id=post.post_id).delete()
+        # 删除用户的所有回复
+        ForumReply.query.filter_by(replier_id=user.id).delete()
+        # 删除用户的所有帖子
+        ForumPost.query.filter_by(author_id=user.id).delete()
+        
+
+        
+        # 5. 处理电动车许可证
+        EBikeLicense.query.filter_by(approved_by=user.id).update({EBikeLicense.approved_by: None})
+        EBikeLicense.query.filter_by(owner_id=user.id).delete()
+        
+        # 6. 删除用户档案
+        if user.user_type == 'student':
+            StudentProfile.query.filter_by(user_id=user.id).delete()
+        elif user.user_type == 'teacher':
+            TeacherProfile.query.filter_by(user_id=user.id).delete()
+        elif user.user_type == 'library_staff':
+            LibraryStaffProfile.query.filter_by(user_id=user.id).delete()
+        elif user.user_type == 'security':
+            SecurityProfile.query.filter_by(user_id=user.id).delete()
+        elif user.user_type == 'admin':
+            AdminProfile.query.filter_by(user_id=user.id).delete()
+
+        # 7. 最后删除用户本身
+        db.session.delete(user)
+        db.session.commit()
+        
+        flash('用户删除成功！', 'success')
+        return redirect(url_for('main.manage_users'))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'删除用户时出错：{str(e)}', 'danger')
+        return redirect(url_for('main.manage_users'))

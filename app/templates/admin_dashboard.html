@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width: 1400px; padding: 30px;">
+    <h2>Admin Dashboard</h2>
+    <p>Welcome, {{ current_user.username }}! This is the admin dashboard.</p>
+    <!-- 添加管理员专属功能 -->
+    <ul>
+        <li><a href="{{ url_for('main.manage_users') }}">Manage Users</a></li>
+    </ul>
+</div>
+{% endblock %}

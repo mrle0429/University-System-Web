@@ -157,3 +157,10 @@ class EBikeLicense(db.Model):
 
     owner = db.relationship('User', foreign_keys=[owner_id])
     approver = db.relationship('User', foreign_keys=[approved_by])
+
+
+class AdminProfile(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    staff_id = db.Column(db.String(20), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
