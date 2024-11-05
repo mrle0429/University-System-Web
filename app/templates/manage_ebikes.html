@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width: 1400px; padding: 30px;">
+    <h2>E-bike Management</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>License Plate</th>
+                <th>Bike Model</th>
+                <th>Owner</th>
+                <th>Status</th>
+                <th>Registration Date</th>
+                <th>Expiration Date</th>
+                <th>Approved By</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ebike in ebikes %}
+            <tr>
+                <td>{{ ebike.license_id }}</td>
+                <td>{{ ebike.license_plate }}</td>
+                <td>{{ ebike.bike_model }}</td>
+                <td>{{ ebike.owner.username }}</td>
+                <td>{{ ebike.status }}</td>
+                <td>{{ ebike.registration_date }}</td>
+                <td>{{ ebike.expiration_date }}</td>
+                <td>{{ ebike.approved_by.username }}</td>
+                <td>
+                    {% if ebike.status == 'Pending' %}
+                    <form method="POST" action="{{ url_for('main.approve_ebike', ebike_id=ebike.license_id) }}" style="display:inline;">
+                        <input type="date" name="registration_date" required>
+                        <input type="date" name="expiration_date" required>
+                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('main.reject_ebike', ebike_id=ebike.license_id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                    </form>
+                    {% elif ebike.status == 'Approved' %}
+                    <form method="POST" action="{{ url_for('main.cancel_ebike', ebike_id=ebike.license_id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-warning btn-sm">Cancel</button>
+                    </form>
+                    {% elif ebike.status == 'Rejected' %}
+                    <span class="badge badge-danger">Rejected</span>
+                    {% elif ebike.status == 'Cancelled' %}
+                    <span class="badge badge-warning">Cancelled</span>
+                    {% elif ebike.status == 'Expired' %}
+                    <span class="badge badge-secondary">Expired</span>
+
+                    {% endif %}
+                    
+                </td>
+                
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

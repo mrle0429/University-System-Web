@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width: 1400px; padding: 30px;">
+    <h2>Security Personnel Profile</h2>
+    <a href="{{ url_for('main.edit_profile', user_id=user.id) }}" class="edit-profile-button">Edit Profile</a>
+    <div class="profile-info" style="padding: 30px; background-color: #ffffff; border-radius: 10px; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); font-size: 1.1em;">
+        <p><strong>Staff ID:</strong> {{ profile.staff_id }}</p>
+        <p><strong>Name:</strong> {{ profile.name }}</p>
+        <p><strong>Gender:</strong> {{ profile.gender }}</p>
+        <p><strong>Shift Hours:</strong> {{ profile.shift_hours }}</p>
+        <p><strong>Assigned Area:</strong> {{ profile.assigned_area }}</p>
+        <p><strong>Email:</strong> {{ profile.email }}</p>
+    </div>
+
+</div>
+{% endblock %}

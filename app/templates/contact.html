@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - BJUT</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- 交互式背景 -->
+    <div class="interactive-background">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="container">
+        <h1>Contact Us</h1>
+        
+        <div class="contact-grid">
+            <!-- 学校总体联系方式 -->
+            <div class="contact-section">
+                <h2>General Contact</h2>
+                <ul>
+                    <li>Address: 100 Pingleyuan, Chaoyang District, Beijing</li>
+                    <li>Phone: +86 10-6739-XXXX</li>
+                    <li>Email: info@bjut.edu.cn</li>
+                </ul>
+            </div>
+
+            <!-- 各部门联系方式 -->
+            <div class="contact-section">
+                <h2>Departments</h2>
+                <ul>
+                    <li>
+                        <strong>Academic Affairs Office</strong><br>
+                        Phone: +86 10-6739-XXXX<br>
+                        Email: academic@bjut.edu.cn
+                    </li>
+                    <li>
+                        <strong>International Office</strong><br>
+                        Phone: +86 10-6739-XXXX<br>
+                        Email: international@bjut.edu.cn
+                    </li>
+                    <li>
+                        <strong>Library</strong><br>
+                        Phone: +86 10-6739-XXXX<br>
+                        Email: library@bjut.edu.cn
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{{ url_for('main.index') }}" class="action-btn">Back to Home</a>
+        </div>
+    </div>
+</body>
+</html> 

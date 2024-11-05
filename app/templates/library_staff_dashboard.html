@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width: 1400px; padding: 30px;">
+    <h2>Library Staff Profile</h2>
+    <a href="{{ url_for('main.edit_profile', user_id=user.id) }}" class="edit-profile-button">Edit Profile</a>
+
+    <div class="profile-info" style="padding: 30px; background-color: #ffffff; border-radius: 10px; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); font-size: 1.1em;">
+        <p><strong>Staff ID:</strong> {{ profile.staff_id }}</p>
+        <p><strong>Name:</strong> {{ profile.name }}</p>
+        <p><strong>Gender:</strong> {{ profile.gender }}</p>
+        <p><strong>Email:</strong> {{ profile.email }}</p>
+        <p><strong>Department:</strong> {{ profile.department }}</p>
+        <p><strong>Position:</strong> {{ profile.position }}</p>
+        <p><strong>Work Hours:</strong> {{ profile.work_hours }}</p>
+        <p><strong>Biography:</strong> {{ profile.biography }}</p>
+    </div>
+
+    <h3>Library Management</h3>
+    <div class="management-section" style="margin-top: 30px;">
+        <div class="quick-actions" style="margin-bottom: 20px;">
+            <a href="{{ url_for('main.add_book') }}" class="action-button" style="background-color: #007bff; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; margin-right: 10px;">Add New Book</a>
+            <a href="{{ url_for('main.manage_books') }}" class="action-button" style="background-color: #28a745; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; margin-right: 10px;">Manage Books</a>
+            <a href="{{ url_for('main.library_statistics') }}" class="action-button" style="background-color: #17a2b8; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">View Statistics</a>
+        </div>
+
+        <div class="recent-activities" style="background-color: #ffffff; border-radius: 10px; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); padding: 20px;">
+            <h4>Recent Activities</h4>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 1.1em;">
+                <thead>
+                    <tr>
+                        <th style="background-color: #007bff; color: white; padding: 12px; border: 1px solid #ccc;">Date</th>
+                        <th style="background-color: #007bff; color: white; padding: 12px; border: 1px solid #ccc;">Activity Type</th>
+                        <th style="background-color: #007bff; color: white; padding: 12px; border: 1px solid #ccc;">Details</th>
+                        <th style="background-color: #007bff; color: white; padding: 12px; border: 1px solid #ccc;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border: 1px solid #ccc; padding: 10px;">2024-01-20</td>
+                        <td style="border: 1px solid #ccc; padding: 10px;">Book Return</td>
+                        <td style="border: 1px solid #ccc; padding: 10px;">Book ID: 12345 - "Python Programming"</td>
+                        <td style="border: 1px solid #ccc; padding: 10px;">Completed</td>
+                    </tr>
+                    <!-- Add more rows as needed -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %} 

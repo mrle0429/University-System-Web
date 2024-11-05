@@ -1,36 +1,40 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
+<div class="container" style="max-width: 1400px; padding: 30px;">
     <h2>Teacher Profile</h2>
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        <div>{{ form.modules.label }} {{ form.modules(size=32) }}</div>
-        <div>{{ form.office_location.label }} {{ form.office_location(size=32) }}</div>
-        <div>{{ form.office_hours.label }} {{ form.office_hours(size=32) }}</div>
-        <div>{{ form.submit() }}</div>
-    </form>
+    <a href="{{ url_for('main.edit_profile', user_id=user.id) }}" class="edit-profile-button">Edit Profile</a>
+
+    <div class="profile-info" style="padding: 30px; background-color: #ffffff; border-radius: 10px; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); font-size: 1.1em;">
+        <p><strong>School ID:</strong> {{ profile.school_id }}</p>
+        <p><strong>Name:</strong> {{ profile.name }}</p>
+        <p><strong>Gender:</strong> {{ profile.gender }}</p>
+        <p><strong>Office Room:</strong> {{ profile.office_location }}</p>
+        <p><strong>Email:</strong> {{ profile.email }}</p>
+        <p><strong>Office Hours:</strong> {{ profile.office_hours }}</p>
+        <p><strong>Biography:</strong> {{ profile.biography }}</p>
+    </div>
 
     <h3>Manage Courses</h3>
-    <table>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 1.1em;">
         <thead>
             <tr>
-                <th>Course ID</th>
-                <th>Course Code</th>
-                <th>Course Name</th>
-                <th>Day of the Week</th>
-                <th>Time</th>
-                <th>Actions</th>
+                <th style="background-color: #007bff; color: white; padding: 12px; border: 1px solid #ccc;">Course ID</th>
+                <th style="background-color: #007bff; color: white; padding: 12px; border: 1px solid #ccc;">Course Code</th>
+                <th style="background-color: #007bff; color: white; padding: 12px; border: 1px solid #ccc;">Course Name</th>
+                <th style="background-color: #007bff; color: white; padding: 12px; border: 1px solid #ccc;">Day of the Week</th>
+                <th style="background-color: #007bff; color: white; padding: 12px; border: 1px solid #ccc;">Time</th>
+                <th style="background-color: #007bff; color: white; padding: 12px; border: 1px solid #ccc;">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for course in courses %}
             <tr>
-                <td>{{ course.id }}</td>
-                <td>{{ course.course_code }}</td>
-                <td>{{ course.course_name }}</td>
-                <td>{{ course.day_of_week }}</td>
-                <td>{{ course.start_period }} - {{ course.end_period }}</td>
-                <td>
+                <td style="border: 1px solid #ccc; padding: 10px;">{{ course.id }}</td>
+                <td style="border: 1px solid #ccc; padding: 10px;">{{ course.course_code }}</td>
+                <td style="border: 1px solid #ccc; padding: 10px;">{{ course.course_name }}</td>
+                <td style="border: 1px solid #ccc; padding: 10px;">{{ course.day_of_week }}</td>
+                <td style="border: 1px solid #ccc; padding: 10px;">{{ course.start_period }} - {{ course.end_period }}</td>
+                <td style="border: 1px solid #ccc; padding: 10px;">
                     <a href="{{ url_for('main.edit_course', course_id=course.id) }}">Edit</a> |
                     <form method="POST" action="{{ url_for('main.delete_course', course_id=course.id) }}" style="display:inline;">
                         <button type="submit">Delete</button>
@@ -42,4 +46,3 @@
     </table>
 </div>
 {% endblock %}
-
