@@ -514,6 +514,7 @@ def edit_book(book_id):
         book.author = form.author.data
         book.publication_year = form.publication_year.data
         book.category = form.category.data
+        book.availability_status = form.availability_status.data  # 更新借阅状态
         db.session.commit()
         flash('Book updated successfully!', 'success')
         return redirect(url_for('main.manage_books'))

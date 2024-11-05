@@ -125,6 +125,11 @@ class AddBookForm(FlaskForm):
         ('law', 'Law'),
         ('other', 'Other')
     ], validators=[DataRequired()])
+    availability_status = SelectField('Availability Status', choices=[
+        ('available', 'Available'),
+        ('borrowed', 'Borrowed'),
+        ('lost', 'Lost')
+    ], validators=[DataRequired()])
     submit = SubmitField('Add Book')
 
 class SearchBookForm(FlaskForm):
@@ -135,7 +140,7 @@ class SearchBookForm(FlaskForm):
         ('', 'All'),
         ('available', 'Available'),
         ('borrowed', 'Borrowed'),
-        ('reserved', 'Reserved')
+        ('lost', 'Lost')
     ])
     submit = SubmitField('Search')
 
