@@ -77,7 +77,7 @@ form label {
     margin-bottom: 0.5em;
 }
 
-form input[type="text"], form input[type="email"], 
+form input[type="text"], form input[type="email"],
 form input[type="password"], form textarea, form select {
     width: 100%;
     padding: 12px;
@@ -504,14 +504,14 @@ textarea {
     border: none;
 }
 
-.action-btn:hover, .btn-primary:hover, 
+.action-btn:hover, .btn-primary:hover,
 .edit-profile-button:hover, .my-course-button:hover {
     transform: scale(1.05);
     background: linear-gradient(45deg, #1976D2, #0097A7);
 }
 
 /* 统一卡片容器样式 */
-.card-container, .feature-card, .forum-post-content, 
+.card-container, .feature-card, .forum-post-content,
 .forum-reply-card, .contact-section {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 15px;
@@ -523,8 +523,8 @@ textarea {
     transition: transform 0.3s ease;
 }
 
-.card-container:hover, .feature-card:hover, 
-.forum-post-content:hover, .forum-reply-card:hover, 
+.card-container:hover, .feature-card:hover,
+.forum-post-content:hover, .forum-reply-card:hover,
 .contact-section:hover {
     transform: translateY(-5px);
 }
