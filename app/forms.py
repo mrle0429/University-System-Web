@@ -152,3 +152,16 @@ class EBikeForm(FlaskForm):
     license_plate = StringField('License Plate', validators=[DataRequired(), Length(max=20)])
     bike_model = StringField('Bike Model', validators=[DataRequired(), Length(max=50)])
 
+class UserPreferenceForm(FlaskForm):
+    theme = SelectField('Theme', choices=[
+        ('light', 'Light Mode'),
+        ('dark', 'Dark Mode'),
+        ('blue', 'Blue Mode')
+    ], validators=[DataRequired()])
+    font_size = SelectField('Font Size', choices=[
+        ('small', 'Small'),
+        ('medium', 'Medium'),
+        ('large', 'Large')
+    ], validators=[DataRequired()])
+    submit = SubmitField('Save Preferences')
+

@@ -157,3 +157,13 @@ class EBikeLicense(db.Model):
 
     owner = db.relationship('User', foreign_keys=[owner_id])
     approver = db.relationship('User', foreign_keys=[approved_by])
+
+class UserPreference(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    theme = db.Column(db.String(20), default='light')  # light, dark, blue
+    font_size = db.Column(db.String(10), default='medium')  # small, medium, large
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    user = db.relationship('User', backref=db.backref('preference', uselist=False))

@@ -1,0 +1,878 @@
+:root {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --bg-container: rgba(40, 40, 40, 0.95);
+    --bg-card: rgba(50, 50, 50, 0.95);
+    --bg-input: rgba(60, 60, 60, 0.9);
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --link-color: #4ca0ff;
+    --link-hover: #66b3ff;
+    --gradient-primary: linear-gradient(45deg, #1e3c72, #2a5298);
+    --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+/* 基础样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--text-primary);
+}
+
+/* 导航栏样式 */
+nav {
+    background: var(--bg-container);
+    padding: 1em;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 2px 10px var(--shadow-color);
+    backdrop-filter: blur(10px);
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+nav ul li {
+    margin: 0 1em;
+}
+
+nav ul li a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: var(--link-color);
+}
+
+/* 容器样式 */
+.container {
+    margin: 2em auto;
+    max-width: 800px;
+    padding: 1em;
+    background: var(--bg-container);
+    border-radius: 15px;
+    box-shadow: 0 8px 16px var(--shadow-color);
+}
+
+/* 标题样式 */
+h2 {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    margin-top: 0;
+}
+
+/* 表单样式 */
+form div, .reply-form-container {
+    background: var(--bg-card);
+    padding: 1em;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px var(--shadow-color);
+    margin-bottom: 1em;
+}
+
+form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    color: var(--text-primary);
+}
+
+form input[type="text"], form input[type="email"], 
+form input[type="password"], form textarea, form select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+/* 按钮样式 */
+form input[type="submit"], .toggle-replies {
+    background: var(--gradient-primary);
+    color: var(--text-primary);
+    border: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+form input[type="submit"]:hover, .toggle-replies:hover {
+    transform: scale(1.05);
+    background: linear-gradient(45deg, #2a5298, #1e3c72);
+}
+
+/* 论坛帖子样式 */
+.forum-post, .forum-reply {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    padding: 1em;
+    margin-bottom: 1em;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.forum-post-main {
+    background-color: var(--bg-card);
+    border-left: 5px solid var(--link-color);
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.forum-reply-card {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+/* 表格样式 */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+    background: var(--bg-card);
+}
+
+table, th, td {
+    border: 1px solid var(--border-color);
+    padding: 0.5em;
+    text-align: left;
+    color: var(--text-primary);
+}
+
+th {
+    background: var(--gradient-primary);
+    color: var(--text-primary);
+    font-weight: bold;
+}
+
+/* Dashboard 样式 */
+.dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 1200px;
+    background: var(--bg-container);
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.profile-section, .timetable-section, .course-section {
+    background: var(--bg-card);
+    border-radius: 15px;
+    box-shadow: 0 8px 16px var(--shadow-color);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    padding: 30px;
+    margin-bottom: 30px;
+    transition: transform 0.3s ease;
+    color: var(--text-primary);
+}
+
+.profile-section:hover, .timetable-section:hover, .course-section:hover {
+    transform: translateY(-5px);
+}
+
+.profile-info p, .course-info p {
+    color: var(--text-secondary);
+    margin: 5px 0;
+}
+
+.course-item {
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.course-item:last-child {
+    border-bottom: none;
+}
+
+/* 按钮样式 */
+.edit-profile-button, .my-course-button {
+    display: inline-block;
+    padding: 10px 15px;
+    background: var(--gradient-primary);
+    color: var(--text-primary);
+    border-radius: 4px;
+    text-decoration: none;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.edit-profile-button:hover, .my-course-button:hover {
+    background: linear-gradient(45deg, #2a5298, #1e3c72);
+}
+
+/* 论坛布局 */
+.forum-layout {
+    display: flex;
+    gap: 20px;
+}
+
+.forum-post-content {
+    flex: 1;
+    padding: 20px;
+    background: var(--bg-card);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.forum-post-main {
+    padding: 15px;
+    background: var(--bg-secondary);
+    border-left: 5px solid var(--link-color);
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+/* 删除按钮 */
+.delete-btn {
+    background-color: #ff5c5c;
+    color: var(--text-primary);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background-color: #e60000;
+}
+
+/* E-bike 布局 */
+.e-bike-layout {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.e-bike-form {
+    flex: 1;
+    padding: 20px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.e-bike-details {
+    flex: 1;
+    padding: 20px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.e-bike-card-title {
+    color: var(--text-primary);
+}
+
+.e-bike-info-title {
+    color: var(--text-secondary);
+}
+
+.e-bike-info-content {
+    color: var(--text-primary);
+}
+
+/* 状态徽章 */
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.status-badge-pending {
+    background-color: #8B6B00;
+}
+
+.status-badge-approved {
+    background-color: #1B5E20;
+}
+
+.status-badge-expired {
+    background-color: #7F0000;
+}
+
+.status-badge-rejected {
+    background-color: #B71C1C;
+}
+
+.status-badge-cancelled {
+    background-color: #E65100;
+}
+
+/* 访客页面样式 */
+.visitor-container {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.welcome-section {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.welcome-title {
+    font-size: 3em;
+    margin-bottom: 10px;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.welcome-subtitle {
+    font-size: 1.2em;
+    color: var(--text-secondary);
+}
+
+/* 卡片样式 */
+.card-container, .feature-card, .forum-post-content, 
+.forum-reply-card, .contact-section {
+    background: var(--bg-card);
+    border-radius: 15px;
+    box-shadow: 0 8px 16px var(--shadow-color);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    padding: 30px;
+    margin-bottom: 30px;
+    transition: transform 0.3s ease;
+}
+
+.card-container:hover, .feature-card:hover, 
+.forum-post-content:hover, .forum-reply-card:hover, 
+.contact-section:hover {
+    transform: translateY(-5px);
+}
+
+/* 粒子效果 */
+.particle {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--link-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--link-hover);
+}
+
+/* 表格样式增强 */
+.table {
+    color: var(--text-primary);
+}
+
+.table td {
+    color: var(--text-secondary);
+    border-color: var(--border-color);
+}
+
+.table tr:nth-child(even) {
+    background-color: var(--bg-secondary);
+}
+
+.table tr:hover {
+    background-color: rgba(76, 160, 255, 0.1);
+}
+
+/* 访客页面样式 */
+.visitor-welcome {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+.visitor-card {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+/* 创建帖子按钮 */
+.create-post-btn {
+    background-color: var(--link-color);
+    color: var(--text-primary);
+}
+
+.create-post-btn:hover {
+    background-color: var(--link-hover);
+}
+
+/* 粒子效果 */
+.particle {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-30px); }
+}
+
+/* 表格样式增强 */
+table {
+    background: var(--bg-card);
+    border-color: var(--border-color);
+}
+
+table, th, td {
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+th {
+    background: var(--gradient-primary);
+    color: var(--text-primary);
+}
+
+/* Dashboard 样式 */
+.dashboard {
+    background: var(--bg-container);
+}
+
+.profile-section, .timetable-section, .course-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+}
+
+.profile-info p {
+    color: var(--text-secondary);
+}
+
+.course-item {
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+/* 访客页面样式 */
+.visitor-welcome {
+    background: var(--bg-card);
+}
+
+.visitor-options {
+    background: var(--bg-container);
+}
+
+.visitor-card {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+/* 联系页面样式 */
+.contact-grid {
+    background: var(--bg-container);
+}
+
+.contact-section {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+.contact-section li {
+    color: var(--text-secondary);
+}
+
+/* E-bike 式 */
+.e-bike-layout {
+    background: var(--bg-container);
+}
+
+.e-bike-form {
+    background: var(--bg-card);
+}
+
+.e-bike-info-title {
+    color: var(--text-secondary);
+}
+
+.e-bike-info-content {
+    color: var(--text-primary);
+}
+
+.e-bike-card-title {
+    color: var(--text-primary);
+}
+
+/* 论坛样式 */
+.forum-post, .forum-reply {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+}
+
+.forum-post-content {
+    background: var(--bg-card);
+    border-left: 5px solid var(--link-color);
+}
+
+.forum-reply-card {
+    background: var(--bg-secondary);
+}
+
+/* 输入框和表单样式 */
+textarea {
+    background: var(--bg-input);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--text-secondary);
+}
+
+/* 按钮样式 */
+.action-btn, .btn-primary, 
+.edit-profile-button, .my-course-button {
+    background: var(--gradient-primary);
+    color: var(--text-primary);
+}
+
+.action-btn:hover, .btn-primary:hover,
+.edit-profile-button:hover, .my-course-button:hover {
+    background: linear-gradient(45deg, #2a5298, #1e3c72);
+}
+
+/* Dashboard Layout Dark Theme */
+.container.dashboard-container {
+    background: var(--bg-container);
+}
+
+.profile-timetable-wrapper {
+    background: var(--bg-container);
+}
+
+.profile-section {
+    background: var(--bg-card);
+    box-shadow: 0 6px 10px var(--shadow-color);
+    color: var(--text-primary);
+}
+
+.timetable-section {
+    background: var(--bg-card);
+    box-shadow: 0 6px 10px var(--shadow-color);
+    color: var(--text-primary);
+}
+
+.course-section {
+    background: var(--bg-card);
+    box-shadow: 0 6px 10px var(--shadow-color);
+    color: var(--text-primary);
+}
+
+.course-item {
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.timetable-section table {
+    background: var(--bg-card);
+}
+
+.timetable-section th {
+    background: var(--gradient-primary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.timetable-section td {
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+/* 搜索页面深色模式 */
+.search-form {
+    background: var(--bg-card);
+    box-shadow: 0 6px 10px var(--shadow-color);
+}
+
+.search-results {
+    background: var(--bg-card);
+    box-shadow: 0 6px 10px var(--shadow-color);
+}
+
+/* 成绩页面深色模式 */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--bg-secondary);
+}
+
+.table-striped tbody tr:nth-of-type(even) {
+    background-color: var(--bg-card);
+}
+
+.table-striped tbody tr:hover {
+    background-color: rgba(76, 160, 255, 0.1);
+}
+
+/* Security Dashboard 深色模式 */
+.security-profile-info {
+    background: var(--bg-card);
+    box-shadow: 0 6px 10px var(--shadow-color);
+    color: var(--text-primary);
+}
+
+.security-profile-info p {
+    color: var(--text-secondary);
+}
+
+/* Teacher Dashboard 深色模式 */
+.teacher-profile-info {
+    background: var(--bg-card);
+    box-shadow: 0 6px 10px var(--shadow-color);
+    color: var(--text-primary);
+}
+
+.teacher-profile-info p {
+    color: var(--text-secondary);
+}
+
+.teacher-courses-table {
+    background: var(--bg-card);
+}
+
+.teacher-courses-table th {
+    background: var(--gradient-primary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.teacher-courses-table td {
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+/* 图书管理深色模式 */
+.form-container,
+.add-book-form,
+.library-profile-info,
+.recent-activities {
+    background: var(--bg-card);
+    box-shadow: 0 6px 10px var(--shadow-color);
+    color: var(--text-primary);
+}
+
+.action-button {
+    background: var(--gradient-primary);
+    color: var(--text-primary);
+}
+
+.action-button.green {
+    background: linear-gradient(45deg, #1b5e20, #388e3c);
+}
+
+.action-button.blue {
+    background: linear-gradient(45deg, #006064, #0097a7);
+}
+
+.activities-table th {
+    background: var(--gradient-primary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.activities-table td {
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+/* 添加图书页面深色模式 */
+.add-book-form {
+    background: var(--bg-card);
+    box-shadow: 0 6px 10px var(--shadow-color);
+    color: var(--text-primary);
+}
+
+/* 图书管理页面深色模式补充 */
+#addBookForm {
+    background: var(--bg-card);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.btn-success {
+    background: linear-gradient(45deg, #1b5e20, #388e3c);
+    color: var(--text-primary);
+}
+
+.btn-success:hover {
+    background: linear-gradient(45deg, #2e7d32, #43a047);
+}
+
+.btn-danger {
+    background: linear-gradient(45deg, #c62828, #d32f2f);
+    color: var(--text-primary);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(45deg, #d32f2f, #e53935);
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 0.875rem;
+}
+
+/* 表单控件深色模式 */
+.form-control {
+    background: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.form-control:focus {
+    background: var(--bg-input);
+    border-color: var(--link-color);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 0.2rem rgba(76, 160, 255, 0.25);
+}
+
+.form-label {
+    color: var(--text-primary);
+}
+
+/* 确认对话框样式 */
+.swal2-popup {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+.swal2-title {
+    color: var(--text-primary);
+}
+
+.swal2-content {
+    color: var(--text-secondary);
+}
+
+.swal2-actions button {
+    background: var(--gradient-primary);
+    color: var(--text-primary);
+}
+
+/* 图书管理表格深色模式 */
+.search-results .table tbody tr:nth-of-type(odd) {
+    background-color: var(--bg-secondary);
+}
+
+.search-results .table tbody tr:nth-of-type(even) {
+    background-color: var(--bg-card);
+}
+
+.search-results .table tbody tr:hover {
+    background-color: rgba(76, 160, 255, 0.1);
+}
+
+.search-results .table {
+    background: var(--bg-card);
+    border-color: var(--border-color);
+}
+
+.search-results .table th {
+    background: var(--gradient-primary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.search-results .table td {
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+/* E-bike 表单深色模式 */
+.e-bike-form {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+.e-bike-form .form-control {
+    background: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.e-bike-form .form-control:focus {
+    background: var(--bg-input);
+    border-color: var(--link-color);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 0.2rem rgba(76, 160, 255, 0.25);
+}
+
+.e-bike-form label {
+    color: var(--text-primary);
+}
+
+.e-bike-details {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+.e-bike-info-title {
+    color: var(--text-primary);
+}
+
+.e-bike-info-content {
+    color: var(--text-secondary);
+}
+
+.e-bike-card-title {
+    color: var(--text-primary);
+}
+
+/* 帖子标题样式 */
+.forum-post-title, .course-post-title {
+    color: var(--text-primary);
+}
+
+.forum-post-title a, .course-post-title a {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.forum-post-title a:hover, .course-post-title a:hover {
+    color: var(--link-color);
+}
+.forum-post-card a{
+    color: var(--link-color);
+}

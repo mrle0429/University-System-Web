@@ -1,10 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container" style="max-width: 1200px; padding: 30px;">
+<div class="container manage-books-container">
     <h2>Manage Library Resources</h2>
-    
-    <!-- Add Book Form -->
-    <div class="add-book-form" style="background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); margin-bottom: 30px;">
+    <div class="add-book-form">
         <button onclick="toggleAddBookForm()" class="btn btn-primary mb-3">Toggle Add Book Form</button>
         <div id="addBookForm" style="display: none;">
             <form method="POST" action="{{ url_for('main.add_book') }}">
@@ -35,7 +33,7 @@
     </div>
     
     <!-- Search Form -->
-    <div class="search-form" style="background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); margin-bottom: 30px;">
+    <div class="search-form"">
         <form method="POST">
             {{ search_form.hidden_tag() }}
             <div class="row">
