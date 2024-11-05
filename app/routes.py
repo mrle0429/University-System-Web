@@ -2,9 +2,9 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, current_user, login_required, logout_user
 from app.forms import RegisterForm, LoginForm, TeacherProfileForm, StudentProfileForm, CreateCourseForm, \
     RegisterCourseForm, ForumPostForm, ForumReplyForm, LibraryStaffProfileForm, AddBookForm, SearchBookForm, \
-    AddGradeForm, EBikeForm, SecurityProfileForm
+    AddGradeForm, EBikeForm, SecurityProfileForm, UserPreferenceForm
 from app.models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db, ForumPost, ForumReply, \
-    LibraryStaffProfile, LibraryResource, StudentGrade, EBikeLicense, SecurityProfile, AdminProfile
+    LibraryStaffProfile, LibraryResource, StudentGrade, EBikeLicense, SecurityProfile, AdminProfile, UserPreference
 from werkzeug.security import generate_password_hash, check_password_hash
 
 main_routes = Blueprint('main', __name__)
@@ -812,3 +812,23 @@ def delete_user(user_id):
         db.session.rollback()
         flash(f'删除用户时出错：{str(e)}', 'danger')
         return redirect(url_for('main.manage_users'))
+@main_routes.route('/preferences', methods=['GET', 'POST'])
+@login_required
+def preferences():
+    # 获取或创建用户偏好
+    user_pref = UserPreference.query.filter_by(user_id=current_user.id).first()
+    if not user_pref:
+        user_pref = UserPreference(user_id=current_user.id)
+        db.session.add(user_pref)
+        db.session.commit()
+    
+    form = UserPreferenceForm(obj=user_pref)
+    
+    if form.validate_on_submit():
+        user_pref.theme = form.theme.data
+        user_pref.font_size = form.font_size.data
+        db.session.commit()
+        flash('Preferences updated successfully!', 'success')
+        return redirect(url_for('main.preferences'))
+        
+    return render_template('preferences.html', form=form)

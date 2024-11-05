@@ -550,3 +550,277 @@ textarea {
     padding: 12px 15px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
+
+/* Dashboard Layout */
+.container.dashboard-container {
+    max-width: 1400px;
+    padding: 30px;
+}
+
+.dashboard {
+    width: 100%;
+}
+
+.profile-timetable-wrapper {
+    display: flex;
+    gap: 30px;
+}
+
+.profile-section {
+    flex: 1;
+    max-width: 400px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    font-size: 1.1em;
+}
+
+.timetable-section {
+    flex: 2;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    font-size: 1.1em;
+}
+
+.course-section {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-top: 30px;
+    font-size: 1.1em;
+}
+
+.course-item {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+.timetable-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 1.1em;
+}
+
+.timetable-section th {
+    background-color: #007bff;
+    color: white;
+    padding: 12px;
+    border: 1px solid #ccc;
+}
+
+.timetable-section td {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+/* 搜索页面样式 */
+.search-container {
+    max-width: 1200px;
+    padding: 30px;
+}
+
+.search-form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.search-results {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 成绩页面样式 */
+.grades-table {
+    margin-top: 20px;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Security Dashboard 样式 */
+.security-container {
+    max-width: 1400px;
+    padding: 30px;
+}
+
+.security-profile-info {
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+    font-size: 1.1em;
+    margin-top: 20px;
+}
+
+/* Teacher Dashboard 样式 */
+.teacher-container {
+    max-width: 1400px;
+    padding: 30px;
+}
+
+.teacher-profile-info {
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+    font-size: 1.1em;
+    margin-bottom: 30px;
+}
+
+.teacher-courses-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 1.1em;
+}
+
+.teacher-courses-table th {
+    background-color: #007bff;
+    color: white;
+    padding: 12px;
+    border: 1px solid #ccc;
+}
+
+.teacher-courses-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.course-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.course-actions form {
+    display: inline;
+}
+
+/* 图书管理相关样式 */
+.edit-book-container {
+    max-width: 800px;
+    padding: 30px;
+}
+
+.form-container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* 图书管理页面样式 */
+.manage-books-container {
+    max-width: 1200px;
+    padding: 30px;
+}
+
+.add-book-form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.col-flex-bottom {
+    display: flex;
+    align-items: flex-end;
+}
+
+/* 图书馆员仪表板样式 */
+.library-staff-container {
+    max-width: 1400px;
+    padding: 30px;
+}
+
+.library-profile-info {
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+    font-size: 1.1em;
+}
+
+.management-section {
+    margin-top: 30px;
+}
+
+.quick-actions {
+    margin-bottom: 20px;
+}
+
+.action-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+.action-button.green {
+    background-color: #28a745;
+}
+
+.action-button.blue {
+    background-color: #17a2b8;
+}
+
+.recent-activities {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.activities-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 1.1em;
+}
+
+.activities-table th {
+    background-color: #007bff;
+    color: white;
+    padding: 12px;
+    border: 1px solid #ccc;
+}
+
+.activities-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+/* 添加图书页面样式 */
+.add-book-container {
+    max-width: 800px;
+    padding: 30px;
+}
+
+.add-book-form {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
