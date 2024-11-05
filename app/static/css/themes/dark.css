@@ -873,6 +873,11 @@ input::placeholder, textarea::placeholder {
 .forum-post-title a:hover, .course-post-title a:hover {
     color: var(--link-color);
 }
+
 .forum-post-card a{
+    color: var(--link-color);
+}
+
+.search-results a{
     color: var(--link-color);
 }
