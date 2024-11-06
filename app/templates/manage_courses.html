@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width: 1400px; padding: 30px;">
+    <h2>Manage Courses</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Course Code</th>
+                <th>Course Name</th>
+                <th>Academic Year</th>
+                <th>Semester</th>
+                <th>Schedule</th>
+                <th>Created By</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course.id }}</td>
+                <td>{{ course.course_code }}</td>
+                <td>{{ course.course_name }}</td>
+                <td>{{ course.year }}</td>
+                <td>{{ course.semester }}</td>
+                <td>{{ course.day_of_week }} ({{ course.start_period }}-{{ course.end_period }})</td>
+                <td>{{ course.created_by }}</td>
+
+                <td>
+                    <form method="POST" action="{{ url_for('main.delete_course_admin', course_id=course.id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

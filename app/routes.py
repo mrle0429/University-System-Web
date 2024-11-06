@@ -735,74 +735,55 @@ def delete_user(user_id):
 
     try:
         user = User.query.get_or_404(user_id)
-        
 
-        if user.user_type == 'security':
-            # 1. 处理电动车许可证审批记录
-            # 将该安保人员审批的许可证的审批人设为 NULL
-            EBikeLicense.query.filter_by(approved_by=user.id).update({EBikeLicense.approved_by:None})
-            
-            # 2. 删除安保人员档案
-            SecurityProfile.query.filter_by(user_id=user.id).delete()
-            
-            # 3. 最后删除用户本身
-            db.session.delete(user)
-            db.session.commit()
-            
-            flash('安保人员删除成功！', 'success')
-            return redirect(url_for('main.manage_users'))
-        # 1. 处理课程相关
-        # 先删除该教师创建的课程的所有相关数据
-        courses = Course.query.filter_by(created_by=user.id).all()
-        for course in courses:
-            # 删除课程的所有成绩记录
-            StudentGrade.query.filter_by(course_id=course.id).delete()
-            # 删除课程的所有注册记录
-            CourseRegistration.query.filter_by(course_id=course.id).delete()
-            # 删除课程的所有论坛帖子和回复
-            course_posts = ForumPost.query.filter_by(course_id=course.id).all()
-            for post in course_posts:
-                ForumReply.query.filter_by(post_id=post.post_id).delete()
-            ForumPost.query.filter_by(course_id=course.id).delete()
-        
-        # 删除课程本身
-        Course.query.filter_by(created_by=user.id).delete()
-        
-        # 2. 删除用户的选课记录
-        CourseRegistration.query.filter_by(user_id=user.id).delete()
-        
-        # 3. 删除用户的成绩记录
-        StudentGrade.query.filter_by(student_id=user.id).delete()
-        
-        # 4. 处理论坛帖子和回复
-        # 先删除用户帖子下的所有回复
-        posts = ForumPost.query.filter_by(author_id=user.id).all()
-        for post in posts:
-            ForumReply.query.filter_by(post_id=post.post_id).delete()
-        # 删除用户的所有回复
-        ForumReply.query.filter_by(replier_id=user.id).delete()
-        # 删除用户的所有帖子
-        ForumPost.query.filter_by(author_id=user.id).delete()
-        
-
-        
-        # 5. 处理电动车许可证
-        EBikeLicense.query.filter_by(approved_by=user.id).update({EBikeLicense.approved_by: None})
-        EBikeLicense.query.filter_by(owner_id=user.id).delete()
-        
-        # 6. 删除用户档案
+        # 1. 根据用户类型处理特定关联数据
         if user.user_type == 'student':
+            # 处理学生相关数据
+            CourseRegistration.query.filter_by(user_id=user.id).delete()
+            StudentGrade.query.filter_by(student_id=user.id).delete()
+            EBikeLicense.query.filter_by(owner_id=user.id).delete()
             StudentProfile.query.filter_by(user_id=user.id).delete()
+
         elif user.user_type == 'teacher':
+            # 处理教师相关数据
+            courses = Course.query.filter_by(created_by=user.id).all()
+            for course in courses:
+                StudentGrade.query.filter_by(course_id=course.id).delete()
+                CourseRegistration.query.filter_by(course_id=course.id).delete()
+            Course.query.filter_by(created_by=user.id).delete()
             TeacherProfile.query.filter_by(user_id=user.id).delete()
-        elif user.user_type == 'library_staff':
-            LibraryStaffProfile.query.filter_by(user_id=user.id).delete()
+
         elif user.user_type == 'security':
+            # 处理安保人员相关数据
+            EBikeLicense.query.filter_by(approved_by=user.id).update({EBikeLicense.approved_by: None})
             SecurityProfile.query.filter_by(user_id=user.id).delete()
+
+        elif user.user_type == 'library_staff':
+            # 处理图书管理员相关数据
+            LibraryStaffProfile.query.filter_by(user_id=user.id).delete()
+        
         elif user.user_type == 'admin':
+            # 检查是否是最后一个管理员
+            admin_count = User.query.filter_by(user_type='admin').count()
+            if admin_count <= 1:
+                print("尝试删除最后一个管理员")  # 调试信息
+                from flask import session
+                session['_flashes'] = [(u'danger', u'无法删除最后一个管理员账号！')]
+                return redirect(url_for('main.manage_users'))
             AdminProfile.query.filter_by(user_id=user.id).delete()
 
-        # 7. 最后删除用户本身
+        # 2. 处理论坛相关数据（除了安保人员）
+        if user.user_type != 'security':
+            posts = ForumPost.query.filter_by(author_id=user.id).all()
+            for post in posts:
+                ForumReply.query.filter_by(post_id=post.post_id).delete()
+            ForumReply.query.filter_by(replier_id=user.id).delete()
+            ForumPost.query.filter_by(author_id=user.id).delete()
+        
+        # 3. 删除用户偏好设置（所有类型用户都有）
+        UserPreference.query.filter_by(user_id=user.id).delete()
+        
+        # 4. 最后删除用户本身
         db.session.delete(user)
         db.session.commit()
         
@@ -813,6 +794,8 @@ def delete_user(user_id):
         db.session.rollback()
         flash(f'删除用户时出错：{str(e)}', 'danger')
         return redirect(url_for('main.manage_users'))
+    
+
 @main_routes.route('/preferences', methods=['GET', 'POST'])
 @login_required
 def preferences():
@@ -833,3 +816,52 @@ def preferences():
         return redirect(url_for('main.preferences'))
         
     return render_template('preferences.html', form=form)
+
+@main_routes.route('/admin/manage_courses')
+@login_required
+def manage_courses():
+    if current_user.user_type != 'admin':
+        flash('Access denied. Admin only.', 'danger')
+        return redirect(url_for('main.index'))
+    
+# Get all courses
+    courses = Course.query.all()
+    
+
+    
+    return render_template('manage_courses.html', courses=courses,)
+
+@main_routes.route('/admin/delete_course/<int:course_id>', methods=['POST'])
+@login_required
+def delete_course_admin(course_id):
+    if current_user.user_type != 'admin':
+        flash('Access denied. Admin only.', 'danger')
+        return redirect(url_for('main.index'))
+
+    try:
+        course = Course.query.get_or_404(course_id)
+        
+        # Delete all course-related data
+        # 1. Delete grades
+        StudentGrade.query.filter_by(course_id=course.id).delete()
+        
+        # 2. Delete course registrations
+        CourseRegistration.query.filter_by(course_id=course.id).delete()
+        
+        # 3. Delete forum posts and replies
+        course_posts = ForumPost.query.filter_by(course_id=course.id).all()
+        for post in course_posts:
+            ForumReply.query.filter_by(post_id=post.post_id).delete()
+        ForumPost.query.filter_by(course_id=course.id).delete()
+        
+        # 4. Delete the course itself
+        db.session.delete(course)
+        db.session.commit()
+        
+        flash('Course deleted successfully!', 'success')
+        return redirect(url_for('main.manage_courses'))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting course: {str(e)}', 'danger')
+        return redirect(url_for('main.manage_courses'))
