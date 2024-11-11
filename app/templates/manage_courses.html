@@ -24,7 +24,7 @@
                 <td>{{ course.year }}</td>
                 <td>{{ course.semester }}</td>
                 <td>{{ course.day_of_week }} ({{ course.start_period }}-{{ course.end_period }})</td>
-                <td>{{ course.created_by }}</td>
+                <td>{{ course.creator.username }}</td>
 
                 <td>
                     <form method="POST" action="{{ url_for('main.delete_course_admin', course_id=course.id) }}" style="display:inline;">

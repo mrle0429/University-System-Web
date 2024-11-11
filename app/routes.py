@@ -726,6 +726,32 @@ def manage_users():
     users = User.query.all()
     return render_template('manage_users.html', users=users)
 
+#管理员创建用户
+@main_routes.route('/admin/create_user', methods=['GET', 'POST'])
+@login_required
+def create_user():
+    if current_user.user_type != 'admin':
+        flash('访问被拒绝。仅限管理员使用。', 'danger')
+        return redirect(url_for('main.index'))
+    form = RegisterForm()
+    if form.validate_on_submit():
+        existing_user = User.query.filter_by(email=form.email.data).first()
+        if existing_user:
+            flash('该邮箱已被注册。请使用其他邮箱。', 'danger')
+            return redirect(url_for('main.create_user'))
+        hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
+        new_user = User(
+            username=form.username.data,
+            email=form.email.data,
+            password=hashed_password,
+            user_type=form.user_type.data
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        flash(f'用户 {form.username.data} 创建成功！', 'success')
+        return redirect(url_for('main.manage_users'))
+    return render_template('create_user.html', form=form)
+
 @main_routes.route('/admin/delete_user/<int:user_id>', methods=['POST'])
 @login_required
 def delete_user(user_id):
@@ -829,7 +855,7 @@ def manage_courses():
     
 
     
-    return render_template('manage_courses.html', courses=courses,)
+    return render_template('manage_courses.html', courses=courses)
 
 @main_routes.route('/admin/delete_course/<int:course_id>', methods=['POST'])
 @login_required

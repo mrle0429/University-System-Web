@@ -2,6 +2,7 @@
 {% block content %}
 <div class="container" style="max-width: 1400px; padding: 30px;">
     <h2>Manage Users</h2>
+    <a href="{{ url_for('main.create_user') }}" class="btn btn-primary">创建新用户</a>
     <table class="table table-striped">
         <thead>
             <tr>
