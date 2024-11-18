@@ -4,9 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"> -->
+    {% if current_user.is_authenticated and current_user.preference %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/themes/' + current_user.preference.theme + '.css') }}">
+        
+        <style>
+            body { font-size: {{ {'small': '14px', 'medium': '16px', 'large': '18px'}[current_user.preference.font_size] }}; }
+        </style>
+    {% endif %}
     <title>University Website</title>
 </head>
 <body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
     <header>
         <nav>
             <ul>
@@ -44,6 +62,8 @@
                         <li><a href="{{ url_for('main.manage_ebikes') }}">E-bike Management</a></li>
                     {% endif %}
 
+                    <li><a href="{{ url_for('main.preferences') }}">Display Settings</a></li>
+
                     <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
                 {% endif %}
             </ul>
@@ -57,5 +77,8 @@
     </footer>
     <!-- Include the JavaScript file -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
