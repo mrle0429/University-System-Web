@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-5">
+    <!-- 添加图片区域 -->
+    <div class="text-center mb-5">
+        <img src="{{ url_for('static', filename='images/nl02.png') }}" 
+             class="img-fluid rounded shadow" 
+             alt="Admin Dashboard Banner"
+             style="max-height: 200px;">
+    </div>
+
+    <h2 class="text-center mb-4">Admin Dashboard</h2>
+    <div class="row">
+        <!-- Manage Users Button -->
+        <div class="col-md-12 mb-4">
+            <a href="{{ url_for('main.manage_users') }}" class="btn btn-primary btn-lg btn-block">
+                <i class="fas fa-users"></i> Manage Users
+            </a>
+        </div>
+        <!-- Manage Courses Button -->
+        <div class="col-md-12 mb-4">
+            <a href="{{ url_for('main.manage_courses') }}" class="btn btn-success btn-lg btn-block">
+                <i class="fas fa-book"></i> Manage Courses
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

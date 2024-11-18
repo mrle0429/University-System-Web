@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Create User</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('main.create_user') }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="form-group mb-8">
+                            {{ form.username.label(class="form-label") }}
+                            {{ form.username(class="form-control", placeholder="Enter Username") }}
+                            {% if form.username.errors %}
+                                {% for error in form.username.errors %}
+                                    <span class="text-danger">{{ error }}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-8">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control", placeholder="Enter email") }}
+                            {% if form.email.errors %}
+                                {% for error in form.email.errors %}
+                                    <span class="text-danger">{{ error }}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-8">
+                            {{ form.password.label(class="form-label") }}
+                            {{ form.password(class="form-control", placeholder="Enter password") }}
+                            {% if form.password.errors %}
+                                {% for error in form.password.errors %}
+                                    <span class="text-danger">{{ error }}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-8">
+                            {{ form.user_type.label(class="form-label") }}
+                            {{ form.user_type(class="form-select") }}
+                            {% if form.user_type.errors %}
+                                {% for error in form.user_type.errors %}
+                                    <span class="text-danger">{{ error }}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-user-plus"></i> Create
+                            </button>
+                            <a href="{{ url_for('main.manage_users') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Return List
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -2,9 +2,9 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, current_user, login_required, logout_user
 from app.forms import RegisterForm, LoginForm, TeacherProfileForm, StudentProfileForm, CreateCourseForm, \
     RegisterCourseForm, ForumPostForm, ForumReplyForm, LibraryStaffProfileForm, AddBookForm, SearchBookForm, \
-    AddGradeForm, EBikeForm, SecurityProfileForm
+    AddGradeForm, EBikeForm, SecurityProfileForm, UserPreferenceForm
 from app.models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db, ForumPost, ForumReply, \
-    LibraryStaffProfile, LibraryResource, StudentGrade, EBikeLicense, SecurityProfile
+    LibraryStaffProfile, LibraryResource, StudentGrade, EBikeLicense, SecurityProfile, AdminProfile, UserPreference
 from werkzeug.security import generate_password_hash, check_password_hash
 
 main_routes = Blueprint('main', __name__)
@@ -108,6 +108,14 @@ def profile(user_id):
         profile = SecurityProfile.query.filter_by(user_id=user.id).first()
         return render_template(
             'security_dashboard.html',
+            user=user,
+            profile=profile
+        )
+    
+    elif user.user_type == 'admin':
+        profile = AdminProfile.query.filter_by(user_id=user.id).first()
+        return render_template(
+            'admin_dashboard.html',
             user=user,
             profile=profile
         )
@@ -506,6 +514,7 @@ def edit_book(book_id):
         book.author = form.author.data
         book.publication_year = form.publication_year.data
         book.category = form.category.data
+        book.availability_status = form.availability_status.data  # 更新借阅状态
         db.session.commit()
         flash('Book updated successfully!', 'success')
         return redirect(url_for('main.manage_books'))
@@ -706,3 +715,179 @@ def visitor():
 @main_routes.route('/contact')
 def contact():
     return render_template('contact.html')
+
+@main_routes.route('/admin/manage_users', methods=['GET', 'POST'])
+@login_required
+def manage_users():
+    if current_user.user_type != 'admin':
+        flash('Access denied. Admins only.', 'danger')
+        return redirect(url_for('main.index'))
+
+    users = User.query.all()
+    return render_template('manage_users.html', users=users)
+
+#管理员创建用户
+@main_routes.route('/admin/create_user', methods=['GET', 'POST'])
+@login_required
+def create_user():
+    if current_user.user_type != 'admin':
+        flash('访问被拒绝。仅限管理员使用。', 'danger')
+        return redirect(url_for('main.index'))
+    form = RegisterForm()
+    if form.validate_on_submit():
+        existing_user = User.query.filter_by(email=form.email.data).first()
+        if existing_user:
+            flash('该邮箱已被注册。请使用其他邮箱。', 'danger')
+            return redirect(url_for('main.create_user'))
+        hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
+        new_user = User(
+            username=form.username.data,
+            email=form.email.data,
+            password=hashed_password,
+            user_type=form.user_type.data
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        flash(f'用户 {form.username.data} 创建成功！', 'success')
+        return redirect(url_for('main.manage_users'))
+    return render_template('create_user.html', form=form)
+
+@main_routes.route('/admin/delete_user/<int:user_id>', methods=['POST'])
+@login_required
+def delete_user(user_id):
+    if current_user.user_type != 'admin':
+        flash('访问被拒绝。仅限管理员使用。', 'danger')
+        return redirect(url_for('main.index'))
+
+    try:
+        user = User.query.get_or_404(user_id)
+
+        # 1. 根据用户类型处理特定关联数据
+        if user.user_type == 'student':
+            # 处理学生相关数据
+            CourseRegistration.query.filter_by(user_id=user.id).delete()
+            StudentGrade.query.filter_by(student_id=user.id).delete()
+            EBikeLicense.query.filter_by(owner_id=user.id).delete()
+            StudentProfile.query.filter_by(user_id=user.id).delete()
+
+        elif user.user_type == 'teacher':
+            # 处理教师相关数据
+            courses = Course.query.filter_by(created_by=user.id).all()
+            for course in courses:
+                StudentGrade.query.filter_by(course_id=course.id).delete()
+                CourseRegistration.query.filter_by(course_id=course.id).delete()
+            Course.query.filter_by(created_by=user.id).delete()
+            TeacherProfile.query.filter_by(user_id=user.id).delete()
+
+        elif user.user_type == 'security':
+            # 处理安保人员相关数据
+            EBikeLicense.query.filter_by(approved_by=user.id).update({EBikeLicense.approved_by: None})
+            SecurityProfile.query.filter_by(user_id=user.id).delete()
+
+        elif user.user_type == 'library_staff':
+            # 处理图书管理员相关数据
+            LibraryStaffProfile.query.filter_by(user_id=user.id).delete()
+        
+        elif user.user_type == 'admin':
+            # 检查是否是最后一个管理员
+            admin_count = User.query.filter_by(user_type='admin').count()
+            if admin_count <= 1:
+                print("尝试删除最后一个管理员")  # 调试信息
+                from flask import session
+                session['_flashes'] = [(u'danger', u'无法删除最后一个管理员账号！')]
+                return redirect(url_for('main.manage_users'))
+            AdminProfile.query.filter_by(user_id=user.id).delete()
+
+        # 2. 处理论坛相关数据（除了安保人员）
+        if user.user_type != 'security':
+            posts = ForumPost.query.filter_by(author_id=user.id).all()
+            for post in posts:
+                ForumReply.query.filter_by(post_id=post.post_id).delete()
+            ForumReply.query.filter_by(replier_id=user.id).delete()
+            ForumPost.query.filter_by(author_id=user.id).delete()
+        
+        # 3. 删除用户偏好设置（所有类型用户都有）
+        UserPreference.query.filter_by(user_id=user.id).delete()
+        
+        # 4. 最后删除用户本身
+        db.session.delete(user)
+        db.session.commit()
+        
+        flash('用户删除成功！', 'success')
+        return redirect(url_for('main.manage_users'))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'删除用户时出错：{str(e)}', 'danger')
+        return redirect(url_for('main.manage_users'))
+    
+
+@main_routes.route('/preferences', methods=['GET', 'POST'])
+@login_required
+def preferences():
+    # 获取或创建用户偏好
+    user_pref = UserPreference.query.filter_by(user_id=current_user.id).first()
+    if not user_pref:
+        user_pref = UserPreference(user_id=current_user.id)
+        db.session.add(user_pref)
+        db.session.commit()
+    
+    form = UserPreferenceForm(obj=user_pref)
+    
+    if form.validate_on_submit():
+        user_pref.theme = form.theme.data
+        user_pref.font_size = form.font_size.data
+        db.session.commit()
+        flash('Preferences updated successfully!', 'success')
+        return redirect(url_for('main.preferences'))
+        
+    return render_template('preferences.html', form=form)
+
+@main_routes.route('/admin/manage_courses')
+@login_required
+def manage_courses():
+    if current_user.user_type != 'admin':
+        flash('Access denied. Admin only.', 'danger')
+        return redirect(url_for('main.index'))
+    
+# Get all courses
+    courses = Course.query.all()
+    
+
+    
+    return render_template('manage_courses.html', courses=courses)
+
+@main_routes.route('/admin/delete_course/<int:course_id>', methods=['POST'])
+@login_required
+def delete_course_admin(course_id):
+    if current_user.user_type != 'admin':
+        flash('Access denied. Admin only.', 'danger')
+        return redirect(url_for('main.index'))
+
+    try:
+        course = Course.query.get_or_404(course_id)
+        
+        # Delete all course-related data
+        # 1. Delete grades
+        StudentGrade.query.filter_by(course_id=course.id).delete()
+        
+        # 2. Delete course registrations
+        CourseRegistration.query.filter_by(course_id=course.id).delete()
+        
+        # 3. Delete forum posts and replies
+        course_posts = ForumPost.query.filter_by(course_id=course.id).all()
+        for post in course_posts:
+            ForumReply.query.filter_by(post_id=post.post_id).delete()
+        ForumPost.query.filter_by(course_id=course.id).delete()
+        
+        # 4. Delete the course itself
+        db.session.delete(course)
+        db.session.commit()
+        
+        flash('Course deleted successfully!', 'success')
+        return redirect(url_for('main.manage_courses'))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting course: {str(e)}', 'danger')
+        return redirect(url_for('main.manage_courses'))
