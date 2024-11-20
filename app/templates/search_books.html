@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container" style="max-width: 1200px; padding: 30px;">
+<div class="container search-container">
     <h2>Search Library Resources</h2>
     
-    <div class="search-form" style="background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); margin-bottom: 30px;">
+    <div class="search-form">
         <form method="POST">
             {{ form.hidden_tag() }}
             <div class="row">
@@ -23,7 +23,7 @@
                     {{ form.availability_status.label(class="form-label") }}
                     {{ form.availability_status(class="form-control") }}
                 </div>
-                <div class="col-md-2" style="display: flex; align-items: flex-end;">
+                <div class="col-md-2 d-flex align-items-end">
                     {{ form.submit(class="btn btn-primary w-100") }}
                 </div>
             </div>
@@ -31,7 +31,7 @@
     </div>
 
     <div class="search-results">
-        <table class="table">
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Title</th>
