@@ -1,4 +1,4 @@
-# BJUT Campus Management System
+# BJUT Campus Management System (Videos for milestone 2 is included in Project Document folder)
 
 A Flask-based campus management system for Beijing University of Technology, providing multi-role user management for students, teachers, library staff, and more.
 
