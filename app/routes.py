@@ -383,45 +383,80 @@ def create_course():
 def register_course():
     """Register a student for a course.
 
-    Args:
-        course_id (int): ID of the course to register for
-
     Returns:
-        POST: Redirect to course listing page
-
-    Permission:
-        - Requires student role
-        - Checks course capacity
-        - Prevents duplicate registration
-
-    Validation:
-        - Verifies course exists
-        - Checks if course is full
-        - Validates registration period
-
-    Logging:
-        - INFO: Registration success
-        - WARNING: Registration failures (course full, etc.)
+        GET: Render registration form with teacher list
+        POST: Process course registration
     """
     if current_user.user_type != 'student':
         flash('Only students can register for courses.', 'danger')
         return redirect(url_for('main.index'))
+    
     form = RegisterCourseForm()
+    
+    # 获取所有教师用户
+    teachers = User.query.filter_by(user_type='teacher').all()
+    
     if form.validate_on_submit():
         course = Course.query.filter_by(course_code=form.course_code.data).first()
         if not course:
             flash('Course not found. Please check the course code.', 'danger')
             return redirect(url_for('main.register_course'))
-        existing_registration = CourseRegistration.query.filter_by(course_id=course.id, user_id=current_user.id).first()
+            
+        existing_registration = CourseRegistration.query.filter_by(
+            course_id=course.id, 
+            user_id=current_user.id
+        ).first()
+        
         if existing_registration:
             flash('You are already registered for this course.', 'danger')
             return redirect(url_for('main.register_course'))
-        new_registration = CourseRegistration(course_id=course.id, user_id=current_user.id)
+            
+        new_registration = CourseRegistration(
+            course_id=course.id, 
+            user_id=current_user.id
+        )
         db.session.add(new_registration)
         db.session.commit()
+        
         flash('Course registered successfully!', 'success')
         return redirect(url_for('main.profile', user_id=current_user.id))
-    return render_template('register_event.html', form=form)
+        
+    return render_template('register_event.html', form=form, teachers=teachers)
+
+@main_routes.route('/get_teacher_courses/<int:teacher_id>')
+@login_required
+def get_teacher_courses(teacher_id):
+    """Get courses created by a specific teacher.
+    
+    Args:
+        teacher_id (int): ID of the teacher
+        
+    Returns:
+        JSON response with courses list
+    """
+    if current_user.user_type != 'student':
+        return jsonify({'error': 'Unauthorized'}), 403
+        
+    try:
+        courses = Course.query.filter_by(created_by=teacher_id).all()
+        courses_data = [{
+            'id': course.id,
+            'course_name': course.course_name,
+            'course_code': course.course_code,
+            'semester': course.semester
+        } for course in courses]
+        
+        return jsonify({
+            'status': 'success',
+            'courses': courses_data
+        })
+        
+    except Exception as e:
+        system_logger.log_error(f"Error fetching teacher courses: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': 'Failed to fetch courses'
+        }), 500
 
 @main_routes.route('/edit_course/<int:course_id>', methods=['GET', 'POST'])
 @login_required
