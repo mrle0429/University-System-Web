@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>System Logs</h2>
+    
+    <!-- 日志文件选择器 -->
+    <form class="mb-4">
+        <div class="form-group">
+            <label for="logFile">Select Log File:</label>
+            <select name="file" id="logFile" class="form-select" onchange="this.form.submit()">
+                <option value="">Choose a log file...</option>
+                {% for file in log_files %}
+                <option value="{{ file }}" {% if file == selected_log %}selected{% endif %}>
+                    {{ file }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+    
+    {% if selected_log %}
+        <!-- 错误日志 -->
+        <div class="card mb-3">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">Errors ({{ log_content.errors|length }})</h5>
+            </div>
+            <div class="card-body">
+                {% for error in log_content.errors %}
+                <div class="log-entry">{{ error }}</div>
+                {% else %}
+                <p class="text-muted">No errors found.</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- 警告日志 -->
+        <div class="card mb-3">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">Warnings ({{ log_content.warnings|length }})</h5>
+            </div>
+            <div class="card-body">
+                {% for warning in log_content.warnings %}
+                <div class="log-entry">{{ warning }}</div>
+                {% else %}
+                <p class="text-muted">No warnings found.</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- 信息日志 -->
+        <div class="card mb-3">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Information ({{ log_content.info|length }})</h5>
+            </div>
+            <div class="card-body">
+                {% for info in log_content.info %}
+                <div class="log-entry">{{ info }}</div>
+                {% else %}
+                <p class="text-muted">No information entries found.</p>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
