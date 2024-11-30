@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, current_user, login_required, logout_user
 from app.forms import RegisterForm, LoginForm, TeacherProfileForm, StudentProfileForm, CreateCourseForm, \
     RegisterCourseForm, ForumPostForm, ForumReplyForm, LibraryStaffProfileForm, AddBookForm, SearchBookForm, \
-    AddGradeForm, EBikeForm, SecurityProfileForm, UserPreferenceForm
+    AddGradeForm, EBikeForm, SecurityProfileForm, UserPreferenceForm, EditUserForm
 from app.models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db, ForumPost, ForumReply, \
     LibraryStaffProfile, LibraryResource, StudentGrade, EBikeLicense, SecurityProfile, AdminProfile, UserPreference
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -317,7 +317,7 @@ def delete_course(course_id):
 @main_routes.route('/forum/<string:board_type>')
 @login_required
 def forum(board_type):
-    # 确���只有学生和老师可以访问
+    # 确只有学生和老师可以访问
     if current_user.user_type not in ['student', 'teacher']:
         flash("You are not authorized to access this board.", "danger")
         return redirect(url_for('main.index'))
@@ -891,3 +891,26 @@ def delete_course_admin(course_id):
         db.session.rollback()
         flash(f'Error deleting course: {str(e)}', 'danger')
         return redirect(url_for('main.manage_courses'))
+
+@main_routes.route('/admin/edit_user/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def edit_user(user_id):
+    if current_user.user_type != 'admin':
+        flash('访问被拒绝。仅限管理员使用。', 'danger')
+        return redirect(url_for('main.index'))
+    
+    user = User.query.get_or_404(user_id)
+    form = EditUserForm(obj=user)
+    
+    if form.validate_on_submit():
+
+        user.user_type = form.user_type.data
+        
+        if form.password.data:  # 只有当输入了新密码时才更新密码
+            user.password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
+            
+        db.session.commit()
+        flash(f'用户 {user.username} 更新成功！', 'success')
+        return redirect(url_for('main.manage_users'))
+        
+    return render_template('edit_user.html', form=form, user=user)

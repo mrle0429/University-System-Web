@@ -170,3 +170,15 @@ class UserPreferenceForm(FlaskForm):
     ], validators=[DataRequired()])
     submit = SubmitField('Save Preferences')
 
+class EditUserForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email', render_kw={'readonly': True})     
+    password = PasswordField('Password (leave blank to keep unchanged)')
+    user_type = SelectField('User Type', 
+                          choices=[('student', 'Student'),
+                                 ('teacher', 'Teacher'),
+                                 ('library_staff', 'Library Staff'),
+                                 ('security', 'Security'),],
+                          validators=[DataRequired()])
+    submit = SubmitField('Update User')
+
