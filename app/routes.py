@@ -10,12 +10,19 @@ from app.utils.logger import SystemLogger
 import os
 
 main_routes = Blueprint('main', __name__)
-
-# 创建全局logger实例
 system_logger = SystemLogger()
 
 @main_routes.before_request
 def check_banned():
+    """Check if current user is banned before each request.
+
+    Returns:
+        - If banned: Logout and redirect to index with ban message
+        - If not banned: None (continue request)
+
+    Logging:
+        - None
+    """
     # 检查当前用户是否登录且被封禁
     if current_user.is_authenticated and current_user.is_banned:
         # 如果是被封禁用户,则登出并重定向到首页
@@ -23,8 +30,25 @@ def check_banned():
         flash('Your account has been banned. Please contact the administrator.','danger')
         return redirect(url_for('main.index'))
 
+
+
 @main_routes.route('/', methods=['GET', 'POST'])
 def index():
+    """Handle user login and homepage.
+
+    Methods:
+        GET: Display login form
+        POST: Process login attempt
+
+    Returns:
+        - If authenticated: Redirect to user profile
+        - If login fails: Render index with error message
+        - If banned: Redirect to index with ban message
+
+    Logging:
+        - INFO: Successful login
+        - WARNING: Failed login attempts, banned user attempts
+    """
     if current_user.is_authenticated:
         return redirect(url_for('main.profile', user_id=current_user.id))
     
@@ -48,6 +72,22 @@ def index():
 
 @main_routes.route('/register', methods=['GET', 'POST'])
 def register():
+    """Handle new user registration.
+
+    Methods:
+        GET: Display registration form
+        POST: Process registration attempt
+
+    Returns:
+        GET: Render register.html with form
+        POST: 
+            - Success: Redirect to index
+            - Failure: Redirect back to register with error
+
+    Validation:
+        - Checks for existing email
+        - Hashes password before storage
+    """
     form = RegisterForm()
     if form.validate_on_submit():
         # Check if email already exists
@@ -68,6 +108,14 @@ def register():
 @main_routes.route('/logout')
 @login_required
 def logout():
+    """Handle user logout.
+
+    Returns:
+        Redirect to index page with logout message
+
+    Permission:
+        - Requires user to be logged in
+    """
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('main.index'))
@@ -76,6 +124,17 @@ def logout():
 @main_routes.route('/profile/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 def profile(user_id):
+    """Display user profile based on user type.
+
+    Args:
+        user_id (int): The ID of the user to display
+
+    Returns:
+        Renders different dashboard templates based on user_type:
+        - student: student_dashboard.html with courses and timetable
+        - teacher: teacher_dashboard.html with courses
+        - library_staff: library_staff_dashboard.html
+    """
     user = User.query.get_or_404(user_id)
 
     # Check if the user is a student
@@ -147,6 +206,26 @@ def profile(user_id):
 @main_routes.route('/edit_profile/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 def edit_profile(user_id):
+    """Handle user profile editing.
+
+    Args:
+        user_id (int): The ID of the user whose profile is being edited
+
+    Methods:
+        GET: Display profile edit form
+        POST: Process profile updates
+
+    Returns:
+        GET: Render appropriate edit form based on user type
+        POST: Redirect to profile page after successful update
+
+    Permission:
+        - Users can only edit their own profiles
+        - Redirects if attempting to edit other users' profiles
+
+    Raises:
+        404: If user_id not found
+    """
     user = User.query.get_or_404(user_id)
 
     # Ensure only the current user can edit their profile
@@ -255,6 +334,28 @@ def edit_profile(user_id):
 @main_routes.route('/create_course', methods=['GET', 'POST'])
 @login_required
 def create_course():
+    """Create a new course.
+
+    Methods:
+        GET: Display course creation form
+        POST: Process new course submission
+
+    Returns:
+        GET: Render create_course.html with form
+        POST: Redirect to course listing after successful creation
+
+    Permission:
+        - Requires teacher privileges
+
+    Validation:
+        - Checks for schedule conflicts
+        - Validates course capacity
+        - Verifies room availability
+
+    Logging:
+        - INFO: Course creation success
+        - ERROR: Creation failures
+    """
     if current_user.user_type != 'teacher':
         flash('Only teachers can create courses.', 'danger')
         return redirect(url_for('main.index'))
@@ -280,6 +381,28 @@ def create_course():
 @main_routes.route('/register_course', methods=['GET', 'POST'])
 @login_required
 def register_course():
+    """Register a student for a course.
+
+    Args:
+        course_id (int): ID of the course to register for
+
+    Returns:
+        POST: Redirect to course listing page
+
+    Permission:
+        - Requires student role
+        - Checks course capacity
+        - Prevents duplicate registration
+
+    Validation:
+        - Verifies course exists
+        - Checks if course is full
+        - Validates registration period
+
+    Logging:
+        - INFO: Registration success
+        - WARNING: Registration failures (course full, etc.)
+    """
     if current_user.user_type != 'student':
         flash('Only students can register for courses.', 'danger')
         return redirect(url_for('main.index'))
@@ -303,6 +426,26 @@ def register_course():
 @main_routes.route('/edit_course/<int:course_id>', methods=['GET', 'POST'])
 @login_required
 def edit_course(course_id):
+    """Edit existing course information.
+
+    Args:
+        course_id (int): ID of the course to edit
+
+    Methods:
+        GET: Display course edit form
+        POST: Process course information updates
+
+    Returns:
+        GET: Render edit_course.html with form
+        POST: Redirect to course listing after successful update
+
+    Permission:
+        - Requires teacher privileges
+
+    Logging:
+        - INFO: Course update success
+        - ERROR: Update failures
+    """
     if current_user.user_type != 'teacher':
         flash('Only teachers can edit courses.', 'danger')
         return redirect(url_for('main.index'))
@@ -325,6 +468,28 @@ def edit_course(course_id):
 @main_routes.route('/delete_course/<int:course_id>', methods=['POST'])
 @login_required
 def delete_course(course_id):
+    """Delete a course and all related data.
+
+    Args:
+        course_id (int): The ID of the course to delete
+
+    Returns:
+        POST: Redirect to manage_courses page
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Actions:
+        - Deletes course grades
+        - Deletes course registrations
+        - Deletes forum posts and replies
+        - Deletes course itself
+
+    Logging:
+        - INFO: Course deletion success
+        - ERROR: Deletion failures
+    """
     if current_user.user_type != 'teacher':
         flash('Only teachers can delete courses.', 'danger')
         return redirect(url_for('main.index'))
@@ -364,6 +529,26 @@ def forum(board_type):
 @main_routes.route('/forum/<string:board_type>/create', methods=['GET', 'POST'])
 @login_required
 def create_post(board_type):
+    """Create a new forum post.
+
+    Args:
+        board_type (str): Type of forum board ('course' or 'general')
+
+    Methods:
+        GET: Display post creation form
+        POST: Process new post submission
+
+    Returns:
+        GET: Render create_post.html with form
+        POST: Redirect to forum board after successful creation
+
+    Permission:
+        - Requires user to be logged in
+        - Course forums require course enrollment
+
+    Logging:
+        - INFO: Post creation success
+    """
     form = ForumPostForm(board_type=board_type)  # Set the board type in the form
 
     if form.validate_on_submit():
@@ -429,6 +614,23 @@ def delete_reply(reply_id):
 @main_routes.route('/add_book', methods=['GET', 'POST'])
 @login_required
 def add_book():
+    """Add a new book to the library system.
+
+    Methods:
+        GET: Display book addition form
+        POST: Process new book submission
+
+    Returns:
+        GET: Render add_book.html with form
+        POST: Redirect to library dashboard after successful addition
+
+    Permission:
+        - Requires library_staff privileges
+
+    Logging:
+        - INFO: Book addition success
+        - ERROR: Addition failures
+    """
     # 检查是否是图书馆工作人员
     if current_user.user_type != 'library_staff':
         flash('Access denied. Library staff only.', 'danger')
@@ -524,6 +726,26 @@ def manage_books():
 @main_routes.route('/edit_book/<int:book_id>', methods=['GET', 'POST'])
 @login_required
 def edit_book(book_id):
+    """Edit existing book information.
+
+    Args:
+        book_id (int): ID of the book to edit
+
+    Methods:
+        GET: Display book edit form
+        POST: Process book information updates
+
+    Returns:
+        GET: Render edit_book.html with form
+        POST: Redirect to library dashboard after successful update
+
+    Permission:
+        - Requires library_staff privileges
+
+    Logging:
+        - INFO: Book update success
+        - ERROR: Update failures
+    """
     if current_user.user_type != 'library_staff':
         flash('Access denied. Library staff only.', 'danger')
         return redirect(url_for('main.index'))
@@ -582,6 +804,24 @@ def view_grades(student_id):
 @main_routes.route('/add_grade', methods=['GET', 'POST'])
 @login_required
 def add_grade():
+    """Add or update student grades.
+
+    Methods:
+        GET: Display grade entry form
+        POST: Process grade submission
+
+    Returns:
+        GET: Render add_grade.html with form
+        POST: Redirect to course page after successful submission
+
+    Permission:
+        - Requires teacher privileges
+        - Teacher must be course instructor
+
+    Logging:
+        - INFO: Grade addition/update success
+        - ERROR: Grade submission failures
+    """
     course_id = request.args.get('course_id', type=int)
     student_id = request.args.get('student_id', type=int)
 
@@ -650,6 +890,26 @@ def get_students_by_course(course_id):
 @main_routes.route('/e_bike_management', methods=['GET', 'POST'])
 @login_required
 def e_bike_management():
+    """Manage e-bike registration and information.
+
+    Methods:
+        GET: Display e-bike management interface
+        POST: Process e-bike registration/updates
+
+    Returns:
+        GET: Render e_bike_management.html with current registration
+        POST: Redirect to same page after successful update
+
+    Permission:
+        - Requires user to be logged in
+        - Students can only manage their own e-bike
+        - Security staff can view all registrations
+
+    Features:
+        - Register new e-bike
+        - Update existing registration
+        - View registration status
+    """
     if current_user.user_type != 'student':
         flash("You are not authorized to access this page.", "danger")
         return redirect(url_for('main.index'))
@@ -744,6 +1004,18 @@ def contact():
 @main_routes.route('/admin/manage_users', methods=['GET', 'POST'])
 @login_required
 def manage_users():
+    """Display user management interface for administrators.
+
+    Returns:
+        GET: Render manage_users.html with list of all users
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Data:
+        - Retrieves all users from database
+    """
     if current_user.user_type != 'admin':
         flash('Access denied. Admins only.', 'danger')
         return redirect(url_for('main.index'))
@@ -756,6 +1028,26 @@ def manage_users():
 @main_routes.route('/admin/create_user', methods=['GET', 'POST'])
 @login_required
 def create_user():
+    """Handle creation of new users by administrators.
+
+    Methods:
+        GET: Display user creation form
+        POST: Process new user creation
+
+    Returns:
+        GET: Render create_user.html with form
+        POST: 
+            - Success: Redirect to manage_users
+            - Failure: Redisplay form with errors
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Logging:
+        - INFO: User creation success
+        - ERROR: Creation failures
+    """
     if current_user.user_type != 'admin':
         flash('访问被拒绝。仅限管理员使用。', 'danger')
         return redirect(url_for('main.index'))
@@ -782,6 +1074,27 @@ def create_user():
 @main_routes.route('/admin/delete_user/<int:user_id>', methods=['POST'])
 @login_required
 def delete_user(user_id):
+    """Delete a user from the system.
+
+    Args:
+        user_id (int): The ID of the user to delete
+
+    Returns:
+        POST: Redirect to manage_users page
+
+    Permission:
+        - Requires admin privileges
+        - Cannot delete last admin account
+        - Redirects to index if unauthorized
+
+    Logging:
+        - INFO: User deletion success
+        - ERROR: Deletion failures
+
+    Validation:
+        - Checks if attempting to delete last admin
+        - Handles cascade deletion of related data
+    """
     if current_user.user_type != 'admin':
         flash('访问被拒绝。仅限管理员使用。', 'danger')
         return redirect(url_for('main.index'))
@@ -854,6 +1167,24 @@ def delete_user(user_id):
 @main_routes.route('/preferences', methods=['GET', 'POST'])
 @login_required
 def preferences():
+    """Handle user preference settings.
+
+    Methods:
+        GET: Display preferences form
+        POST: Process preference updates
+
+    Returns:
+        GET: Render preferences.html with form
+        POST: Redirect to preferences page after update
+
+    Data:
+        - Creates default preferences if none exist
+        - Updates theme and font size settings
+
+    Permission:
+        - Requires user to be logged in
+    """
+
     # 获取或创建用户偏好
     user_pref = UserPreference.query.filter_by(user_id=current_user.id).first()
     if not user_pref:
@@ -875,6 +1206,18 @@ def preferences():
 @main_routes.route('/admin/manage_courses')
 @login_required
 def manage_courses():
+    """Display course management interface for administrators.
+
+    Returns:
+        GET: Render manage_courses.html with all courses
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Data:
+        - Retrieves all courses from database
+    """
     if current_user.user_type != 'admin':
         flash('Access denied. Admin only.', 'danger')
         return redirect(url_for('main.index'))
@@ -889,6 +1232,28 @@ def manage_courses():
 @main_routes.route('/admin/delete_course/<int:course_id>', methods=['POST'])
 @login_required
 def delete_course_admin(course_id):
+    """Delete a course and all related data.
+
+    Args:
+        course_id (int): The ID of the course to delete
+
+    Returns:
+        POST: Redirect to manage_courses page
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Actions:
+        - Deletes course grades
+        - Deletes course registrations
+        - Deletes forum posts and replies
+        - Deletes course itself
+
+    Logging:
+        - INFO: Course deletion success
+        - ERROR: Deletion failures
+    """
     if current_user.user_type != 'admin':
         flash('Access denied. Admin only.', 'danger')
         return redirect(url_for('main.index'))
@@ -924,6 +1289,27 @@ def delete_course_admin(course_id):
 @main_routes.route('/admin/edit_user/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 def edit_user(user_id):
+    """Edit user information by administrator.
+
+    Args:
+        user_id (int): The ID of the user to edit
+
+    Methods:
+        GET: Display user edit form
+        POST: Process user information updates
+
+    Returns:
+        GET: Render edit_user.html with form
+        POST: Redirect to manage_users after successful update
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Logging:
+        - INFO: User update success
+        - ERROR: Update failures
+    """
     if current_user.user_type != 'admin':
         flash('访问被拒绝。仅限管理员使用。', 'danger')
         return redirect(url_for('main.index'))
@@ -947,6 +1333,21 @@ def edit_user(user_id):
 @main_routes.route('/admin/ban_user/<int:user_id>', methods=['POST'])
 @login_required
 def ban_user(user_id):
+    """Ban a user from the system.
+
+    Args:
+        user_id (int): The ID of the user to ban
+
+    Returns:
+        POST: Redirect to manage_users page
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Logging:
+        - WARNING: User ban events
+    """
     if current_user.user_type != 'admin':
         flash('Access denied. Admin only.', 'danger')
         return redirect(url_for('main.index'))
@@ -961,6 +1362,21 @@ def ban_user(user_id):
 @main_routes.route('/admin/unban_user/<int:user_id>', methods=['POST'])
 @login_required
 def unban_user(user_id):
+    """Remove ban from a user.
+
+    Args:
+        user_id (int): The ID of the user to unban
+
+    Returns:
+        POST: Redirect to manage_users page
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Logging:
+        - INFO: User unban events
+    """
     if current_user.user_type != 'admin':
         flash('Access denied. Admin only.', 'danger')
         return redirect(url_for('main.index'))
@@ -975,6 +1391,20 @@ def unban_user(user_id):
 @main_routes.route('/admin/view_logs')
 @login_required
 def view_logs():
+    """Display system logs for administrators.
+
+    Returns:
+        GET: Render view_logs.html with log content
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Features:
+        - Lists all log files
+        - Filters logs by type (error, warning, info)
+        - Displays selected log file content
+    """
     if current_user.user_type != 'admin':
         flash('Access denied. Admin only.', 'danger')
         return redirect(url_for('main.index'))
@@ -1008,5 +1438,16 @@ def view_logs():
 
 @main_routes.errorhandler(Exception)
 def handle_error(error):
+    """Global error handler for all unhandled exceptions.
+
+    Args:
+        error: The exception that was raised
+
+    Returns:
+        Tuple of error message and HTTP 500 status code
+
+    Logging:
+        - ERROR: Logs all unhandled exceptions
+    """
     system_logger.log_error(f"System error: {str(error)}")
     return 'Internal Server Error', 500
