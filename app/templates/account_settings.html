@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="account-settings-box">
+        <h2>Account Settings</h2>
+        <div class="warning-section">
+            <h3>Delete Account</h3>
+            <div class="alert alert-danger">
+                <h4>Warning!</h4>
+                <p>Deleting your account will:</p>
+                <ul>
+                    <li>Permanently remove all your personal information</li>
+                    <li>Delete all associated data (courses, grades, posts, etc.)</li>
+                    <li>This action cannot be undone</li>
+                </ul>
+            </div>
+            
+            <form method="POST" action="{{ url_for('main.delete_account') }}" id="deleteAccountForm">
+                {{ form.csrf_token }}
+                <div class="form-group">
+                    <label for="password">Confirm your password to delete account:</label>
+                    {{ form.password(class="form-control", placeholder="Enter your password") }}
+                    {% if form.password.errors %}
+                        {% for error in form.password.errors %}
+                            <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-check mb-3">
+                    {{ form.confirm(class="form-check-input") }}
+                    <label class="form-check-label" for="confirm">
+                        I understand that this action cannot be undone
+                    </label>
+                    {% if form.confirm.errors %}
+                        {% for error in form.confirm.errors %}
+                            <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                {{ form.submit(class="btn btn-danger", value="Delete Account") }}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -10,6 +10,7 @@ class User(UserMixin, db.Model):
     user_type = db.Column(db.String(20), nullable=False)  # e.g., 'student', 'teacher', etc.
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_banned = db.Column(db.Boolean, default=False)  # 只保留一个封禁状态字段
 
     def __repr__(self):
         return f'<User {self.username}>'

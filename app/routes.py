@@ -1,16 +1,55 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, current_user, login_required, logout_user
+from sqlalchemy.exc import SQLAlchemyError  # 添加这行
 from app.forms import RegisterForm, LoginForm, TeacherProfileForm, StudentProfileForm, CreateCourseForm, \
     RegisterCourseForm, ForumPostForm, ForumReplyForm, LibraryStaffProfileForm, AddBookForm, SearchBookForm, \
-    AddGradeForm, EBikeForm, SecurityProfileForm, UserPreferenceForm
+    AddGradeForm, EBikeForm, SecurityProfileForm, UserPreferenceForm, EditUserForm, DeleteAccountForm
 from app.models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db, ForumPost, ForumReply, \
     LibraryStaffProfile, LibraryResource, StudentGrade, EBikeLicense, SecurityProfile, AdminProfile, UserPreference
 from werkzeug.security import generate_password_hash, check_password_hash
+from app.utils.logger import SystemLogger
+import os
 
 main_routes = Blueprint('main', __name__)
+system_logger = SystemLogger()
+
+@main_routes.before_request
+def check_banned():
+    """Check if current user is banned before each request.
+
+    Returns:
+        - If banned: Logout and redirect to index with ban message
+        - If not banned: None (continue request)
+
+    Logging:
+        - None
+    """
+    # 检查当前用户是否登录且被封禁
+    if current_user.is_authenticated and current_user.is_banned:
+        # 如果是被封禁用户,则登出并重定向到首页
+        logout_user()
+        flash('Your account has been banned. Please contact the administrator.','danger')
+        return redirect(url_for('main.index'))
+
+
 
 @main_routes.route('/', methods=['GET', 'POST'])
 def index():
+    """Handle user login and homepage.
+
+    Methods:
+        GET: Display login form
+        POST: Process login attempt
+
+    Returns:
+        - If authenticated: Redirect to user profile
+        - If login fails: Render index with error message
+        - If banned: Redirect to index with ban message
+
+    Logging:
+        - INFO: Successful login
+        - WARNING: Failed login attempts, banned user attempts
+    """
     if current_user.is_authenticated:
         return redirect(url_for('main.profile', user_id=current_user.id))
     
@@ -18,16 +57,43 @@ def index():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password, form.password.data):
+            if user.is_banned:
+                system_logger.log_warning(f"Banned user attempted to login: {user.username}")
+                flash('Your account has been banned.', 'danger')
+                return redirect(url_for('main.index'))
+            
             login_user(user)
-            flash('Login successful!', 'success')
+            system_logger.log_info(f"User logged in successfully: {user.username}")
             return redirect(url_for('main.profile', user_id=user.id))
         else:
-            flash('Login failed. Please check your email and password.', 'danger')
+            system_logger.log_warning(f"Failed login attempt for email: {form.email.data}")
+            # 修改这里：添加表单错误而不是使用 flash
+            if user:
+                form.password.errors.append('Incorrect password')
+            else:
+                form.email.errors.append('Email not found')
+            return render_template('index.html', form=form)
     
     return render_template('index.html', form=form)
 
 @main_routes.route('/register', methods=['GET', 'POST'])
 def register():
+    """Handle new user registration.
+
+    Methods:
+        GET: Display registration form
+        POST: Process registration attempt
+
+    Returns:
+        GET: Render register.html with form
+        POST: 
+            - Success: Redirect to index
+            - Failure: Redirect back to register with error
+
+    Validation:
+        - Checks for existing email
+        - Hashes password before storage
+    """
     form = RegisterForm()
     if form.validate_on_submit():
         # Check if email already exists
@@ -48,6 +114,14 @@ def register():
 @main_routes.route('/logout')
 @login_required
 def logout():
+    """Handle user logout.
+
+    Returns:
+        Redirect to index page with logout message
+
+    Permission:
+        - Requires user to be logged in
+    """
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('main.index'))
@@ -56,6 +130,17 @@ def logout():
 @main_routes.route('/profile/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 def profile(user_id):
+    """Display user profile based on user type.
+
+    Args:
+        user_id (int): The ID of the user to display
+
+    Returns:
+        Renders different dashboard templates based on user_type:
+        - student: student_dashboard.html with courses and timetable
+        - teacher: teacher_dashboard.html with courses
+        - library_staff: library_staff_dashboard.html
+    """
     user = User.query.get_or_404(user_id)
 
     # Check if the user is a student
@@ -127,6 +212,26 @@ def profile(user_id):
 @main_routes.route('/edit_profile/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 def edit_profile(user_id):
+    """Handle user profile editing.
+
+    Args:
+        user_id (int): The ID of the user whose profile is being edited
+
+    Methods:
+        GET: Display profile edit form
+        POST: Process profile updates
+
+    Returns:
+        GET: Render appropriate edit form based on user type
+        POST: Redirect to profile page after successful update
+
+    Permission:
+        - Users can only edit their own profiles
+        - Redirects if attempting to edit other users' profiles
+
+    Raises:
+        404: If user_id not found
+    """
     user = User.query.get_or_404(user_id)
 
     # Ensure only the current user can edit their profile
@@ -235,6 +340,28 @@ def edit_profile(user_id):
 @main_routes.route('/create_course', methods=['GET', 'POST'])
 @login_required
 def create_course():
+    """Create a new course.
+
+    Methods:
+        GET: Display course creation form
+        POST: Process new course submission
+
+    Returns:
+        GET: Render create_course.html with form
+        POST: Redirect to course listing after successful creation
+
+    Permission:
+        - Requires teacher privileges
+
+    Validation:
+        - Checks for schedule conflicts
+        - Validates course capacity
+        - Verifies room availability
+
+    Logging:
+        - INFO: Course creation success
+        - ERROR: Creation failures
+    """
     if current_user.user_type != 'teacher':
         flash('Only teachers can create courses.', 'danger')
         return redirect(url_for('main.index'))
@@ -260,29 +387,106 @@ def create_course():
 @main_routes.route('/register_course', methods=['GET', 'POST'])
 @login_required
 def register_course():
+    """Register a student for a course.
+
+    Returns:
+        GET: Render registration form with teacher list
+        POST: Process course registration
+    """
     if current_user.user_type != 'student':
         flash('Only students can register for courses.', 'danger')
         return redirect(url_for('main.index'))
+    
     form = RegisterCourseForm()
+    
+    # 获取所有教师用户
+    teachers = User.query.filter_by(user_type='teacher').all()
+    
     if form.validate_on_submit():
         course = Course.query.filter_by(course_code=form.course_code.data).first()
         if not course:
             flash('Course not found. Please check the course code.', 'danger')
             return redirect(url_for('main.register_course'))
-        existing_registration = CourseRegistration.query.filter_by(course_id=course.id, user_id=current_user.id).first()
+            
+        existing_registration = CourseRegistration.query.filter_by(
+            course_id=course.id, 
+            user_id=current_user.id
+        ).first()
+        
         if existing_registration:
             flash('You are already registered for this course.', 'danger')
             return redirect(url_for('main.register_course'))
-        new_registration = CourseRegistration(course_id=course.id, user_id=current_user.id)
+            
+        new_registration = CourseRegistration(
+            course_id=course.id, 
+            user_id=current_user.id
+        )
         db.session.add(new_registration)
         db.session.commit()
+        
         flash('Course registered successfully!', 'success')
         return redirect(url_for('main.profile', user_id=current_user.id))
-    return render_template('register_event.html', form=form)
+        
+    return render_template('register_event.html', form=form, teachers=teachers)
+
+@main_routes.route('/get_teacher_courses/<int:teacher_id>')
+@login_required
+def get_teacher_courses(teacher_id):
+    """Get courses created by a specific teacher.
+    
+    Args:
+        teacher_id (int): ID of the teacher
+        
+    Returns:
+        JSON response with courses list
+    """
+    if current_user.user_type != 'student':
+        return jsonify({'error': 'Unauthorized'}), 403
+        
+    try:
+        courses = Course.query.filter_by(created_by=teacher_id).all()
+        courses_data = [{
+            'id': course.id,
+            'course_name': course.course_name,
+            'course_code': course.course_code,
+            'semester': course.semester
+        } for course in courses]
+        
+        return jsonify({
+            'status': 'success',
+            'courses': courses_data
+        })
+        
+    except Exception as e:
+        system_logger.log_error(f"Error fetching teacher courses: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': 'Failed to fetch courses'
+        }), 500
 
 @main_routes.route('/edit_course/<int:course_id>', methods=['GET', 'POST'])
 @login_required
 def edit_course(course_id):
+    """Edit existing course information.
+
+    Args:
+        course_id (int): ID of the course to edit
+
+    Methods:
+        GET: Display course edit form
+        POST: Process course information updates
+
+    Returns:
+        GET: Render edit_course.html with form
+        POST: Redirect to course listing after successful update
+
+    Permission:
+        - Requires teacher privileges
+
+    Logging:
+        - INFO: Course update success
+        - ERROR: Update failures
+    """
     if current_user.user_type != 'teacher':
         flash('Only teachers can edit courses.', 'danger')
         return redirect(url_for('main.index'))
@@ -305,6 +509,28 @@ def edit_course(course_id):
 @main_routes.route('/delete_course/<int:course_id>', methods=['POST'])
 @login_required
 def delete_course(course_id):
+    """Delete a course and all related data.
+
+    Args:
+        course_id (int): The ID of the course to delete
+
+    Returns:
+        POST: Redirect to manage_courses page
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Actions:
+        - Deletes course grades
+        - Deletes course registrations
+        - Deletes forum posts and replies
+        - Deletes course itself
+
+    Logging:
+        - INFO: Course deletion success
+        - ERROR: Deletion failures
+    """
     if current_user.user_type != 'teacher':
         flash('Only teachers can delete courses.', 'danger')
         return redirect(url_for('main.index'))
@@ -317,7 +543,8 @@ def delete_course(course_id):
 @main_routes.route('/forum/<string:board_type>')
 @login_required
 def forum(board_type):
-    # 确���只有学生和老师可以访问
+
+    # 确只有学生和老师可以访问
     if current_user.user_type not in ['student', 'teacher']:
         flash("You are not authorized to access this board.", "danger")
         return redirect(url_for('main.index'))
@@ -343,6 +570,26 @@ def forum(board_type):
 @main_routes.route('/forum/<string:board_type>/create', methods=['GET', 'POST'])
 @login_required
 def create_post(board_type):
+    """Create a new forum post.
+
+    Args:
+        board_type (str): Type of forum board ('course' or 'general')
+
+    Methods:
+        GET: Display post creation form
+        POST: Process new post submission
+
+    Returns:
+        GET: Render create_post.html with form
+        POST: Redirect to forum board after successful creation
+
+    Permission:
+        - Requires user to be logged in
+        - Course forums require course enrollment
+
+    Logging:
+        - INFO: Post creation success
+    """
     form = ForumPostForm(board_type=board_type)  # Set the board type in the form
 
     if form.validate_on_submit():
@@ -355,6 +602,7 @@ def create_post(board_type):
         )
         db.session.add(new_post)
         db.session.commit()
+        system_logger.log_info(f"User {current_user.username} created a new post in {board_type} board")
         flash("Post created successfully!", "success")
         return redirect(url_for('main.forum', board_type=board_type))
     return render_template('create_post.html', form=form, board_type=board_type)
@@ -407,6 +655,23 @@ def delete_reply(reply_id):
 @main_routes.route('/add_book', methods=['GET', 'POST'])
 @login_required
 def add_book():
+    """Add a new book to the library system.
+
+    Methods:
+        GET: Display book addition form
+        POST: Process new book submission
+
+    Returns:
+        GET: Render add_book.html with form
+        POST: Redirect to library dashboard after successful addition
+
+    Permission:
+        - Requires library_staff privileges
+
+    Logging:
+        - INFO: Book addition success
+        - ERROR: Addition failures
+    """
     # 检查是否是图书馆工作人员
     if current_user.user_type != 'library_staff':
         flash('Access denied. Library staff only.', 'danger')
@@ -502,6 +767,26 @@ def manage_books():
 @main_routes.route('/edit_book/<int:book_id>', methods=['GET', 'POST'])
 @login_required
 def edit_book(book_id):
+    """Edit existing book information.
+
+    Args:
+        book_id (int): ID of the book to edit
+
+    Methods:
+        GET: Display book edit form
+        POST: Process book information updates
+
+    Returns:
+        GET: Render edit_book.html with form
+        POST: Redirect to library dashboard after successful update
+
+    Permission:
+        - Requires library_staff privileges
+
+    Logging:
+        - INFO: Book update success
+        - ERROR: Update failures
+    """
     if current_user.user_type != 'library_staff':
         flash('Access denied. Library staff only.', 'danger')
         return redirect(url_for('main.index'))
@@ -532,6 +817,7 @@ def delete_book(book_id):
     db.session.delete(book)
     db.session.commit()
     flash('Book deleted successfully!', 'success')
+    system_logger.log_info(f"Library staff {current_user.username} deleted book: {book_title}")
     return redirect(url_for('main.manage_books'))
 
 @main_routes.route('/view_grades/<int:student_id>', methods=['GET'])
@@ -559,6 +845,24 @@ def view_grades(student_id):
 @main_routes.route('/add_grade', methods=['GET', 'POST'])
 @login_required
 def add_grade():
+    """Add or update student grades.
+
+    Methods:
+        GET: Display grade entry form
+        POST: Process grade submission
+
+    Returns:
+        GET: Render add_grade.html with form
+        POST: Redirect to course page after successful submission
+
+    Permission:
+        - Requires teacher privileges
+        - Teacher must be course instructor
+
+    Logging:
+        - INFO: Grade addition/update success
+        - ERROR: Grade submission failures
+    """
     course_id = request.args.get('course_id', type=int)
     student_id = request.args.get('student_id', type=int)
 
@@ -576,11 +880,13 @@ def add_grade():
         if grade_entry:
             # 更新现有成绩
             grade_entry.grade = form.grade.data
+            system_logger.log_info(f"Teacher {current_user.username} updated grade for student {student_id} in course {course_id}")
             flash("Grade updated successfully!", "success")
         else:
             # 创建新的成绩记录
             grade_entry = StudentGrade(student_id=student_id, course_id=course_id, grade=form.grade.data)
             db.session.add(grade_entry)
+            system_logger.log_info(f"Teacher {current_user.username} added new grade for student {student_id} in course {course_id}")
             flash("Grade added successfully!", "success")
 
         db.session.commit()
@@ -625,6 +931,26 @@ def get_students_by_course(course_id):
 @main_routes.route('/e_bike_management', methods=['GET', 'POST'])
 @login_required
 def e_bike_management():
+    """Manage e-bike registration and information.
+
+    Methods:
+        GET: Display e-bike management interface
+        POST: Process e-bike registration/updates
+
+    Returns:
+        GET: Render e_bike_management.html with current registration
+        POST: Redirect to same page after successful update
+
+    Permission:
+        - Requires user to be logged in
+        - Students can only manage their own e-bike
+        - Security staff can view all registrations
+
+    Features:
+        - Register new e-bike
+        - Update existing registration
+        - View registration status
+    """
     if current_user.user_type != 'student':
         flash("You are not authorized to access this page.", "danger")
         return redirect(url_for('main.index'))
@@ -638,7 +964,7 @@ def e_bike_management():
             e_bike = EBikeLicense(owner_id=current_user.id)
         e_bike.license_plate = form.license_plate.data
         e_bike.bike_model = form.bike_model.data
-        e_bike.status = 'Pending'  # 每次创建或修改后自动变为“申请”状态
+        e_bike.status = 'Pending'  # 每次创建或修改后自动变为"申请"状态
         e_bike.registration_date = None
         e_bike.expiration_date = None
         e_bike.approved_by = None
@@ -719,17 +1045,50 @@ def contact():
 @main_routes.route('/admin/manage_users', methods=['GET', 'POST'])
 @login_required
 def manage_users():
+    """Display user management interface for administrators.
+
+    Returns:
+        GET: Render manage_users.html with list of all users
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Data:
+        - Retrieves all users from database
+    """
     if current_user.user_type != 'admin':
         flash('Access denied. Admins only.', 'danger')
         return redirect(url_for('main.index'))
 
     users = User.query.all()
+    system_logger.log_info(f"Admin {current_user.username} accessed user management")
     return render_template('manage_users.html', users=users)
 
 #管理员创建用户
 @main_routes.route('/admin/create_user', methods=['GET', 'POST'])
 @login_required
 def create_user():
+    """Handle creation of new users by administrators.
+
+    Methods:
+        GET: Display user creation form
+        POST: Process new user creation
+
+    Returns:
+        GET: Render create_user.html with form
+        POST: 
+            - Success: Redirect to manage_users
+            - Failure: Redisplay form with errors
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Logging:
+        - INFO: User creation success
+        - ERROR: Creation failures
+    """
     if current_user.user_type != 'admin':
         flash('访问被拒绝。仅限管理员使用。', 'danger')
         return redirect(url_for('main.index'))
@@ -748,6 +1107,7 @@ def create_user():
         )
         db.session.add(new_user)
         db.session.commit()
+        system_logger.log_info(f"Admin {current_user.username} created new user: {new_user.username} ({new_user.user_type})")
         flash(f'用户 {form.username.data} 创建成功！', 'success')
         return redirect(url_for('main.manage_users'))
     return render_template('create_user.html', form=form)
@@ -755,13 +1115,35 @@ def create_user():
 @main_routes.route('/admin/delete_user/<int:user_id>', methods=['POST'])
 @login_required
 def delete_user(user_id):
+    """Delete a user from the system.
+
+    Args:
+        user_id (int): The ID of the user to delete
+
+    Returns:
+        POST: Redirect to manage_users page
+
+    Permission:
+        - Requires admin privileges
+        - Cannot delete last admin account
+        - Redirects to index if unauthorized
+
+    Logging:
+        - INFO: User deletion success
+        - ERROR: Deletion failures
+
+    Validation:
+        - Checks if attempting to delete last admin
+        - Handles cascade deletion of related data
+    """
     if current_user.user_type != 'admin':
         flash('访问被拒绝。仅限管理员使用。', 'danger')
         return redirect(url_for('main.index'))
 
     try:
         user = User.query.get_or_404(user_id)
-
+        username = user.username
+        user_type = user.user_type
         # 1. 根据用户类型处理特定关联数据
         if user.user_type == 'student':
             # 处理学生相关数据
@@ -792,9 +1174,8 @@ def delete_user(user_id):
             # 检查是否是最后一个管理员
             admin_count = User.query.filter_by(user_type='admin').count()
             if admin_count <= 1:
-                print("尝试删除最后一个管理员")  # 调试信息
                 from flask import session
-                session['_flashes'] = [(u'danger', u'无法删除最后一个管理员账号！')]
+                session['_flashes'] = [(u'danger', u'Cannot delete the last admin account.')]
                 return redirect(url_for('main.manage_users'))
             AdminProfile.query.filter_by(user_id=user.id).delete()
 
@@ -813,18 +1194,38 @@ def delete_user(user_id):
         db.session.delete(user)
         db.session.commit()
         
-        flash('用户删除成功！', 'success')
+        system_logger.log_info(f"Admin {current_user.username} deleted user: {username} ({user_type})")
+        flash('User Delete Success!', 'success')
         return redirect(url_for('main.manage_users'))
         
     except Exception as e:
+        system_logger.log_error(f"Error deleting user {user_id}: {str(e)}")
         db.session.rollback()
-        flash(f'删除用户时出错：{str(e)}', 'danger')
+        flash(f'Delete Error:{str(e)}', 'danger')
         return redirect(url_for('main.manage_users'))
     
 
 @main_routes.route('/preferences', methods=['GET', 'POST'])
 @login_required
 def preferences():
+    """Handle user preference settings.
+
+    Methods:
+        GET: Display preferences form
+        POST: Process preference updates
+
+    Returns:
+        GET: Render preferences.html with form
+        POST: Redirect to preferences page after update
+
+    Data:
+        - Creates default preferences if none exist
+        - Updates theme and font size settings
+
+    Permission:
+        - Requires user to be logged in
+    """
+
     # 获取或创建用户偏好
     user_pref = UserPreference.query.filter_by(user_id=current_user.id).first()
     if not user_pref:
@@ -846,6 +1247,18 @@ def preferences():
 @main_routes.route('/admin/manage_courses')
 @login_required
 def manage_courses():
+    """Display course management interface for administrators.
+
+    Returns:
+        GET: Render manage_courses.html with all courses
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Data:
+        - Retrieves all courses from database
+    """
     if current_user.user_type != 'admin':
         flash('Access denied. Admin only.', 'danger')
         return redirect(url_for('main.index'))
@@ -860,6 +1273,28 @@ def manage_courses():
 @main_routes.route('/admin/delete_course/<int:course_id>', methods=['POST'])
 @login_required
 def delete_course_admin(course_id):
+    """Delete a course and all related data.
+
+    Args:
+        course_id (int): The ID of the course to delete
+
+    Returns:
+        POST: Redirect to manage_courses page
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Actions:
+        - Deletes course grades
+        - Deletes course registrations
+        - Deletes forum posts and replies
+        - Deletes course itself
+
+    Logging:
+        - INFO: Course deletion success
+        - ERROR: Deletion failures
+    """
     if current_user.user_type != 'admin':
         flash('Access denied. Admin only.', 'danger')
         return redirect(url_for('main.index'))
@@ -891,3 +1326,286 @@ def delete_course_admin(course_id):
         db.session.rollback()
         flash(f'Error deleting course: {str(e)}', 'danger')
         return redirect(url_for('main.manage_courses'))
+
+@main_routes.route('/admin/edit_user/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def edit_user(user_id):
+    """Edit user information by administrator.
+
+    Args:
+        user_id (int): The ID of the user to edit
+
+    Methods:
+        GET: Display user edit form
+        POST: Process user information updates
+
+    Returns:
+        GET: Render edit_user.html with form
+        POST: Redirect to manage_users after successful update
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Logging:
+        - INFO: User update success
+        - ERROR: Update failures
+    """
+    if current_user.user_type != 'admin':
+        flash('访问被拒绝。仅限管理员使用。', 'danger')
+        return redirect(url_for('main.index'))
+    
+    user = User.query.get_or_404(user_id)
+    form = EditUserForm(obj=user)
+    
+    if form.validate_on_submit():
+
+        user.user_type = form.user_type.data
+        
+        if form.password.data:  # 只有当输入了新密码时才更新密码
+            user.password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
+            
+        db.session.commit()
+        flash(f'User {user.username} update success !', 'success')
+        return redirect(url_for('main.manage_users'))
+        
+    return render_template('edit_user.html', form=form, user=user)
+
+@main_routes.route('/admin/ban_user/<int:user_id>', methods=['POST'])
+@login_required
+def ban_user(user_id):
+    """Ban a user from the system.
+
+    Args:
+        user_id (int): The ID of the user to ban
+
+    Returns:
+        POST: Redirect to manage_users page
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Logging:
+        - WARNING: User ban events
+    """
+    if current_user.user_type != 'admin':
+        flash('Access denied. Admin only.', 'danger')
+        return redirect(url_for('main.index'))
+    
+    user = User.query.get_or_404(user_id)
+    user.is_banned = True
+    db.session.commit()
+    system_logger.log_warning(f"Admin {current_user.username} banned user: {user.username}")
+    flash(f'User {user.username} has been banned.', 'success')
+    return redirect(url_for('main.manage_users'))
+
+@main_routes.route('/admin/unban_user/<int:user_id>', methods=['POST'])
+@login_required
+def unban_user(user_id):
+    """Remove ban from a user.
+
+    Args:
+        user_id (int): The ID of the user to unban
+
+    Returns:
+        POST: Redirect to manage_users page
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Logging:
+        - INFO: User unban events
+    """
+    if current_user.user_type != 'admin':
+        flash('Access denied. Admin only.', 'danger')
+        return redirect(url_for('main.index'))
+    
+    user = User.query.get_or_404(user_id)
+    user.is_banned = False
+    db.session.commit()
+    system_logger.log_info(f"Admin {current_user.username} unbanned user: {user.username}")
+    flash(f'User {user.username} has been unbanned.', 'success')
+    return redirect(url_for('main.manage_users'))
+
+@main_routes.route('/admin/view_logs')
+@login_required
+def view_logs():
+    """Display system logs for administrators.
+
+    Returns:
+        GET: Render view_logs.html with log content
+
+    Permission:
+        - Requires admin privileges
+        - Redirects to index if unauthorized
+
+    Features:
+        - Lists all log files
+        - Filters logs by type (error, warning, info)
+        - Displays selected log file content
+    """
+    if current_user.user_type != 'admin':
+        flash('Access denied. Admin only.', 'danger')
+        return redirect(url_for('main.index'))
+    
+    # 获取日志文件列表
+    log_dir = 'logs'
+    log_files = []
+    if os.path.exists(log_dir):
+        log_files = [f for f in os.listdir(log_dir) if f.endswith('.log')]
+        log_files.sort(reverse=True)  # 最新的文件在前
+    
+    # 读取选定的日志文件
+    selected_log = request.args.get('file', '')
+    log_content = {'errors': [], 'warnings': [], 'info': []}
+    
+    if selected_log and selected_log in log_files:
+        with open(os.path.join(log_dir, selected_log), 'r', encoding='utf-8') as f:
+            for line in f:
+                if 'ERROR' in line:
+                    log_content['errors'].append(line)
+                elif 'WARNING' in line:
+                    log_content['warnings'].append(line)
+                elif 'INFO' in line:
+                    log_content['info'].append(line)
+    
+    return render_template('view_logs.html',
+                         log_files=log_files,
+                         selected_log=selected_log,
+                         log_content=log_content)
+
+@main_routes.route('/account/settings', methods=['GET'])
+@login_required
+def account_settings():
+    """Display account settings page.
+    
+    Returns:
+        Rendered account settings template
+        
+    Permission:
+        - Requires user to be logged in
+        - Admins cannot access this page
+    """
+    if current_user.user_type == 'admin':
+        flash('Administrators cannot delete their accounts.', 'danger')
+        return redirect(url_for('main.index'))
+        
+    form = DeleteAccountForm()
+    return render_template('account_settings.html', form=form)
+
+@main_routes.route('/account/delete_account', methods=['POST'])
+@login_required
+def delete_account():
+    """Handle account deletion request."""
+    if current_user.user_type == 'admin':
+        flash('Administrators cannot delete their accounts.', 'danger')
+        return redirect(url_for('main.index'))
+        
+    form = DeleteAccountForm()
+    if form.validate_on_submit():
+        if check_password_hash(current_user.password, form.password.data):
+            try:
+                # 开启数据库会话
+                db.session.begin_nested()
+                
+                # 保存用户信息用于日志
+                user_id = current_user.id
+                username = current_user.username
+                user_type = current_user.user_type
+                
+                system_logger.log_info(f"Starting account deletion for user: {username} ({user_type})")
+
+                try:
+                    # 1. 删除论坛相关数据
+                    system_logger.log_info("Deleting forum data...")
+                    reply_count = ForumReply.query.filter_by(replier_id=user_id).delete()  # 修改 user_id 为 replier_id
+                    post_count = ForumPost.query.filter_by(author_id=user_id).delete()  # 修改 user_id 为 author_id
+                    system_logger.log_info(f"Deleted {reply_count} replies and {post_count} posts")
+
+                    # 2. 根据用户类型删除特定数据
+                    if user_type == 'student':
+                        system_logger.log_info("Deleting student data...")
+                        StudentGrade.query.filter_by(student_id=user_id).delete()
+                        CourseRegistration.query.filter_by(user_id=user_id).delete()
+                        EBikeLicense.query.filter_by(owner_id=user_id).delete()  # 修改 student_id 为 owner_id
+                        StudentProfile.query.filter_by(user_id=user_id).delete()
+
+                    elif user_type == 'teacher':
+                        system_logger.log_info("Deleting teacher data...")
+                        courses = Course.query.filter_by(created_by=user_id).all()
+                        for course in courses:
+                            course_id = course.id
+                            StudentGrade.query.filter_by(course_id=course_id).delete()
+                            CourseRegistration.query.filter_by(course_id=course_id).delete()
+                            ForumPost.query.filter_by(course_id=course_id).delete()
+                        Course.query.filter_by(created_by=user_id).delete()
+                        TeacherProfile.query.filter_by(user_id=user_id).delete()
+
+                    elif user_type == 'security':
+                        system_logger.log_info("Deleting security staff data...")
+                        EBikeLicense.query.filter_by(approved_by=user_id).update({EBikeLicense.approved_by: None})
+                        SecurityProfile.query.filter_by(user_id=user_id).delete()
+
+                    elif user_type == 'library_staff':
+                        system_logger.log_info("Deleting library staff data...")
+                        LibraryStaffProfile.query.filter_by(user_id=user_id).delete()
+
+                    # 3. 删除用户偏好设置
+                    system_logger.log_info("Deleting user preferences...")
+                    UserPreference.query.filter_by(user_id=user_id).delete()
+
+                    # 4. 登出用户
+                    system_logger.log_info("Logging out user...")
+                    logout_user()
+
+                    # 5. 删除用户账户
+                    system_logger.log_info("Deleting user account...")
+                    user = User.query.get(user_id)
+                    if user:
+                        db.session.delete(user)
+                    
+                    # 6. 提交所有更改
+                    system_logger.log_info("Committing changes...")
+                    db.session.commit()
+
+                    system_logger.log_info(f"User account deleted successfully: {username} ({user_type})")
+                    flash('Your account has been successfully deleted.', 'success')
+                    return redirect(url_for('main.index'))
+
+                except SQLAlchemyError as e:
+                    system_logger.log_error(f"SQLAlchemy error during deletion: {str(e)}")
+                    db.session.rollback()
+                    raise
+
+            except Exception as e:
+                db.session.rollback()
+                system_logger.log_error(f"Unexpected error during account deletion: {str(e)}")
+                flash(f'Error deleting account: {str(e)}', 'danger')  # 显示具体错误信息
+                return redirect(url_for('main.account_settings'))
+        else:
+            flash('Incorrect password.', 'danger')
+            return redirect(url_for('main.account_settings'))
+    
+    # 如果表单验证失败，显示具体错误
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(f'{field}: {error}', 'danger')
+    return redirect(url_for('main.account_settings'))
+
+@main_routes.errorhandler(Exception)
+def handle_error(error):
+    """Global error handler for all unhandled exceptions.
+
+    Args:
+        error: The exception that was raised
+
+    Returns:
+        Tuple of error message and HTTP 500 status code
+
+    Logging:
+        - ERROR: Logs all unhandled exceptions
+    """
+    system_logger.log_error(f"System error: {str(error)}")
+    return 'Internal Server Error', 500

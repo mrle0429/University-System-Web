@@ -824,3 +824,151 @@ textarea {
 .form-group {
     margin-bottom: 20px;
 }
+
+.mb-4 {
+    margin-bottom: 1.5rem; /* 24px */
+}
+
+.log-entry {
+    font-family: monospace;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #eee;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.card-header h5 {
+    margin: 0;
+}
+
+/* 管理操作按钮基础样式 */
+.admin-btn {
+    display: inline-block;
+    padding: 6px 12px;  /* 稍微减小padding使按钮更紧凑 */
+    margin: 0 3px;      /* 减小边距 */
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+    min-width: 60px;    /* 确保按钮最小宽度一致 */
+}
+
+.admin-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* 编辑按钮 - 蓝色 */
+.admin-btn-edit {
+    background: linear-gradient(45deg, #2196F3, #1976D2);
+}
+
+.admin-btn-edit:hover {
+    background: linear-gradient(45deg, #1976D2, #1565C0);
+}
+
+/* 解封按钮 - 绿色 */
+.admin-btn-unban {
+    background: linear-gradient(45deg, #4CAF50, #388E3C);
+}
+
+.admin-btn-unban:hover {
+    background: linear-gradient(45deg, #388E3C, #2E7D32);
+}
+
+/* 封禁按钮 - 橙色 */
+.admin-btn-ban {
+    background: linear-gradient(45deg, #FF9800, #F57C00);
+}
+
+.admin-btn-ban:hover {
+    background: linear-gradient(45deg, #F57C00, #EF6C00);
+}
+
+/* 删除按钮 - 红色 */
+.admin-btn-delete {
+    background: linear-gradient(45deg, #f44336, #d32f2f);
+}
+
+.admin-btn-delete:hover {
+    background: linear-gradient(45deg, #d32f2f, #c62828);
+}
+
+/* 按钮组容器 */
+.admin-btn-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* 左对齐 */
+    gap: 5px;                    /* 减小间距 */
+    white-space: nowrap;         /* 防止按钮换行 */
+}
+
+/* 表单按钮样式重置 */
+.admin-btn-group form {
+    margin: 0;
+    padding: 0;
+    display: inline-block;  /* 让表单内联显示 */
+}
+
+/* 表格单元格样式 */
+td.admin-btn-group {
+    min-width: 200px;      /* 确保有足够空间放置按钮 */
+    padding: 5px 10px;     /* 调整单元格内边距 */
+}
+
+/* 确保按钮在同一行显示 */
+.admin-btn-group > * {
+    float: left;           /* 使用浮动布局 */
+    margin-right: 5px;     /* 按钮之间的间距 */
+}
+
+/* 清除浮动 */
+.admin-btn-group::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.account-settings-box {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.warning-section {
+    margin-top: 2rem;
+}
+
+.warning-section .alert {
+    margin: 1rem 0;
+}
+
+.warning-section ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.form-check {
+    margin: 1rem 0;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
