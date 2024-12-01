@@ -5,10 +5,14 @@ from app.forms import RegisterForm, LoginForm, TeacherProfileForm, StudentProfil
     RegisterCourseForm, ForumPostForm, ForumReplyForm, LibraryStaffProfileForm, AddBookForm, SearchBookForm, \
     AddGradeForm, EBikeForm, SecurityProfileForm, UserPreferenceForm, EditUserForm, DeleteAccountForm
 from app.models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db, ForumPost, ForumReply, \
-    LibraryStaffProfile, LibraryResource, StudentGrade, EBikeLicense, SecurityProfile, AdminProfile, UserPreference
+    LibraryStaffProfile, LibraryResource, StudentGrade, EBikeLicense, SecurityProfile, AdminProfile, UserPreference, \
+    ChatHistory
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.utils.logger import SystemLogger
 import os
+import requests
+import json
+import time
 
 main_routes = Blueprint('main', __name__)
 system_logger = SystemLogger()
@@ -1609,3 +1613,157 @@ def handle_error(error):
     """
     system_logger.log_error(f"System error: {str(error)}")
     return 'Internal Server Error', 500
+
+@main_routes.route('/ai_assistant')
+@login_required
+def ai_assistant():
+    """Displayed the AI assistant page"""
+    chat_history = ChatHistory.query.filter_by(user_id=current_user.id)\
+                                 .order_by(ChatHistory.created_at.desc())\
+                                 .limit(10).all()
+    return render_template('ai_assistant.html', chat_history=chat_history)
+
+@main_routes.route('/ai_assistant/chat', methods=['POST'])
+@login_required
+def chat():
+    """Handle chat requests"""
+    message = request.json.get('message', '')
+    
+    # Wenxin Yiyan API configuration
+    API_KEY = "kec2fq9yo27KWmTwYuoAurl2"
+    SECRET_KEY = "bFS62bfjurWCffOssqmLVIOiHrEvb3hW"
+    
+    # Get access token
+    def get_access_token():
+        url = "https://aip.baidubce.com/oauth/2.0/token"
+        params = {
+            "grant_type": "client_credentials",
+            "client_id": API_KEY,
+            "client_secret": SECRET_KEY
+        }
+        return str(requests.post(url, params=params).json().get("access_token"))
+
+    try:
+        # Build different prompt words based on user type
+        user_type = current_user.user_type
+        if user_type == 'student':
+            # Get information about the courses that students are enrolled in
+            courses = Course.query.join(CourseRegistration)\
+                .filter(CourseRegistration.user_id == current_user.id)\
+                .all()
+            
+            courses_info = "\n".join([
+                f"- {course.course_name}: {course.description}"
+                for course in courses
+            ])
+            
+            prompt = f"""You are a professional learning assistant helping a student.
+
+            Student's current courses:
+            {courses_info}
+
+            As a student assistant, you should:
+            1. Provide clear and easy-to-understand answers
+            2. Give specific study tips and examples
+            3. Encourage independent thinking
+            4. Suggest appropriate learning methods for course-related questions
+            5. Reference the student's current courses when relevant
+
+            Please respond in English to this question: {message}"""
+            
+        elif user_type == 'teacher':
+            # Get information about a course created by an instructor
+            courses = Course.query.filter_by(created_by=current_user.id).all()
+            
+            courses_info = "\n".join([
+                f"- {course.course_name}: {course.description}"
+                for course in courses
+            ])
+            
+            prompt = f"""You are a teaching assistant helping a professor.
+
+            Professor's current courses:
+            {courses_info}
+
+            As a teaching assistant, you should:
+            1. Provide teaching methodology suggestions
+            2. Share course design ideas specific to the courses being taught
+            3. Suggest classroom interaction methods
+            4. Recommend teaching resources
+            5. Consider the context of current courses when providing advice
+
+            Please respond in English to this question: {message}"""
+            
+        elif user_type == 'library_staff':
+            prompt = f"""You are a library management assistant helping library staff.
+
+            As a library assistant, you should:
+            1. Provide library management suggestions
+            2. Help with book classification questions
+            3. Suggest reader service methods
+            4. Provide resource management advice
+
+            Please respond in English to this question: {message}"""
+            
+        elif user_type == 'security':
+            prompt = f"""You are a campus security assistant helping security personnel.
+
+            As a security assistant, you should:
+            1. Provide security management suggestions
+            2. Help with security-related questions
+            3. Suggest emergency response methods
+            4. Provide patrol guidance
+
+            Please respond in English to this question: {message}"""
+            
+        else:
+            prompt = f"""You are a general assistant. Please provide a professional and helpful response in English to this question: {message}"""
+        
+        # Uniform request to add an English reply at the end of the prompt
+        prompt += "\n\nIMPORTANT: Always respond in English, regardless of the language of the question."
+        
+        # Configure Wenxin Yiyan requests
+        url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions?access_token=" + get_access_token()
+        
+        payload = json.dumps({
+            "messages": [{
+                "role": "user",
+                "content": prompt
+            }]
+        })
+        
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        
+       # Send a request to Wenxin Yiyan API
+        response = requests.post(url, headers=headers, data=payload)
+        result = response.json()
+        
+        if 'result' in result:
+            answer = result['result']
+            
+            # Save your chat history
+            chat = ChatHistory(
+                user_id=current_user.id,
+                message=message,
+                response=answer
+            )
+            db.session.add(chat)
+            db.session.commit()
+            
+            return jsonify({
+                'status': 'success',
+                'response': answer
+            })
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': 'Failed to get AI response'
+            }), 500
+            
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
