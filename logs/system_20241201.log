@@ -24,8 +24,5 @@ WHERE user.email = %(email_1)s
 2024-12-01 16:02:44,282 - INFO - INFO: User logged in successfully: Sean
 2024-12-01 16:04:12,534 - INFO - INFO: User logged in successfully: ZhangBohan
 2024-12-01 16:06:34,102 - INFO - INFO: User logged in successfully: Sean
-2024-12-01 22:06:13,985 - INFO - INFO: User logged in successfully: ZhangBohan
-2024-12-01 22:07:34,062 - ERROR - ERROR: System error: Could not build url for endpoint 'main.login'. Did you mean 'main.logout' instead?
-2024-12-01 22:07:37,398 - ERROR - ERROR: System error: Could not build url for endpoint 'main.login'. Did you mean 'main.logout' instead?
-2024-12-01 22:07:39,163 - ERROR - ERROR: System error: Could not build url for endpoint 'main.login'. Did you mean 'main.logout' instead?
-2024-12-01 22:07:50,336 - INFO - INFO: User logged in successfully: Yunhan Gao
+2024-12-01 21:50:52,936 - INFO - INFO: User logged in successfully: ZhangBohan
+2024-12-01 21:57:55,785 - INFO - INFO: User logged in successfully: mrle
