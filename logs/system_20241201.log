@@ -24,3 +24,5 @@ WHERE user.email = %(email_1)s
 2024-12-01 16:02:44,282 - INFO - INFO: User logged in successfully: Sean
 2024-12-01 16:04:12,534 - INFO - INFO: User logged in successfully: ZhangBohan
 2024-12-01 16:06:34,102 - INFO - INFO: User logged in successfully: Sean
+2024-12-01 21:50:52,936 - INFO - INFO: User logged in successfully: ZhangBohan
+2024-12-01 21:57:55,785 - INFO - INFO: User logged in successfully: mrle
