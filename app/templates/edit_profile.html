@@ -2,19 +2,28 @@
 {% block content %}
 <div class="container">
     <h2>Edit Profile</h2>
-    <form method="POST">
-        {{ form.hidden_tag() }}
+    <div class="login-box">
+        <form method="POST" class="login-form">
+            {{ form.hidden_tag() }}
 
-        <!-- Loop through each form field dynamically -->
-        {% for field in form %}
-            {% if field.name != "csrf_token" and field.type != "SubmitField" %}
-                <div class="form-group">
-                    {{ field.label }} {{ field(class="form-control") }}
-                </div>
-            {% endif %}
-        {% endfor %}
+            {% for field in form %}
+                {% if field.name != "csrf_token" and field.type != "SubmitField" %}
+                    <div class="form-group">
+                        {{ field(class="form-control", placeholder=field.label.text) }}
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                                <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
 
-        <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
-    </form>
+            {{ form.submit(class="login-btn", value="Update Profile") }}
+        </form>
+    </div>
 </div>
+
+<script src="{{ url_for('static', filename='js/form-validation.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form-validation.css') }}">
 {% endblock %}
