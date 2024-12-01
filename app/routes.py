@@ -1629,13 +1629,13 @@ def chat():
     """Handle chat requests"""
     message = request.json.get('message', '')
     
-    # Wenxin Yiyan API configuration
-    API_KEY = "kec2fq9yo27KWmTwYuoAurl2"
-    SECRET_KEY = "bFS62bfjurWCffOssqmLVIOiHrEvb3hW"
+    # Wenxin Yiyan API configuration - 使用环境变量
+    API_KEY = os.getenv('WENXIN_API_KEY')
+    SECRET_KEY = os.getenv('WENXIN_SECRET_KEY')
     
     # Get access token
     def get_access_token():
-        url = "https://aip.baidubce.com/oauth/2.0/token"
+        url = os.getenv('WENXIN_TOKEN_URL')
         params = {
             "grant_type": "client_credentials",
             "client_id": API_KEY,
@@ -1722,8 +1722,8 @@ def chat():
         # Uniform request to add an English reply at the end of the prompt
         prompt += "\n\nIMPORTANT: Always respond in English, regardless of the language of the question."
         
-        # Configure Wenxin Yiyan requests
-        url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions?access_token=" + get_access_token()
+        # Configure Wenxin Yiyan requests - 使用环境变量
+        url = f"{os.getenv('WENXIN_API_URL')}?access_token={get_access_token()}"
         
         payload = json.dumps({
             "messages": [{
@@ -1736,7 +1736,7 @@ def chat():
             'Content-Type': 'application/json'
         }
         
-       # Send a request to Wenxin Yiyan API
+        # Send a request to Wenxin Yiyan API
         response = requests.post(url, headers=headers, data=payload)
         result = response.json()
         
