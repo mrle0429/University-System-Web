@@ -66,7 +66,12 @@ def index():
             return redirect(url_for('main.profile', user_id=user.id))
         else:
             system_logger.log_warning(f"Failed login attempt for email: {form.email.data}")
-            flash('Login failed. Please check your email and password.', 'danger')
+            # 修改这里：添加表单错误而不是使用 flash
+            if user:
+                form.password.errors.append('Incorrect password')
+            else:
+                form.email.errors.append('Email not found')
+            return render_template('index.html', form=form)
     
     return render_template('index.html', form=form)
 
@@ -958,7 +963,7 @@ def e_bike_management():
             e_bike = EBikeLicense(owner_id=current_user.id)
         e_bike.license_plate = form.license_plate.data
         e_bike.bike_model = form.bike_model.data
-        e_bike.status = 'Pending'  # 每次创建或修改后自动变为“申请”状态
+        e_bike.status = 'Pending'  # 每次创建或修改后自动变为"申请"状态
         e_bike.registration_date = None
         e_bike.expiration_date = None
         e_bike.approved_by = None
