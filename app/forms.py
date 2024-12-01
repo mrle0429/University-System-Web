@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, TextAreaField, DateTimeField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, TextAreaField, DateTimeField, IntegerField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, Optional
 
 class RegisterForm(FlaskForm):
@@ -169,4 +169,28 @@ class UserPreferenceForm(FlaskForm):
         ('large', 'Large')
     ], validators=[DataRequired()])
     submit = SubmitField('Save Preferences')
+
+class EditUserForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email', render_kw={'readonly': True})     
+    password = PasswordField('Password (leave blank to keep unchanged)')
+    user_type = SelectField('User Type', 
+                          choices=[('student', 'Student'),
+                                 ('teacher', 'Teacher'),
+                                 ('library_staff', 'Library Staff'),
+                                 ('security', 'Security'),],
+                          validators=[DataRequired()])
+    submit = SubmitField('Update User')
+
+class DeleteAccountForm(FlaskForm):
+    password = PasswordField('Password', validators=[
+        DataRequired(message='Password is required')
+    ])
+    confirm = BooleanField('Confirm Delete', validators=[
+        DataRequired(message='You must confirm this action')
+    ])
+    submit = SubmitField('Delete Account')
+
+    def __init__(self, *args, **kwargs):
+        super(DeleteAccountForm, self).__init__(*args, **kwargs)
 

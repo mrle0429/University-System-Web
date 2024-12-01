@@ -1,0 +1,27 @@
+.form-control.error {
+    border: 2px solid #ff4444;
+    background-color: #fff8f8;
+    animation: shake 0.5s;
+}
+
+.error-message {
+    color: #ff4444;
+    font-size: 0.85em;
+    margin-top: 5px;
+    display: block;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+.form-control:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.form-control.error:focus {
+    box-shadow: 0 0 5px rgba(255, 68, 68, 0.4);
+} 

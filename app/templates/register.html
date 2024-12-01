@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BJUT Unified Identity Authentication - Register</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form-validation.css') }}">
 </head>
 <body>
     <div class="login-page">
@@ -58,6 +59,11 @@
                         </div>
                         <div class="form-group">
                             {{ form.user_type(class="form-control") }}
+                            {% if form.user_type.errors %}
+                                {% for error in form.user_type.errors %}
+                                    <span class="error-message">{{ error }}</span>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                         {{ form.submit(class="login-btn", value="Register") }}
                     </form>
@@ -81,5 +87,6 @@
     {% endwith %}
 
     <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/form-validation.js') }}"></script>
 </body>
 </html>

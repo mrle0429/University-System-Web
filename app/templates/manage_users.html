@@ -20,9 +20,19 @@
                 <td>{{ user.username }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.user_type }}</td>
-                <td>
-                    <form method="POST" action="{{ url_for('main.delete_user', user_id=user.id) }}" style="display:inline;">
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                <td class="admin-btn-group">
+                    <a href="{{ url_for('main.edit_user', user_id=user.id) }}" class="admin-btn admin-btn-edit">Edit</a>
+                    {% if user.is_banned %}
+                        <form method="POST" action="{{ url_for('main.unban_user', user_id=user.id) }}">
+                            <button type="submit" class="admin-btn admin-btn-unban">Unban</button>
+                        </form>
+                    {% else %}
+                        <form method="POST" action="{{ url_for('main.ban_user', user_id=user.id) }}" class="btn btn-secondary btn-sm">
+                            <button type="submit" class="admin-btn admin-btn-ban">Ban</button>
+                        </form>
+                    {% endif %}
+                    <form method="POST" action="{{ url_for('main.delete_user', user_id=user.id) }}" class="btn btn-danger">
+                        <button type="submit" class="admin-btn admin-btn-delete">Delete</button>
                     </form>
                 </td>
             </tr>

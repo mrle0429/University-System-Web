@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width: 800px; padding: 30px;">
+    <h2>Edit User</h2>
+    <form method="POST" class="mt-4">
+        {{ form.hidden_tag() }}
+        <div class="form-group mb-3">
+            {{ form.username.label(class="form-label") }}
+            {{ form.username(class="form-control") }}
+        </div>
+        <div class="form-group mb-3">
+            {{ form.email.label(class="form-label") }}
+            {{ form.email(class="form-control") }}
+        </div>
+        <div class="form-group mb-3">
+            {{ form.password.label(class="form-label") }}
+            {{ form.password(class="form-control") }}
+        </div>
+        <div class="form-group mb-3">
+            {{ form.user_type.label(class="form-label") }}
+            {{ form.user_type(class="form-control") }}
+        </div>
+        {{ form.submit(class="btn btn-primary") }}
+        <a href="{{ url_for('main.manage_users') }}" class="btn btn-secondary">Back</a>
+    </form>
+</div>
+{% endblock %} 

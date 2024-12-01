@@ -2,10 +2,53 @@
 {% block content %}
 <div class="container">
     <h2>Register for Course</h2>
-    <form method="POST">
+    <form method="POST" id="courseRegistrationForm">
         {{ form.hidden_tag() }}
-        <div>{{ form.course_code.label }} {{ form.course_code(size=32) }}</div>
+        <div class="form-group mb-3">
+            <label for="teacherSelect">Select Teacher</label>
+            <select class="form-control" id="teacherSelect" name="teacher_id" required>
+                <option value="">Select a Teacher</option>
+                {% for teacher in teachers %}
+                <option value="{{ teacher.id }}">{{ teacher.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group mb-3">
+            <label for="courseSelect">Select Course</label>
+            <select class="form-control" id="courseSelect" name="course_code" required>
+                <option value="">Please select a teacher first</option>
+            </select>
+        </div>
         <div>{{ form.submit() }}</div>
     </form>
 </div>
+
+<script>
+document.getElementById('teacherSelect').addEventListener('change', async function() {
+    const teacherId = this.value;
+    const courseSelect = document.getElementById('courseSelect');
+    
+    // 清空课程选项
+    courseSelect.innerHTML = '<option value="">Select a Course</option>';
+    
+    if (!teacherId) return;
+    
+    try {
+        const response = await fetch(`/get_teacher_courses/${teacherId}`);
+        const data = await response.json();
+        
+        if (data.courses) {
+            data.courses.forEach(course => {
+                const option = document.createElement('option');
+                option.value = course.course_code;
+                option.textContent = `${course.course_name} (${course.course_code})`;
+                courseSelect.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching courses:', error);
+        alert('Failed to load courses. Please try again.');
+    }
+});
+</script>
 {% endblock %}
