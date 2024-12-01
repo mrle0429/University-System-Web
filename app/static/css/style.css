@@ -933,3 +933,42 @@ td.admin-btn-group {
     display: table;
     clear: both;
 }
+
+.account-settings-box {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.warning-section {
+    margin-top: 2rem;
+}
+
+.warning-section .alert {
+    margin: 1rem 0;
+}
+
+.warning-section ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.form-check {
+    margin: 1rem 0;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}

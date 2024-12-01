@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, current_user, login_required, logout_user
+from sqlalchemy.exc import SQLAlchemyError  # 添加这行
 from app.forms import RegisterForm, LoginForm, TeacherProfileForm, StudentProfileForm, CreateCourseForm, \
     RegisterCourseForm, ForumPostForm, ForumReplyForm, LibraryStaffProfileForm, AddBookForm, SearchBookForm, \
-    AddGradeForm, EBikeForm, SecurityProfileForm, UserPreferenceForm, EditUserForm
+    AddGradeForm, EBikeForm, SecurityProfileForm, UserPreferenceForm, EditUserForm, DeleteAccountForm
 from app.models import User, TeacherProfile, StudentProfile, Course, CourseRegistration, db, ForumPost, ForumReply, \
     LibraryStaffProfile, LibraryResource, StudentGrade, EBikeLicense, SecurityProfile, AdminProfile, UserPreference
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -1475,6 +1476,123 @@ def view_logs():
                          selected_log=selected_log,
                          log_content=log_content)
 
+@main_routes.route('/account/settings', methods=['GET'])
+@login_required
+def account_settings():
+    """Display account settings page.
+    
+    Returns:
+        Rendered account settings template
+        
+    Permission:
+        - Requires user to be logged in
+        - Admins cannot access this page
+    """
+    if current_user.user_type == 'admin':
+        flash('Administrators cannot delete their accounts.', 'danger')
+        return redirect(url_for('main.index'))
+        
+    form = DeleteAccountForm()
+    return render_template('account_settings.html', form=form)
+
+@main_routes.route('/account/delete_account', methods=['POST'])
+@login_required
+def delete_account():
+    """Handle account deletion request."""
+    if current_user.user_type == 'admin':
+        flash('Administrators cannot delete their accounts.', 'danger')
+        return redirect(url_for('main.index'))
+        
+    form = DeleteAccountForm()
+    if form.validate_on_submit():
+        if check_password_hash(current_user.password, form.password.data):
+            try:
+                # 开启数据库会话
+                db.session.begin_nested()
+                
+                # 保存用户信息用于日志
+                user_id = current_user.id
+                username = current_user.username
+                user_type = current_user.user_type
+                
+                system_logger.log_info(f"Starting account deletion for user: {username} ({user_type})")
+
+                try:
+                    # 1. 删除论坛相关数据
+                    system_logger.log_info("Deleting forum data...")
+                    reply_count = ForumReply.query.filter_by(replier_id=user_id).delete()  # 修改 user_id 为 replier_id
+                    post_count = ForumPost.query.filter_by(author_id=user_id).delete()  # 修改 user_id 为 author_id
+                    system_logger.log_info(f"Deleted {reply_count} replies and {post_count} posts")
+
+                    # 2. 根据用户类型删除特定数据
+                    if user_type == 'student':
+                        system_logger.log_info("Deleting student data...")
+                        StudentGrade.query.filter_by(student_id=user_id).delete()
+                        CourseRegistration.query.filter_by(user_id=user_id).delete()
+                        EBikeLicense.query.filter_by(owner_id=user_id).delete()  # 修改 student_id 为 owner_id
+                        StudentProfile.query.filter_by(user_id=user_id).delete()
+
+                    elif user_type == 'teacher':
+                        system_logger.log_info("Deleting teacher data...")
+                        courses = Course.query.filter_by(created_by=user_id).all()
+                        for course in courses:
+                            course_id = course.id
+                            StudentGrade.query.filter_by(course_id=course_id).delete()
+                            CourseRegistration.query.filter_by(course_id=course_id).delete()
+                            ForumPost.query.filter_by(course_id=course_id).delete()
+                        Course.query.filter_by(created_by=user_id).delete()
+                        TeacherProfile.query.filter_by(user_id=user_id).delete()
+
+                    elif user_type == 'security':
+                        system_logger.log_info("Deleting security staff data...")
+                        EBikeLicense.query.filter_by(approved_by=user_id).update({EBikeLicense.approved_by: None})
+                        SecurityProfile.query.filter_by(user_id=user_id).delete()
+
+                    elif user_type == 'library_staff':
+                        system_logger.log_info("Deleting library staff data...")
+                        LibraryStaffProfile.query.filter_by(user_id=user_id).delete()
+
+                    # 3. 删除用户偏好设置
+                    system_logger.log_info("Deleting user preferences...")
+                    UserPreference.query.filter_by(user_id=user_id).delete()
+
+                    # 4. 登出用户
+                    system_logger.log_info("Logging out user...")
+                    logout_user()
+
+                    # 5. 删除用户账户
+                    system_logger.log_info("Deleting user account...")
+                    user = User.query.get(user_id)
+                    if user:
+                        db.session.delete(user)
+                    
+                    # 6. 提交所有更改
+                    system_logger.log_info("Committing changes...")
+                    db.session.commit()
+
+                    system_logger.log_info(f"User account deleted successfully: {username} ({user_type})")
+                    flash('Your account has been successfully deleted.', 'success')
+                    return redirect(url_for('main.index'))
+
+                except SQLAlchemyError as e:
+                    system_logger.log_error(f"SQLAlchemy error during deletion: {str(e)}")
+                    db.session.rollback()
+                    raise
+
+            except Exception as e:
+                db.session.rollback()
+                system_logger.log_error(f"Unexpected error during account deletion: {str(e)}")
+                flash(f'Error deleting account: {str(e)}', 'danger')  # 显示具体错误信息
+                return redirect(url_for('main.account_settings'))
+        else:
+            flash('Incorrect password.', 'danger')
+            return redirect(url_for('main.account_settings'))
+    
+    # 如果表单验证失败，显示具体错误
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(f'{field}: {error}', 'danger')
+    return redirect(url_for('main.account_settings'))
 
 @main_routes.errorhandler(Exception)
 def handle_error(error):

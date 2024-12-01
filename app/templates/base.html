@@ -64,6 +64,10 @@
 
                     <li><a href="{{ url_for('main.preferences') }}">Display Settings</a></li>
 
+                    {% if current_user.is_authenticated and current_user.user_type not in ['admin'] %}
+                        <li><a href="{{ url_for('main.account_settings') }}" class="text-danger">Account Settings</a></li>
+                    {% endif %}
+
                     <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
                 {% endif %}
             </ul>
