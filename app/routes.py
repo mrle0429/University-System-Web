@@ -703,6 +703,19 @@ def add_book():
 
 @main_routes.route('/search_books', methods=['GET', 'POST'])
 def search_books():
+    """Handle book search functionality.
+    
+    Methods:
+        GET: Display search form
+        POST: Process search and display results
+        
+    Returns:
+        Rendered template with search form and results
+        
+    Access:
+        - Public access allowed
+        - Supports both authenticated and guest users
+    """
     form = SearchBookForm()
     query = LibraryResource.query
     
@@ -728,7 +741,13 @@ def search_books():
         else:
             flash(f'Successfully found {book_count} books!', 'success')
     
-    return render_template('search_books.html', form=form, books=books)
+    # 添加一个标志来标识是否是访客访问
+    is_guest = not current_user.is_authenticated
+    
+    return render_template('search_books.html', 
+                         form=form, 
+                         books=books,
+                         is_guest=is_guest)  # 传递访客标志到模板
 
 @main_routes.route('/library_statistics')
 @login_required
