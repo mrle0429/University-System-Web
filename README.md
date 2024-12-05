@@ -67,8 +67,12 @@ URL: http://localhost:5000 or http://127.0.0.1:5000
 * Password encryption
 * Comprehensive logging system
 * Theme customization (Light/Dark mode)
+* ![image](Project%20Document/STYLE.gif)
 * Form validation with JavaScript
-* AJAX for dynamic updates
+* ![image](Project%20Document/JS.gif)
+* AJAX for dynamic updates  
+* ![image](Project%20Document/AJAX_S.gif)
+* ![image](Project%20Document/AJAX_T.gif)
 
 ### Roles in the System
 
