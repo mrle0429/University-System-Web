@@ -2,13 +2,24 @@
 {% block content %}
 <!-- Add Marked.js and Code Highlighting Library -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 
 <div class="container">
     <div class="chat-container">
         <div class="chat-header">
             <h2>AI Assistant</h2>
+            {% if current_user.user_type == 'student' %}
+                <p class="subtitle">Your Personal Learning Assistant</p>
+            {% elif current_user.user_type == 'teacher' %}
+                <p class="subtitle">Your Professional Teaching Assistant</p>
+            {% elif current_user.user_type == 'library_staff' %}
+                <p class="subtitle">Your Library Management Assistant</p>
+            {% elif current_user.user_type == 'security' %}
+                <p class="subtitle">Your Campus Security Assistant</p>
+            {% else %}
+                <p class="subtitle">Your Intelligent Partner</p>
+            {% endif %}
         </div>
         
         <div class="chat-messages" id="chatMessages">
@@ -33,39 +44,71 @@
         </div>
         
         <div class="chat-input">
-            <textarea id="messageInput" placeholder="Please enter your question..."></textarea>
-            <button id="sendButton">Send</button>
+            <textarea id="messageInput" placeholder="Ask me anything..."></textarea>
+            <button id="sendButton">
+                <span>Send</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.5.5 0 0 1-.9.1l-2.79-3.487-3.487 2.79a.5.5 0 0 1-.8-.4v-2.5a.5.5 0 0 1 .1-.1l11.147-11.147a.5.5 0 0 1 .708 0z"/>
+                </svg>
+            </button>
         </div>
     </div>
 </div>
 
 <style>
+/* 基础样式 */
 .chat-container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 20px auto;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    height: 80vh;
+    background: var(--bg-card, rgba(255, 255, 255, 0.95));
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    height: 85vh;
     display: flex;
     flex-direction: column;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
+    transition: all 0.3s ease;
 }
 
 .chat-header {
-    padding: 20px;
-    border-bottom: 1px solid #eee;
+    padding: 25px;
+    border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
     text-align: center;
+    background: linear-gradient(45deg, #1e3c72, #2a5298);
+    border-radius: 20px 20px 0 0;
+    color: white;
+}
+
+.chat-header h2 {
+    margin: 0;
+    font-size: 1.8em;
+    background: none;
+    -webkit-text-fill-color: white;
+}
+
+.subtitle {
+    margin: 5px 0 0;
+    opacity: 0.8;
+    font-size: 0.9em;
 }
 
 .chat-messages {
     flex: 1;
     overflow-y: auto;
-    padding: 20px;
+    padding: 25px;
+    background: var(--bg-card, rgba(255, 255, 255, 0.7));
 }
 
 .message {
-    margin-bottom: 20px;
-    max-width: 80%;
+    margin-bottom: 25px;
+    max-width: 85%;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .user-message {
@@ -77,144 +120,178 @@
 }
 
 .message-content {
-    padding: 10px 15px;
-    border-radius: 15px;
-    background: #f0f0f0;
+    padding: 15px 20px;
+    border-radius: 18px;
+    background: var(--bg-secondary, rgba(240, 240, 240, 0.7));
+    color: var(--text-primary, #000);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
 }
 
 .user-message .message-content {
-    background: #007bff;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
     color: white;
+    box-shadow: 0 4px 15px rgba(30, 60, 114, 0.2);
+}
+
+.assistant-message .message-content {
+    background: var(--bg-card, rgba(255, 255, 255, 0.9));
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
 }
 
 .message-time {
-    font-size: 12px;
-    color: #888;
-    margin-top: 5px;
+    font-size: 0.8em;
+    color: var(--text-secondary, rgba(136, 136, 136, 0.8));
+    margin-top: 8px;
+    padding: 0 10px;
 }
 
 .chat-input {
     padding: 20px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
     display: flex;
-    gap: 10px;
+    gap: 15px;
+    background: var(--bg-card, rgba(255, 255, 255, 0.8));
+    border-radius: 0 0 20px 20px;
 }
 
 .chat-input textarea {
     flex: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    padding: 15px;
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+    border-radius: 12px;
     resize: none;
-    height: 60px;
+    height: 50px;
+    background: var(--bg-input, rgba(255, 255, 255, 0.9));
+    color: var(--text-primary, #000);
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+.chat-input textarea:focus {
+    outline: none;
+    border-color: #1e3c72;
+    box-shadow: 0 0 0 2px rgba(30, 60, 114, 0.1);
 }
 
 .chat-input button {
-    padding: 10px 20px;
-    background: #007bff;
+    padding: 0 25px;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 12px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .chat-input button:hover {
-    background: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(30, 60, 114, 0.2);
 }
 
-/* 添加 Markdown 相关样式 */
+.chat-input button:disabled {
+    background: var(--bg-secondary, rgba(204, 204, 204, 0.5));
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Markdown样式适配 */
 .markdown-body {
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif;
     line-height: 1.6;
     word-wrap: break-word;
+    color: var(--text-primary, #000);
 }
 
 .markdown-body pre {
-    background-color: #f6f8fa;
-    border-radius: 6px;
+    background-color: var(--bg-secondary, rgba(246, 248, 250, 0.8));
+    border-radius: 8px;
     padding: 16px;
     overflow: auto;
-    margin-bottom: 16px;
+    margin: 16px 0;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .markdown-body code {
-    background-color: rgba(27,31,35,.05);
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+    font-size: 0.9em;
+    padding: 0.2em 0.4em;
     border-radius: 3px;
-    padding: .2em .4em;
-    margin: 0;
-    font-size: 85%;
-    font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
-}
-
-.markdown-body p {
-    margin-bottom: 16px;
-}
-
-.markdown-body ul, .markdown-body ol {
-    padding-left: 2em;
-    margin-bottom: 16px;
+    background: var(--bg-secondary, rgba(27, 31, 35, 0.05));
+    color: var(--text-primary, #000);
 }
 
 .markdown-body table {
-    border-spacing: 0;
-    border-collapse: collapse;
-    margin-bottom: 16px;
     width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    background: var(--bg-card, rgba(255, 255, 255, 0.8));
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .markdown-body table th,
 .markdown-body table td {
-    padding: 6px 13px;
-    border: 1px solid #dfe2e5;
+    padding: 12px 16px;
+    border: 1px solid var(--border-color, rgba(223, 226, 229, 0.5));
+    color: var(--text-primary, #000);
 }
 
 .markdown-body table tr {
-    background-color: #fff;
-    border-top: 1px solid #c6cbd1;
+    background: var(--bg-card, rgba(255, 255, 255, 0.8));
 }
 
 .markdown-body table tr:nth-child(2n) {
-    background-color: #f6f8fa;
+    background: var(--bg-secondary, rgba(246, 248, 250, 0.5));
 }
 
-/* 修改加载动画样式 */
+/* 加载动画样式 */
 .typing-indicator {
     display: flex;
     align-items: center;
     gap: 5px;
-    padding: 10px 15px;
+    padding: 15px;
     min-width: 60px;
 }
 
 .dot {
     width: 8px;
     height: 8px;
-    background-color: #666;
+    background: var(--text-secondary, rgba(102, 102, 102, 0.8));
     border-radius: 50%;
-    animation: bounce 1.3s linear infinite;
+    animation: bounce 1.3s ease-in-out infinite;
 }
 
-.dot:nth-child(2) {
-    animation-delay: 0.15s;
-}
-
-.dot:nth-child(3) {
-    animation-delay: 0.3s;
-}
+.dot:nth-child(2) { animation-delay: 0.15s; }
+.dot:nth-child(3) { animation-delay: 0.3s; }
 
 @keyframes bounce {
-    0%, 60%, 100% {
-        transform: translateY(0);
-    }
-    30% {
-        transform: translateY(-4px);
-    }
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-4px); }
 }
 
-/* 禁用状态的发送按钮样式 */
-.chat-input button:disabled {
-    background: #cccccc;
-    cursor: not-allowed;
+/* 滚动条样式 */
+.chat-messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: var(--bg-secondary, rgba(241, 241, 241, 0.5));
+    border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: var(--text-secondary, rgba(136, 136, 136, 0.5));
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: var(--text-primary, rgba(85, 85, 85, 0.8));
 }
 </style>
 
