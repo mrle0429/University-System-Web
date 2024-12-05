@@ -676,24 +676,28 @@ def add_book():
         - INFO: Book addition success
         - ERROR: Addition failures
     """
-    # 检查是否是图书馆工作人员
     if current_user.user_type != 'library_staff':
         flash('Access denied. Library staff only.', 'danger')
         return redirect(url_for('main.index'))
     
     form = AddBookForm()
     if form.validate_on_submit():
-        new_book = LibraryResource(
-            title=form.title.data,
-            author=form.author.data,
-            publication_year=form.publication_year.data,
-            category=form.category.data,
-            availability_status='available'
-        )
-        db.session.add(new_book)
-        db.session.commit()
-        flash('New book added successfully!', 'success')
-        return redirect(url_for('main.profile', user_id=current_user.id))
+        try:
+            new_book = LibraryResource(
+                title=form.title.data,
+                author=form.author.data,
+                publication_year=form.publication_year.data,
+                category=form.category.data,
+                availability_status=form.availability_status.data
+            )
+            db.session.add(new_book)
+            db.session.commit()
+            flash('New book added successfully!', 'success')
+            return redirect(url_for('main.manage_books'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error adding book: {str(e)}', 'danger')
+            return redirect(url_for('main.add_book'))
     
     return render_template('add_book.html', form=form)
 
@@ -713,6 +717,17 @@ def search_books():
             query = query.filter(LibraryResource.availability_status == form.availability_status.data)
     
     books = query.all()
+    book_count = len(books)
+    
+    # 添加搜索结果提示
+    if form.validate_on_submit():  # 只在提交搜索时显示提示
+        if book_count == 0:
+            flash('No books found matching your search criteria.', 'info')
+        elif book_count == 1:
+            flash('Successfully found 1 book!', 'success')
+        else:
+            flash(f'Successfully found {book_count} books!', 'success')
+    
     return render_template('search_books.html', form=form, books=books)
 
 @main_routes.route('/library_statistics')
@@ -722,7 +737,7 @@ def library_statistics():
         flash('Access denied. Library staff only.', 'danger')
         return redirect(url_for('main.index'))
     
-    # 获取基本统计数据
+    # 取基本统计数据
     total_books = LibraryResource.query.count()
     available_books = LibraryResource.query.filter_by(availability_status='available').count()
     borrowed_books = LibraryResource.query.filter_by(availability_status='borrowed').count()
@@ -744,29 +759,45 @@ def library_statistics():
 @main_routes.route('/manage_books', methods=['GET', 'POST'])
 @login_required
 def manage_books():
+    """Display book management interface for library staff."""
     if current_user.user_type != 'library_staff':
         flash('Access denied. Library staff only.', 'danger')
         return redirect(url_for('main.index'))
     
-    search_form = SearchBookForm()
-    add_book_form = AddBookForm()
-    query = LibraryResource.query
-    
-    if search_form.validate_on_submit():
-        if search_form.title.data:
-            query = query.filter(LibraryResource.title.ilike(f'%{search_form.title.data}%'))
-        if search_form.author.data:
-            query = query.filter(LibraryResource.author.ilike(f'%{search_form.author.data}%'))
-        if search_form.publication_year.data:
-            query = query.filter(LibraryResource.publication_year == search_form.publication_year.data)
-        if search_form.availability_status.data:
-            query = query.filter(LibraryResource.availability_status == search_form.availability_status.data)
-    
-    books = query.all()
-    return render_template('manage_books.html', 
-                         search_form=search_form, 
-                         add_book_form=add_book_form, 
-                         books=books)
+    try:
+        form = SearchBookForm()
+        query = LibraryResource.query
+        
+        if form.validate_on_submit():
+            if form.title.data:
+                query = query.filter(LibraryResource.title.ilike(f'%{form.title.data}%'))
+            if form.author.data:
+                query = query.filter(LibraryResource.author.ilike(f'%{form.author.data}%'))
+            if form.publication_year.data:
+                query = query.filter(LibraryResource.publication_year == form.publication_year.data)
+            if form.availability_status.data:
+                query = query.filter(LibraryResource.availability_status == form.availability_status.data)
+        
+        books = query.all()
+        book_count = len(books)
+        
+        # 添加搜索结果提示
+        if form.validate_on_submit():
+            if book_count == 0:
+                flash('No books found matching your search criteria.', 'info')
+            elif book_count == 1:
+                flash('Successfully found 1 book!', 'success')
+            else:
+                flash(f'Successfully found {book_count} books!', 'success')
+        
+        return render_template('manage_books.html', 
+                             books=books,
+                             form=form)
+                             
+    except Exception as e:
+        system_logger.log_error(f"Error in manage_books: {str(e)}")
+        flash('An error occurred while loading the books.', 'danger')
+        return redirect(url_for('main.index'))
 
 @main_routes.route('/edit_book/<int:book_id>', methods=['GET', 'POST'])
 @login_required
@@ -910,7 +941,7 @@ def select_grade_entry():
     # 获取当前教师创建的课程
     courses = Course.query.filter_by(created_by=current_user.id).all()
 
-    # 初始化学生为空，在前端根据选择的课程动态加载
+    # 初始化学生为空，在前端根据选的课程动态加载
     students = []
 
     return render_template('select_grade_entry.html', courses=courses, students=students)
@@ -1461,7 +1492,7 @@ def view_logs():
         log_files = [f for f in os.listdir(log_dir) if f.endswith('.log')]
         log_files.sort(reverse=True)  # 最新的文件在前
     
-    # 读取选定的日志文件
+    # 读取选的日志文件
     selected_log = request.args.get('file', '')
     log_content = {'errors': [], 'warnings': [], 'info': []}
     

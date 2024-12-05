@@ -135,7 +135,9 @@ class AddBookForm(FlaskForm):
 class SearchBookForm(FlaskForm):
     title = StringField('Title')
     author = StringField('Author')
-    publication_year = IntegerField('Publication Year', validators=[Optional()])
+    publication_year = IntegerField('Publication Year', 
+        validators=[Optional()],  # 只验证是否为整数，不限制范围
+        render_kw={"placeholder": "YYYY"})
     availability_status = SelectField('Status', choices=[
         ('', 'All'),
         ('available', 'Available'),
@@ -160,8 +162,7 @@ class EBikeForm(FlaskForm):
 class UserPreferenceForm(FlaskForm):
     theme = SelectField('Theme', choices=[
         ('light', 'Light Mode'),
-        ('dark', 'Dark Mode'),
-        ('blue', 'Blue Mode')
+        ('dark', 'Dark Mode')
     ], validators=[DataRequired()])
     font_size = SelectField('Font Size', choices=[
         ('small', 'Small'),

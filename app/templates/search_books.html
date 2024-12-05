@@ -1,37 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container search-container">
+<div class="container-wide">
     <h2>Search Library Resources</h2>
-    
-    <div class="search-form">
-        <form method="POST">
+
+    <!-- 搜索表单 -->
+    <div class="search-form card-container mb-4">
+        <form method="POST" action="{{ url_for('main.search_books') }}">
             {{ form.hidden_tag() }}
-            <div class="row">
-                <div class="col-md-3">
+            <div class="search-grid">
+                <div class="search-item">
                     {{ form.title.label(class="form-label") }}
-                    {{ form.title(class="form-control") }}
+                    {{ form.title(class="form-control", placeholder="Enter title...") }}
                 </div>
-                <div class="col-md-3">
+                <div class="search-item">
                     {{ form.author.label(class="form-label") }}
-                    {{ form.author(class="form-control") }}
+                    {{ form.author(class="form-control", placeholder="Enter author...") }}
                 </div>
-                <div class="col-md-2">
+                <div class="search-item">
                     {{ form.publication_year.label(class="form-label") }}
-                    {{ form.publication_year(class="form-control") }}
+                    {{ form.publication_year(class="form-control", type="number", placeholder="YYYY") }}
                 </div>
-                <div class="col-md-2">
+                <div class="search-item">
                     {{ form.availability_status.label(class="form-label") }}
                     {{ form.availability_status(class="form-control") }}
                 </div>
-                <div class="col-md-2 d-flex align-items-end">
-                    {{ form.submit(class="btn btn-primary w-100") }}
+                <div class="search-item search-button">
+                    {{ form.submit(class="action-btn") }}
                 </div>
             </div>
         </form>
     </div>
 
-    <div class="search-results">
-        <table class="table table-striped">
+    <!-- 搜索结果 -->
+    <div class="search-results card-container">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Title</th>
@@ -48,7 +50,11 @@
                     <td>{{ book.author }}</td>
                     <td>{{ book.publication_year }}</td>
                     <td>{{ book.category }}</td>
-                    <td>{{ book.availability_status }}</td>
+                    <td>
+                        <span class="status-badge status-{{ book.availability_status.lower() }}">
+                            {{ book.availability_status }}
+                        </span>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
