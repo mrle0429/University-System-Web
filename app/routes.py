@@ -547,13 +547,35 @@ def delete_course(course_id):
 @main_routes.route('/forum/<string:board_type>')
 @login_required
 def forum(board_type):
+    """
+    Display forum posts based on board type and user role.
 
-    # 确只有学生和老师可以访问
+    Args:
+        board_type (str): Type of forum board ('chat' or 'course')
+
+    Returns:
+        Rendered forum.html template with filtered posts
+
+    Access Control:
+        - Requires authentication
+        - Limited to students and teachers
+        - Students can only see posts from their registered courses
+        - Teachers can see all course posts
+
+    Board Types:
+        - chat: General discussion board accessible to all authorized users
+        - course: Course-specific discussion board with restricted access
+
+    Error Handling:
+        - Redirects to index with error message for unauthorized access
+        - Redirects to index with error message for invalid board type
+    """
+    # Ensure only students and teachers can access
     if current_user.user_type not in ['student', 'teacher']:
         flash("You are not authorized to access this board.", "danger")
         return redirect(url_for('main.index'))
 
-    # 检查 board_type 是否有效
+    # Validate board type
     if board_type not in ['chat', 'course']:
         flash("Invalid board type.", "danger")
         return redirect(url_for('main.index'))
@@ -563,10 +585,15 @@ def forum(board_type):
             # Get courses the student is registered for
             registrations = CourseRegistration.query.filter_by(user_id=current_user.id).all()
             course_ids = [reg.course_id for reg in registrations]
-            posts = ForumPost.query.filter(ForumPost.board_type == "course", ForumPost.course_id.in_(course_ids)).all()
+            posts = ForumPost.query.filter(
+                ForumPost.board_type == "course", 
+                ForumPost.course_id.in_(course_ids)
+            ).all()
         else:
+            # Teachers can see all course posts
             posts = ForumPost.query.filter_by(board_type="course").all()
     else:
+        # Chat board shows all general discussion posts
         posts = ForumPost.query.filter_by(board_type="chat").all()
 
     return render_template('forum.html', posts=posts, board_type=board_type)
@@ -614,8 +641,35 @@ def create_post(board_type):
 @main_routes.route('/forum/post/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 def view_post(post_id):
+    """
+    View a forum post and handle replies.
+
+    Args:
+        post_id (int): ID of the forum post to view
+
+    Methods:
+        GET: Display post and existing replies
+        POST: Process new reply submission
+
+    Returns:
+        GET: Rendered view_post.html with post, replies, and reply form
+        POST: Redirect back to post page after successful reply
+
+    Access Control:
+        - Requires authentication
+        - All authenticated users can view posts and add replies
+
+    Error Handling:
+        - Returns 404 if post not found
+        - Form validation for reply submission
+
+    Database Operations:
+        - Reads post and replies from database
+        - Creates new reply records on POST
+    """
     post = ForumPost.query.get_or_404(post_id)
     form = ForumReplyForm()
+    
     if form.validate_on_submit():
         new_reply = ForumReply(
             post_id=post_id,
@@ -628,11 +682,38 @@ def view_post(post_id):
         return redirect(url_for('main.view_post', post_id=post_id))
 
     replies = ForumReply.query.filter_by(post_id=post_id).all()
-    return render_template('view_post.html', post=post, replies=replies, form=form)
+    return render_template('view_post.html', 
+                         post=post, 
+                         replies=replies, 
+                         form=form)
 
 @main_routes.route('/forum/post/<int:post_id>/delete', methods=['POST'])
 @login_required
 def delete_post(post_id):
+    """
+    Delete a forum post and all associated replies.
+
+    Args:
+        post_id (int): ID of the post to delete
+
+    Methods:
+        POST: Process post deletion request
+
+    Returns:
+        Redirect to forum board after deletion
+
+    Access Control:
+        - Requires authentication
+        - Only post author can delete their own posts
+
+    Error Handling:
+        - Returns 404 if post not found
+        - Redirects with error message if user is not post author
+
+    Database Operations:
+        - Deletes post and cascades to associated replies
+        - Commits transaction
+    """
     post = ForumPost.query.get_or_404(post_id)
     if post.author_id != current_user.id:
         flash("You can only delete your own posts.", "danger")
@@ -646,6 +727,30 @@ def delete_post(post_id):
 @main_routes.route('/forum/reply/<int:reply_id>/delete', methods=['POST'])
 @login_required
 def delete_reply(reply_id):
+    """
+    Delete a forum reply.
+
+    Args:
+        reply_id (int): ID of the reply to delete
+
+    Methods:
+        POST: Process reply deletion request
+
+    Returns:
+        Redirect to original post page after deletion
+
+    Access Control:
+        - Requires authentication
+        - Only reply author can delete their own replies
+
+    Error Handling:
+        - Returns 404 if reply not found
+        - Redirects with error message if user is not reply author
+
+    Database Operations:
+        - Deletes single reply
+        - Commits transaction
+    """
     reply = ForumReply.query.get_or_404(reply_id)
     if reply.replier_id != current_user.id:
         flash("You can only delete your own replies.", "danger")
@@ -752,6 +857,15 @@ def search_books():
 @main_routes.route('/library_statistics')
 @login_required
 def library_statistics():
+    """
+    Display library statistics for library staff.
+
+    Access Control:
+        - Requires library_staff privileges
+
+    Returns:
+        Rendered template with library statistics data
+    """
     if current_user.user_type != 'library_staff':
         flash('Access denied. Library staff only.', 'danger')
         return redirect(url_for('main.index'))
@@ -778,7 +892,19 @@ def library_statistics():
 @main_routes.route('/manage_books', methods=['GET', 'POST'])
 @login_required
 def manage_books():
-    """Display book management interface for library staff."""
+    """
+    Display book management interface for library staff.
+
+    Methods:
+        GET: Display book management page
+        POST: Process book search and display results
+
+    Access Control:
+        - Requires library_staff privileges
+
+    Returns:
+        Rendered template with book management data
+    """
     if current_user.user_type != 'library_staff':
         flash('Access denied. Library staff only.', 'danger')
         return redirect(url_for('main.index'))
@@ -863,6 +989,25 @@ def edit_book(book_id):
 @main_routes.route('/delete_book/<int:book_id>', methods=['POST'])
 @login_required
 def delete_book(book_id):
+    """
+    Delete a book from the library.
+
+    Args:
+        book_id (int): ID of the book to delete
+
+    Methods:
+        POST: Process book deletion
+
+    Returns:
+        Redirect to book management page after successful deletion
+
+    Access Control:
+        - Requires library_staff privileges
+
+    Logging:
+        - INFO: Book deletion success
+        - ERROR: Deletion failures
+    """
     if current_user.user_type != 'library_staff':
         flash('Access denied. Library staff only.', 'danger')
         return redirect(url_for('main.index'))
@@ -877,14 +1022,29 @@ def delete_book(book_id):
 @main_routes.route('/view_grades/<int:student_id>', methods=['GET'])
 @login_required
 def view_grades(student_id):
+    """
+    View grades for a specific student.
+
+    Args:
+        student_id (int): ID of the student whose grades are to be viewed
+
+    Methods:
+        GET: Display grades for the student
+
+    Returns:
+        Rendered template with student's grades
+
+    Access Control:
+        - Requires student privileges
+        - Student can only view their own grades
+    """
     if current_user.user_type != 'student' or current_user.id != student_id:
         flash("You are not authorized to view this page.", "danger")
         return redirect(url_for('main.index'))
 
-    # 查询该学生的所有成绩
+
     grades = StudentGrade.query.filter_by(student_id=student_id).all()
 
-    # 将课程名称与成绩关联
     grade_data = [
         {
             'course_name': Course.query.get(grade.course_id).course_name,
@@ -920,24 +1080,24 @@ def add_grade():
     course_id = request.args.get('course_id', type=int)
     student_id = request.args.get('student_id', type=int)
 
-    # 检查用户权限，仅允许教师访问
+
     if current_user.user_type != 'teacher':
         flash("You are not authorized to access this page.", "danger")
         return redirect(url_for('main.index'))
 
-    # 查询表单
+
     form = AddGradeForm()
     if form.validate_on_submit():
-        # 检查是否已存在该学生和课程的成绩记录
+
         grade_entry = StudentGrade.query.filter_by(student_id=student_id, course_id=course_id).first()
 
         if grade_entry:
-            # 更新现有成绩
+
             grade_entry.grade = form.grade.data
             system_logger.log_info(f"Teacher {current_user.username} updated grade for student {student_id} in course {course_id}")
             flash("Grade updated successfully!", "success")
         else:
-            # 创建新的成绩记录
+
             grade_entry = StudentGrade(student_id=student_id, course_id=course_id, grade=form.grade.data)
             db.session.add(grade_entry)
             system_logger.log_info(f"Teacher {current_user.username} added new grade for student {student_id} in course {course_id}")
@@ -952,6 +1112,19 @@ def add_grade():
 @main_routes.route('/select_grade_entry', methods=['GET', 'POST'])
 @login_required
 def select_grade_entry():
+    """
+    Select a course and student for grade entry.
+
+    Methods:
+        GET: Display selection form
+        POST: Process selection and redirect to grade entry
+
+    Returns:
+        Rendered template with selection form
+
+    Access Control:
+        - Requires teacher privileges
+    """
     # 检查用户权限，仅允许教师访问
     if current_user.user_type != 'teacher':
         flash("You are not authorized to access this page.", "danger")
@@ -968,6 +1141,16 @@ def select_grade_entry():
 @main_routes.route('/get_students_by_course/<int:course_id>', methods=['GET'])
 @login_required
 def get_students_by_course(course_id):
+    """
+    API endpoint to get list of students enrolled in a specific course.
+
+    Args:
+        course_id (int): ID of the course to query
+
+    Methods:
+        GET: Retrieve student list for course
+
+    """
     # 验证该课程是否由当前教师创建
     course = Course.query.filter_by(id=course_id, created_by=current_user.id).first()
     if not course:
@@ -1034,6 +1217,23 @@ def e_bike_management():
 @main_routes.route('/manage_ebikes', methods=['GET'])
 @login_required
 def manage_ebikes():
+    """
+    Display e-bike license management interface for security personnel.
+
+    Methods:
+        GET: Display all e-bike license applications
+
+    Returns:
+        Rendered manage_ebikes.html template with sorted license applications
+
+    Access Control:
+        - Requires authentication
+        - Limited to security personnel only
+
+    Database Operations:
+        - Retrieves all e-bike licenses
+        - Orders by license ID in descending order
+    """
     if current_user.user_type != 'security':
         flash('Access denied. Security personnel only.', 'danger')
         return redirect(url_for('main.index'))
@@ -1046,6 +1246,27 @@ def manage_ebikes():
 @main_routes.route('/approve_ebike/<int:ebike_id>', methods=['POST'])
 @login_required
 def approve_ebike(ebike_id):
+    """
+    Approve an e-bike license application.
+
+    Args:
+        ebike_id (int): ID of the e-bike license to approve
+
+    Methods:
+        POST: Process license approval
+
+    Returns:
+        Redirect to e-bike management page after approval
+
+    Access Control:
+        - Requires authentication
+        - Limited to security personnel only
+
+    Database Updates:
+        - Sets status to 'Approved'
+        - Updates registration and expiration dates
+        - Records approving security officer
+    """
     if current_user.user_type != 'security':
         flash('Access denied. Security personnel only.', 'danger')
         return redirect(url_for('main.index'))
@@ -1062,6 +1283,25 @@ def approve_ebike(ebike_id):
 @main_routes.route('/reject_ebike/<int:ebike_id>', methods=['POST'])
 @login_required
 def reject_ebike(ebike_id):
+    """
+    Reject an e-bike license application.
+
+    Args:
+        ebike_id (int): ID of the e-bike license to reject
+
+    Methods:
+        POST: Process license rejection
+
+    Returns:
+        Redirect to e-bike management page after rejection
+
+    Access Control:
+        - Requires authentication
+        - Limited to security personnel only
+
+    Database Updates:
+        - Sets status to 'Rejected'
+    """
     if current_user.user_type != 'security':
         flash('Access denied. Security personnel only.', 'danger')
         return redirect(url_for('main.index'))
@@ -1075,6 +1315,27 @@ def reject_ebike(ebike_id):
 @main_routes.route('/cancel_ebike/<int:ebike_id>', methods=['POST'])
 @login_required
 def cancel_ebike(ebike_id):
+    """
+    Cancel an existing e-bike license.
+
+    Args:
+        ebike_id (int): ID of the e-bike license to cancel
+
+    Methods:
+        POST: Process license cancellation
+
+    Returns:
+        Redirect to e-bike management page after cancellation
+
+    Access Control:
+        - Requires authentication
+        - Limited to security personnel only
+
+    Database Updates:
+        - Sets status to 'Cancelled'
+        - Clears registration and expiration dates
+        - Removes approver reference
+    """
     if current_user.user_type != 'security':
         flash('Access denied. Security personnel only.', 'danger')
         return redirect(url_for('main.index'))
@@ -1090,10 +1351,36 @@ def cancel_ebike(ebike_id):
 
 @main_routes.route('/visitor')
 def visitor():
+    """
+    Display visitor information page.
+
+    Methods:
+        GET: Display visitor information
+
+    Returns:
+        Rendered visitor.html template
+
+    Access Control:
+        - Public access
+        - No authentication required
+    """
     return render_template('visitor.html')
 
 @main_routes.route('/contact')
 def contact():
+    """
+    Display contact information page.
+
+    Methods:
+        GET: Display contact information
+
+    Returns:
+        Rendered contact.html template
+
+    Access Control:
+        - Public access
+        - No authentication required
+    """
     return render_template('contact.html')
 
 @main_routes.route('/admin/manage_users', methods=['GET', 'POST'])
@@ -1119,7 +1406,7 @@ def manage_users():
     system_logger.log_info(f"Admin {current_user.username} accessed user management")
     return render_template('manage_users.html', users=users)
 
-#管理员创建用户
+
 @main_routes.route('/admin/create_user', methods=['GET', 'POST'])
 @login_required
 def create_user():
@@ -1667,7 +1954,23 @@ def handle_error(error):
 @main_routes.route('/ai_assistant')
 @login_required
 def ai_assistant():
-    """Displayed the AI assistant page"""
+    """
+    Display AI assistant interface with chat history.
+
+    Methods:
+        GET: Display AI assistant page
+
+    Returns:
+        Rendered ai_assistant.html template with recent chat history
+
+    Access Control:
+        - Requires authentication
+        - Available to all user types
+
+    Database Operations:
+        - Retrieves 10 most recent chat history entries for current user
+        - Orders chat history by creation time (descending)
+    """
     chat_history = ChatHistory.query.filter_by(user_id=current_user.id)\
                                  .order_by(ChatHistory.created_at.desc())\
                                  .limit(10).all()
@@ -1676,7 +1979,49 @@ def ai_assistant():
 @main_routes.route('/ai_assistant/chat', methods=['POST'])
 @login_required
 def chat():
-    """Handle chat requests"""
+    """
+    Handle AI chat interactions using Wenxin Yiyan API.
+
+    Methods:
+        POST: Process chat message and get AI response
+
+    Request Body:
+        JSON: {
+            'message': 'User's input message'
+        }
+
+    Returns:
+        Success Response: {
+            'status': 'success',
+            'response': 'AI generated response'
+        }
+        Error Response: {
+            'status': 'error',
+            'message': 'Error description'
+        }, 500 status code
+
+    Access Control:
+        - Requires authentication
+        - Customizes response based on user type
+
+    Features:
+        - Role-specific prompts based on user type:
+            * Student: Learning assistance with course context
+            * Teacher: Teaching methodology and course design help
+            * Library Staff: Library management assistance
+            * Security: Campus security guidance
+        - Maintains chat history in database
+        - Always responds in English
+
+    External Services:
+        - Wenxin Yiyan API for AI responses
+        - Uses environment variables for API configuration
+
+    Error Handling:
+        - API connection errors
+        - Invalid API responses
+        - Database operation errors
+    """
     message = request.json.get('message', '')
     
     # Wenxin Yiyan API configuration - 使用环境变量

@@ -89,11 +89,48 @@
 .table td .status-badge {
     margin: 0 auto;
 }
+
+.back-button-container {
+        text-align: left;
+        padding: 10px 0;
+    }
+    
+    .btn-secondary {
+        background: linear-gradient(45deg, #2a5298, #1e3c72);
+        border: none;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+        background: linear-gradient(45deg, #1e3c72, #2a5298);
+        transform: translateY(-2px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    /* 确保图标和文字垂直对齐 */
+    .btn-secondary i {
+        margin-right: 5px;
+        vertical-align: middle;
+    }
 </style>
 {% endif %}
 
+
+
 <div class="container-wide">
     <div class="card-container">
+        <!-- 添加返回按钮 -->
+        {% if is_guest %}
+        <div class="back-button-container" style="margin-bottom: 20px;">
+            <button onclick="window.history.back()" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+        </div>
+        {% endif %}
         <h2>Search Books</h2>
         
         <form method="POST" class="mb-4">

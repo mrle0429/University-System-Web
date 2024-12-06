@@ -1,5 +1,6 @@
 # COMP3019J Project
 
+English | [简体中文](README_zh.md)
 ### Project Name: BJUT Unified Identity Authentication System
 
 ### Team_20 Members:
@@ -181,7 +182,7 @@ web-application/
 ├── Project Document/    # Project document and videos
 ├── tests/               # Tests
 ├── .env/                # Enviroment variables
-├── .env.example/        # Example for enviroment variables
+├── .env.example/        # Example for environment variables
 ├── .gitignore/ 
 ├── config.py/           # Config files
 ├── README.md/
