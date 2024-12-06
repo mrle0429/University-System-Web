@@ -1,5 +1,6 @@
-# COMP3019J Assignment
+# COMP3019J Project
 
+English | [简体中文](README_zh.md)
 ### Project Name: BJUT Unified Identity Authentication System
 
 ### Team_20 Members:
@@ -45,11 +46,15 @@ pip install -r requirements.txt
 
 #### Run this web server
 
+```shell
 flask run
+```
 
 or
 
+```shell
 python run.py
+````
 
 #### Access the website
 
@@ -63,8 +68,12 @@ URL: http://localhost:5000 or http://127.0.0.1:5000
 * Password encryption
 * Comprehensive logging system
 * Theme customization (Light/Dark mode)
+* ![image](Project%20Document/STYLE.gif)
 * Form validation with JavaScript
-* AJAX for dynamic updates
+* ![image](Project%20Document/JS.gif)
+* AJAX for dynamic updates  
+* ![image](Project%20Document/AJAX_S.gif)
+* ![image](Project%20Document/AJAX_T.gif)
 
 ### Roles in the System
 
@@ -173,7 +182,7 @@ web-application/
 ├── Project Document/    # Project document and videos
 ├── tests/               # Tests
 ├── .env/                # Enviroment variables
-├── .env.example/        # Example for enviroment variables
+├── .env.example/        # Example for environment variables
 ├── .gitignore/ 
 ├── config.py/           # Config files
 ├── README.md/
@@ -195,7 +204,7 @@ Repository URL: https://csgitlab.ucd.ie/webApplication/web-application
 
 MIT License
 
-Copyright (c) 2024 Team 20
+Copyright (c) 2024 Team 20 Bohan Zhang, Yunhan Gao and Le Liu
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
